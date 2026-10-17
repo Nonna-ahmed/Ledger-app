@@ -55,6 +55,17 @@
   .set-edit{ display:flex; align-items:baseline; gap:6px; }
   .set-edit input[type=number]{ font-family:'JetBrains Mono',monospace; font-size:16px; font-weight:700; background:transparent; border:none; border-bottom:1px dashed var(--brass-soft); color: var(--ink); width: 90px; text-align:right; padding:2px 0; direction:ltr; }
   .set-edit input:focus{ outline:none; border-bottom-color: var(--brass); }
+  .sal-block{ padding:6px 0 10px; border-top:1px dashed var(--paper-line); margin-top:4px; }
+  .sal-title{ font-size:13px; color:var(--ink-soft); margin-bottom:6px; }
+  .sal-row{ display:flex; align-items:center; gap:8px; padding:5px 0; font-size:13px; }
+  .sal-row .sal-from{ flex:1; }
+  .sal-row input{ font-family:'JetBrains Mono',monospace; font-size:15px; font-weight:700; width:90px; text-align:right; direction:ltr; background:transparent; border:none; border-bottom:1px dashed var(--brass-soft); color:var(--ink); }
+  .sal-row button{ background:none; border:none; color:var(--red); cursor:pointer; font-size:13px; }
+  .sal-add{ display:flex; gap:6px; align-items:center; flex-wrap:wrap; margin-top:6px; }
+  .sal-add select, .sal-add input{ font-family:inherit; font-size:13px; background:var(--card); color:var(--ink); border:1px solid var(--paper-line); border-radius:7px; padding:6px; }
+  .sal-add input#salYear{ width:68px; } .sal-add input#salAmount{ width:84px; }
+  .sal-add button{ font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:700; background:var(--brass); color:#fff; border:none; border-radius:7px; padding:7px 12px; cursor:pointer; }
+  .sal-hint{ font-size:11px; color:var(--ink-soft); margin-top:6px; }
   .set-edit .curr{ font-size:11px; color:var(--ink-soft); }
   #payDayInput{ width: 40px; }
   .switch{ position:relative; display:inline-block; width:40px; height:23px; flex-shrink:0; }
@@ -259,6 +270,17 @@
 
 <div class="settings">
   <div class="set-row"><label data-i18n="monthlySalary">Monthly salary</label><div class="set-edit"><span class="curr mono">EGP</span><input type="number" id="salaryInput" inputmode="decimal" value="6200"></div></div>
+  <div class="sal-block">
+    <div class="sal-title" data-i18n="salaryChanges">Salary changes (raises)</div>
+    <div id="salaryChangesList"></div>
+    <div class="sal-add">
+      <select id="salMonth"></select>
+      <input type="number" id="salYear" inputmode="numeric" min="2000" max="2100">
+      <input type="number" id="salAmount" inputmode="decimal" data-i18n-placeholder="addAmountPlaceholder" placeholder="Amount">
+      <button id="salAddBtn" data-i18n="addBtn">Add</button>
+    </div>
+    <div class="sal-hint" data-i18n="salaryHint">Months before the first change keep the base salary.</div>
+  </div>
   <div class="set-row"><label data-i18n="payday">Payday (day of month)</label><div class="set-edit"><input type="number" id="payDayInput" inputmode="numeric" min="1" max="28" value="25"></div></div>
   <div class="set-row">
     <label data-i18n="notifications">Notifications (payday, overspending, goals, bills)</label>
@@ -398,7 +420,7 @@ const translations = {
   en: {
     appEyebrow: "The Ledger", appTitle: "Annual Spending",
     exportJson: "Export JSON", exportCsv: "Export CSV", importJson: "Import JSON", importTitle: "Import backup", importSummary: (e,i,g,c)=>`This file has ${e} expenses, ${i} bonuses, ${g} goals and ${c} deposits. Merge adds only what is missing. Replace deletes your current data first.`, importMerge: "Merge with current data", importReplace: "Replace everything", toastImportDone: (n,c)=>`Imported ${n} items`+(c?` · ${c} duplicate recurring cleaned`:""), toastImportFailed: "Not a valid Ledger backup file",
-    monthlySalary: "Monthly salary", payday: "Payday (day of month)",
+    monthlySalary: "Base salary (before any raise)", salaryChanges: "Salary changes (raises)", salaryFrom: "From", salaryHint: "Months before the first change keep the base salary.", toastSalarySaved: "Salary change saved", payday: "Payday (day of month)",
     notifications: "Notifications (payday, overspending, goals, bills)",
     notifNoteOk: "Payday, overspending, savings goal, and recurring bill reminders.",
     notifUnsupported: "Notifications aren't supported in this browser.",
@@ -464,7 +486,7 @@ const translations = {
   ar: {
     appEyebrow: "الدفتر", appTitle: "الإنفاق السنوي",
     exportJson: "تصدير JSON", exportCsv: "تصدير CSV", importJson: "استيراد JSON", importTitle: "استيراد نسخة احتياطية", importSummary: (e,i,g,c)=>`الملف فيه ${e} مصروف و${i} مكافأة و${g} هدف و${c} إيداع. الدمج بيضيف الناقص بس، والاستبدال بيمسح بياناتك الحالية الأول.`, importMerge: "دمج مع البيانات الحالية", importReplace: "استبدال كل حاجة", toastImportDone: (n,c)=>`تم استيراد ${n} عنصر`+(c?` · تم حذف ${c} مصروف متكرر مكرر`:""), toastImportFailed: "الملف ده مش نسخة احتياطية صالحة",
-    monthlySalary: "الراتب الشهري", payday: "يوم استلام الراتب (يوم الشهر)",
+    monthlySalary: "الراتب الأساسي (قبل أي زيادة)", salaryChanges: "تغييرات المرتب (الزيادات)", salaryFrom: "من", salaryHint: "الشهور قبل أول تغيير بتفضل على الراتب الأساسي.", toastSalarySaved: "تم حفظ تغيير المرتب", payday: "يوم استلام الراتب (يوم الشهر)",
     notifications: "الإشعارات (الراتب، تجاوز الميزانية، الأهداف، الفواتير)",
     notifNoteOk: "تذكيرات بموعد الراتب، وتجاوز الميزانية، وأهداف الادخار، والفواتير المتكررة.",
     notifUnsupported: "الإشعارات غير مدعومة في هذا المتصفح.",
@@ -602,7 +624,7 @@ const LedgerLocal = {
 /* ========================================================= */
 
 let state = {
-  salary: 6200, payDay: 25,
+  salary: 6200, salaryChanges: [], payDay: 25,
   expenses: [], incomes: [], recurring: [], goals: [], contributions: [],
   notificationsEnabled: false,
   notifyLog: { paydayDate: null, overspendPeriods: [], goalsNotified: [] },
@@ -629,7 +651,9 @@ function formatDate(dateStr){ const d=new Date(dateStr+'T00:00:00'); return d.to
 async function loadState(){
   // Simple settings from localStorage
   const s = LedgerLocal.get('salary'); if(s) state.salary = parseFloat(s.value);
+  try{ const sc = LedgerLocal.get('salaryChanges'); if(sc){ const a = JSON.parse(sc.value); if(Array.isArray(a)) state.salaryChanges = a.filter(x=>x && isFinite(x.year) && x.monthIdx>=0 && x.monthIdx<=11 && isFinite(x.amount)); } }catch(e){}
   const p = LedgerLocal.get('payDay'); if(p) state.payDay = parseInt(p.value);
+  { const cp = currentPeriod(); state.year = fyOf(cp.year, cp.monthIdx); }
   const n = LedgerLocal.get('notificationsEnabled'); if(n) state.notificationsEnabled = n.value === 'true';
   const l = LedgerLocal.get('lang'); if(l && translations[l.value]) state.lang = l.value;
 
@@ -696,7 +720,13 @@ function expensesForPeriod(year, monthIdx){ return state.expenses.filter(e=>inPe
 function incomesForPeriod(year, monthIdx){ return state.incomes.filter(e=>inPeriod(e.date,year,monthIdx)); }
 function periodExpenseTotal(year, monthIdx){ return expensesForPeriod(year,monthIdx).reduce((s,e)=>s+parseFloat(e.amount),0); }
 function periodIncomeTotal(year, monthIdx){ return incomesForPeriod(year,monthIdx).reduce((s,e)=>s+parseFloat(e.amount),0); }
-function periodBaseBudget(year, monthIdx){ return state.salary + periodIncomeTotal(year,monthIdx); }
+/* salary that applies to a period: the base salary, overridden by the latest change that starts on/before it */
+function salaryFor(year, monthIdx){
+  const key = year*12 + monthIdx; let amt = state.salary, best = -Infinity;
+  state.salaryChanges.forEach(c=>{ const k = c.year*12 + c.monthIdx; if(k<=key && k>best){ best=k; amt=c.amount; } });
+  return amt;
+}
+function periodBaseBudget(year, monthIdx){ return salaryFor(year,monthIdx) + periodIncomeTotal(year,monthIdx); }
 function firstDataPeriod(){
   const dates = state.expenses.map(e=>e.date).concat(state.incomes.map(e=>e.date));
   if(!dates.length) return null;
@@ -713,7 +743,13 @@ function periodCarry(year, monthIdx){
   return carry;
 }
 function periodBudget(year, monthIdx){ return periodBaseBudget(year,monthIdx) + periodCarry(year,monthIdx); }
-function yearPeriodsTotals(year){ let spent=0,budget=0; for(let m=0;m<12;m++){ spent+=periodExpenseTotal(year,m); budget+=periodBaseBudget(year,m); } return {spent,budget}; }
+/* The "year" runs June -> May. state.year is the calendar year in which that June falls. */
+const FY_START = 5; // monthIdx of the first month of the year (5 = June)
+function fyPeriod(fy, i){ const k = FY_START + i; return { year: fy + (k>=12 ? 1 : 0), monthIdx: k % 12 }; }
+function fyOf(year, monthIdx){ return monthIdx>=FY_START ? year : year-1; }
+function fyYearFor(monthIdx){ return monthIdx>=FY_START ? state.year : state.year+1; }
+function fyLabel(fy){ return fy+'/'+String(fy+1).slice(2); }
+function yearPeriodsTotals(fy){ let spent=0,budget=0; for(let i=0;i<12;i++){ const p=fyPeriod(fy,i); spent+=periodExpenseTotal(p.year,p.monthIdx); budget+=periodBaseBudget(p.year,p.monthIdx); } return {spent,budget}; }
 function periodKey(year, monthIdx){ return year+'-'+monthIdx; }
 
 /* ---------------- Recurring expenses ---------------- */
@@ -848,11 +884,11 @@ document.getElementById('saveGoal').addEventListener('click', async ()=>{
 
 /* ---------------- Trend chart (SVG) ---------------- */
 function renderTrend(){
-  document.getElementById('trendYear').textContent = state.year;
+  document.getElementById('trendYear').textContent = fyLabel(state.year);
   const svg = document.getElementById('trendSvg');
   const W=320,H=90,pad=8;
   const spentArr=[], budgetArr=[];
-  for(let m=0;m<12;m++){ spentArr.push(periodExpenseTotal(state.year,m)); budgetArr.push(periodBaseBudget(state.year,m)); }
+  for(let i=0;i<12;i++){ const p=fyPeriod(state.year,i); spentArr.push(periodExpenseTotal(p.year,p.monthIdx)); budgetArr.push(periodBaseBudget(p.year,p.monthIdx)); }
   const maxV = Math.max(1, ...spentArr, ...budgetArr);
   const stepX = (W-2*pad)/11;
   function pathFor(arr){
@@ -880,7 +916,7 @@ async function buildExportData(){
     if(!e.hasReceipt) continue;
     try{ const r = await LedgerDB.get('receipt:'+e.id); if(r && r.value) receipts[e.id] = r.value; }catch(err){}
   }
-  return { version:2, exportedAt:new Date().toISOString(), salary:state.salary, payDay:state.payDay, expenses:state.expenses, incomes:state.incomes, recurring:state.recurring, goals:state.goals, contributions:state.contributions, receipts };
+  return { version:2, exportedAt:new Date().toISOString(), salary:state.salary, salaryChanges:state.salaryChanges, payDay:state.payDay, expenses:state.expenses, incomes:state.incomes, recurring:state.recurring, goals:state.goals, contributions:state.contributions, receipts };
 }
 document.getElementById('exportJson').addEventListener('click', async ()=>{
   const data = await buildExportData();
@@ -892,7 +928,7 @@ document.getElementById('exportCsv').addEventListener('click', ()=>{
   state.expenses.slice().sort((a,b)=>a.date.localeCompare(b.date)).forEach(e=>{
     csv += `${e.date},"${(e.category||'').replace(/"/g,'""')}","${(e.desc||'').replace(/"/g,'""')}",${e.amount}\n`;
   });
-  downloadBlob(csv, 'ledger-expenses-'+state.year+'.csv', 'text/csv');
+  downloadBlob(csv, 'ledger-expenses-'+state.year+'-'+(state.year+1)+'.csv', 'text/csv');
   showToast(t('toastCsvExported'));
 });
 
@@ -916,6 +952,7 @@ function sanitizeImport(data){
   out.contributions = arr('contributions').filter(c=>c.id && c.goalId && DATE_RE.test(c.date||'') && num(c.amount)!==null).map(c=>({...c, amount:num(c.amount)}));
   out.receipts = (data.receipts && typeof data.receipts==='object') ? data.receipts : {};
   out.salary = num(data.salary);
+  out.salaryChanges = Array.isArray(data.salaryChanges) ? data.salaryChanges.filter(c=>c && isFinite(c.year) && c.monthIdx>=0 && c.monthIdx<=11 && num(c.amount)!==null).map(c=>({year:parseInt(c.year), monthIdx:parseInt(c.monthIdx), amount:num(c.amount)})) : [];
   const pd = parseInt(data.payDay); out.payDay = (pd>=1 && pd<=31) ? pd : null;
   return out;
 }
@@ -940,6 +977,7 @@ async function applyImport(mode){
     for(const e of state.expenses){ if(e.hasReceipt) await deleteReceipt(e.id); }
     state.expenses=[]; state.incomes=[]; state.recurring=[]; state.goals=[]; state.contributions=[];
     if(d.salary!==null){ state.salary=d.salary; LedgerLocal.set('salary', String(d.salary)); }
+    state.salaryChanges = d.salaryChanges; saveSalaryChanges();
     if(d.payDay!==null){ state.payDay=d.payDay; LedgerLocal.set('payDay', String(d.payDay)); }
   }
   const addNew = (target, items)=>{ const ids=new Set(target.map(x=>x.id)); const added=[]; items.forEach(x=>{ if(!ids.has(x.id)){ ids.add(x.id); target.push(x); added.push(x); } }); return added; };
@@ -1185,10 +1223,50 @@ if('serviceWorker' in navigator){
   });
 }
 
+/* ---------------- Salary changes ---------------- */
+function saveSalaryChanges(){ LedgerLocal.set('salaryChanges', JSON.stringify(state.salaryChanges)); }
+function renderSalaryChanges(){
+  const list = document.getElementById('salaryChangesList');
+  if(list.contains(document.activeElement)) return; // don't steal focus while typing
+  const sel = document.getElementById('salMonth');
+  const keep = sel.value;
+  sel.innerHTML = Array.from({length:12},(_,i)=>`<option value="${i}">${monthName(i)}</option>`).join('');
+  sel.value = keep || String(currentPeriod().monthIdx);
+  const yi = document.getElementById('salYear'); if(!yi.value) yi.value = currentPeriod().year;
+  const sorted = state.salaryChanges.slice().sort((a,b)=> (a.year*12+a.monthIdx)-(b.year*12+b.monthIdx));
+  list.innerHTML = sorted.map(c=>`
+    <div class="sal-row">
+      <span class="sal-from">${t('salaryFrom')} ${monthName(c.monthIdx)} ${c.year}</span>
+      <span class="curr mono">EGP</span>
+      <input type="number" inputmode="decimal" value="${c.amount}" data-y="${c.year}" data-m="${c.monthIdx}" class="sal-amt">
+      <button data-y="${c.year}" data-m="${c.monthIdx}" class="sal-del" title="${t('delete')}">✕</button>
+    </div>`).join('');
+  list.querySelectorAll('.sal-amt').forEach(inp=>inp.addEventListener('input',()=>{
+    const v=parseFloat(inp.value); if(isNaN(v)) return;
+    const c = state.salaryChanges.find(x=>x.year==inp.dataset.y && x.monthIdx==inp.dataset.m);
+    if(c){ c.amount=v; debouncedSave(()=>{ saveSalaryChanges(); render(); }); }
+  }));
+  list.querySelectorAll('.sal-del').forEach(b=>b.addEventListener('click',()=>{
+    state.salaryChanges = state.salaryChanges.filter(x=>!(x.year==b.dataset.y && x.monthIdx==b.dataset.m));
+    saveSalaryChanges(); render();
+  }));
+}
+document.getElementById('salAddBtn').addEventListener('click',()=>{
+  const monthIdx = parseInt(document.getElementById('salMonth').value);
+  const year = parseInt(document.getElementById('salYear').value);
+  const amount = parseFloat(document.getElementById('salAmount').value);
+  if(isNaN(year) || isNaN(amount) || amount<=0){ showToast(t('toastEnterAmount')); return; }
+  const ex = state.salaryChanges.find(x=>x.year===year && x.monthIdx===monthIdx);
+  if(ex) ex.amount = amount; else state.salaryChanges.push({year, monthIdx, amount});
+  document.getElementById('salAmount').value = '';
+  saveSalaryChanges(); render(); showToast(t('toastSalarySaved'));
+});
+
 /* ---------------- Main render ---------------- */
 function render(){
-  document.getElementById('yearLabel').textContent = state.year;
+  document.getElementById('yearLabel').textContent = fyLabel(state.year);
   document.getElementById('salaryInput').value = state.salary;
+  renderSalaryChanges();
   document.getElementById('payDayInput').value = state.payDay;
   document.getElementById('notifToggle').checked = state.notificationsEnabled;
   updateNotifNote();
@@ -1237,20 +1315,21 @@ function render(){
   const monthList = document.getElementById('monthList');
   monthList.innerHTML = '';
   const nowCur = currentPeriod();
-  for(let idx=0; idx<12; idx++){
-    const total = periodExpenseTotal(state.year, idx);
-    const bonus = periodIncomeTotal(state.year, idx);
-    const carry = periodCarry(state.year, idx);
-    const budget = state.salary + bonus + carry;
+  for(let i=0; i<12; i++){
+    const {year:py, monthIdx:idx} = fyPeriod(state.year, i);
+    const total = periodExpenseTotal(py, idx);
+    const bonus = periodIncomeTotal(py, idx);
+    const carry = periodCarry(py, idx);
+    const budget = salaryFor(py, idx) + bonus + carry;
     const pct = budget>0 ? (total/budget)*100 : 0;
-    const isFuture = (state.year>nowCur.year) || (state.year===nowCur.year && idx>nowCur.monthIdx);
+    const isFuture = (py>nowCur.year) || (py===nowCur.year && idx>nowCur.monthIdx);
     const isOver = total>budget;
     const card = document.createElement('div');
     card.className = 'month-card' + (isOver?' over':'') + (isFuture?' future':'');
     card.innerHTML = `
       <div class="month-left">
         <div class="month-name">${monthName(idx)}</div>
-        <div class="month-range">${periodLabel(state.year, idx)}</div>
+        <div class="month-range">${periodLabel(py, idx)}</div>
         <div class="month-bar-track"><div class="month-bar-fill ${isOver?'over':''}" style="width:${Math.min(pct,100)}%"></div></div>
       </div>
       <div class="month-right">
@@ -1422,8 +1501,7 @@ saveBtn.addEventListener('click', async ()=>{
     }
   }
 
-  const y=parseInt(date.slice(0,4));
-  if(y!==state.year) state.year=y;
+  { const per=periodOf(date); const fy=fyOf(per.year, per.monthIdx); if(fy!==state.year) state.year=fy; }
   resetForm();
   closeAddBar();
   render();
@@ -1449,16 +1527,17 @@ let sheetCatFilter = 'all';
 function openPeriodSheet(monthIdx, silent){
   if(!silent) sheetCatFilter = 'all';
   currentSheetMonthIdx = monthIdx;
-  const entries=expensesForPeriod(state.year,monthIdx).sort((a,b)=>b.date.localeCompare(a.date));
-  const incomeEntries=incomesForPeriod(state.year,monthIdx).sort((a,b)=>b.date.localeCompare(a.date));
+  const sy=fyYearFor(monthIdx);
+  const entries=expensesForPeriod(sy,monthIdx).sort((a,b)=>b.date.localeCompare(a.date));
+  const incomeEntries=incomesForPeriod(sy,monthIdx).sort((a,b)=>b.date.localeCompare(a.date));
   const spent=entries.reduce((s,e)=>s+parseFloat(e.amount),0);
   const bonus=incomeEntries.reduce((s,e)=>s+parseFloat(e.amount),0);
-  const carry=periodCarry(state.year,monthIdx);
-  const budget=state.salary+bonus;
+  const carry=periodCarry(sy,monthIdx);
+  const budget=salaryFor(sy,monthIdx)+bonus;
   const remaining=budget+carry-spent;
 
-  document.getElementById('sheetTitle').textContent=monthName(monthIdx)+' '+state.year;
-  document.getElementById('sheetRange').textContent=periodLabel(state.year,monthIdx);
+  document.getElementById('sheetTitle').textContent=monthName(monthIdx)+' '+sy;
+  document.getElementById('sheetRange').textContent=periodLabel(sy,monthIdx);
   document.getElementById('sheetBudget').textContent='EGP '+fmt(budget);
   document.getElementById('sheetCarry').textContent='EGP '+fmt(carry);
   document.getElementById('sheetSpent').textContent='EGP '+fmt(spent);
