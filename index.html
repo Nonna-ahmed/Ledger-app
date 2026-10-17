@@ -148,6 +148,12 @@
   .add-goal-form{ display:none; background:var(--card); border-radius:10px; padding:12px 14px; margin-bottom:9px; box-shadow: var(--shadow); }
   .add-goal-form.open{ display:block; }
   .add-goal-form .row{ display:flex; gap:8px; margin-bottom:8px; }
+  .goal-deadline-row{ align-items:center; }
+  .goal-deadline-row label{ font-size:12px; color:var(--ink-soft); white-space:nowrap; }
+  .goal-due{ font-size:11.5px; color:var(--ink-soft); margin-bottom:6px; }
+  .goal-due.late{ color:var(--red); font-weight:600; }
+  .goal-due .need{ display:block; margin-top:2px; }
+  .goal-edit{ background:none; border:1px solid var(--paper-line); color:var(--ink-soft); border-radius:6px; padding:6px 10px; font-size:12px; cursor:pointer; font-family:inherit; }
   .add-goal-form input{ font-family:'JetBrains Mono',monospace; font-size:13px; background:transparent; border:1px solid var(--paper-line); border-radius:6px; padding:8px 10px; width:100%; }
   .btn-outline{ font-family:'JetBrains Mono',monospace; font-size:12.5px; background:none; border:1px solid var(--brass); color:var(--brass); border-radius:7px; padding:8px 12px; cursor:pointer; }
   .btn-outline.full{ width:100%; }
@@ -317,6 +323,7 @@
   <div class="add-goal-form" id="addGoalForm">
     <div class="row"><input type="text" id="goalName" data-i18n-placeholder="goalNamePlaceholder" placeholder="Goal name (e.g. Emergency fund)"></div>
     <div class="row"><input type="number" id="goalTarget" inputmode="decimal" data-i18n-placeholder="targetAmountPlaceholder" placeholder="Target amount EGP"></div>
+    <div class="row goal-deadline-row"><label for="goalDeadline" data-i18n="goalDeadlineLabel">Deadline (optional)</label><input type="date" id="goalDeadline"></div>
     <div class="row"><button class="btn-outline full" id="saveGoal" data-i18n="saveGoal">Save goal</button></div>
   </div>
   <button class="btn-outline full" id="toggleAddGoal" data-i18n="newGoal">+ New goal</button>
@@ -436,7 +443,7 @@ const translations = {
     savingsGoals: "Savings goals",
     goalNamePlaceholder: "Goal name (e.g. Emergency fund)", targetAmountPlaceholder: "Target amount EGP",
     saveGoal: "Save goal", newGoal: "+ New goal", noGoalsYet: "No goals yet.",
-    addAmountPlaceholder: "Amount", carriedOver: "Carried over", allCategories: "All categories", filteredTotal: "Total", depositHistory: "Deposits", hideHistory: "Hide", noDepositsYet: "No deposits yet.", deleteDepositTitle: "Delete this deposit?", deleteDepositBody: "This will reduce the saved amount.", toastDepositDeleted: "Deposit deleted", toastEnterDate: "Pick a date", addBtn: "+ Add", delete: "Delete",
+    addAmountPlaceholder: "Amount", goalDeadlineLabel: "Deadline (optional)", updateGoal: "Update goal", toastGoalUpdated: "Goal updated", goalDueIn: (d,n)=>`Due ${d} · ${n} days left`, goalDueToday: (d)=>`Due today (${d})`, goalLate: (d,n)=>`Was due ${d} · ${n} days late`, goalPerMonth: (a)=>`≈ EGP ${a} / month needed`, goalDone: "Goal reached ✓", carriedOver: "Carried over", allCategories: "All categories", filteredTotal: "Total", depositHistory: "Deposits", hideHistory: "Hide", noDepositsYet: "No deposits yet.", deleteDepositTitle: "Delete this deposit?", deleteDepositBody: "This will reduce the saved amount.", toastDepositDeleted: "Deposit deleted", toastEnterDate: "Pick a date", addBtn: "+ Add", delete: "Delete",
     recurringExpenses: "Recurring expenses",
     noRecurringYet: 'None yet — check "repeat every pay period" when adding an expense.',
     pause: "Pause", resume: "Resume", everyPayPeriod: "every pay period", pausedLabel: "(paused)",
@@ -502,7 +509,7 @@ const translations = {
     savingsGoals: "أهداف الادخار",
     goalNamePlaceholder: "اسم الهدف (مثال: صندوق الطوارئ)", targetAmountPlaceholder: "المبلغ المستهدف بالجنيه",
     saveGoal: "حفظ الهدف", newGoal: "+ هدف جديد", noGoalsYet: "لا توجد أهداف بعد.",
-    addAmountPlaceholder: "المبلغ", carriedOver: "المرحَّل من الشهر السابق", allCategories: "كل الفئات", filteredTotal: "الإجمالي", depositHistory: "الإيداعات", hideHistory: "إخفاء", noDepositsYet: "لا توجد إيداعات بعد.", deleteDepositTitle: "حذف هذا الإيداع؟", deleteDepositBody: "سيتم خصم المبلغ من المدخر.", toastDepositDeleted: "تم حذف الإيداع", toastEnterDate: "اختر التاريخ", addBtn: "+ إضافة", delete: "حذف",
+    addAmountPlaceholder: "المبلغ", goalDeadlineLabel: "تاريخ الانتهاء (اختياري)", updateGoal: "تحديث الهدف", toastGoalUpdated: "تم تحديث الهدف", goalDueIn: (d,n)=>`ينتهي ${d} · باقي ${n} يوم`, goalDueToday: (d)=>`ينتهي النهارده (${d})`, goalLate: (d,n)=>`كان ينتهي ${d} · متأخر ${n} يوم`, goalPerMonth: (a)=>`≈ ${a} جنيه / شهر مطلوب`, goalDone: "تم تحقيق الهدف ✓", carriedOver: "المرحَّل من الشهر السابق", allCategories: "كل الفئات", filteredTotal: "الإجمالي", depositHistory: "الإيداعات", hideHistory: "إخفاء", noDepositsYet: "لا توجد إيداعات بعد.", deleteDepositTitle: "حذف هذا الإيداع؟", deleteDepositBody: "سيتم خصم المبلغ من المدخر.", toastDepositDeleted: "تم حذف الإيداع", toastEnterDate: "اختر التاريخ", addBtn: "+ إضافة", delete: "حذف",
     recurringExpenses: "المصروفات المتكررة",
     noRecurringYet: 'لا يوجد بعد — فعّل خيار "تكرار كل فترة راتب" عند إضافة مصروف.',
     pause: "إيقاف مؤقت", resume: "استئناف", everyPayPeriod: "كل فترة راتب", pausedLabel: "(متوقف)",
@@ -805,6 +812,24 @@ function renderRecurring(){
 /* ---------------- Goals ---------------- */
 function goalSaved(goalId){ return state.contributions.filter(c=>c.goalId===goalId).reduce((s,c)=>s+parseFloat(c.amount),0); }
 const expandedGoals = new Set();
+function goalDueHtml(g, saved){
+  if(!g.deadline) return '';
+  const remaining = g.target - saved;
+  if(remaining<=0) return `<div class="goal-due">${t('goalDone')}</div>`;
+  const today = new Date(todayStr()+'T00:00:00'), due = new Date(g.deadline+'T00:00:00');
+  const days = Math.round((due-today)/86400000), ds = formatDate(g.deadline);
+  if(days<0) return `<div class="goal-due late">${t('goalLate', ds, -days)}</div>`;
+  if(days===0) return `<div class="goal-due">${t('goalDueToday', ds)}</div>`;
+  const months = Math.max(1, days/30.4);
+  return `<div class="goal-due">${t('goalDueIn', ds, days)}<span class="need">${t('goalPerMonth', fmtShort(Math.ceil(remaining/months)))}</span></div>`;
+}
+let editingGoalId = null;
+function resetGoalForm(){
+  editingGoalId = null;
+  document.getElementById('goalName').value=''; document.getElementById('goalTarget').value=''; document.getElementById('goalDeadline').value='';
+  document.getElementById('saveGoal').textContent = t('saveGoal');
+  document.getElementById('addGoalForm').classList.remove('open');
+}
 function renderGoals(){
   const el = document.getElementById('goalsList');
   if(!state.goals.length){ el.innerHTML = `<div class="empty-note">${t('noGoalsYet')}</div>`; return; }
@@ -817,10 +842,12 @@ function renderGoals(){
     <div class="goal-card">
       <div class="goal-top"><div class="goal-name">${escapeHtml(g.name)}</div><div class="goal-nums mono">${fmt(saved)} / ${fmt(g.target)}</div></div>
       <div class="goal-track2"><div class="goal-fill2" style="width:${pct}%"></div></div>
+      ${goalDueHtml(g, saved)}
       <div class="goal-actions">
         <input type="number" inputmode="decimal" placeholder="${t('addAmountPlaceholder')}" id="contrib-${g.id}">
         <input type="date" class="dep-date" value="${todayStr()}" id="contribdate-${g.id}">
         <button data-id="${g.id}" class="contrib-btn">${t('addBtn')}</button>
+        <button data-id="${g.id}" class="goal-edit">${t('edit')}</button>
         <button data-id="${g.id}" class="goal-del">${t('delete')}</button>
       </div>
       <button class="dep-toggle" data-id="${g.id}">${open ? '▾' : '▸'} ${t('depositHistory')} (${deps.length})</button>
@@ -858,6 +885,16 @@ function renderGoals(){
       showToast(t('toastDepositDeleted'));
     });
   }));
+  el.querySelectorAll('.goal-edit').forEach(b=>b.addEventListener('click', ()=>{
+    const g = state.goals.find(x=>x.id===b.dataset.id); if(!g) return;
+    editingGoalId = g.id;
+    document.getElementById('goalName').value = g.name;
+    document.getElementById('goalTarget').value = g.target;
+    document.getElementById('goalDeadline').value = g.deadline || '';
+    document.getElementById('saveGoal').textContent = t('updateGoal');
+    const form = document.getElementById('addGoalForm'); form.classList.add('open');
+    form.scrollIntoView({behavior:'smooth', block:'center'});
+  }));
   el.querySelectorAll('.goal-del').forEach(b=>b.addEventListener('click', ()=>{
     const g = state.goals.find(x=>x.id===b.dataset.id);
     confirmAction(t('deleteGoalTitle'), t('deleteGoalBody', g?g.name:''), async ()=>{
@@ -869,17 +906,25 @@ function renderGoals(){
     });
   }));
 }
-document.getElementById('toggleAddGoal').addEventListener('click', ()=>{ document.getElementById('addGoalForm').classList.toggle('open'); });
+document.getElementById('toggleAddGoal').addEventListener('click', ()=>{ const f=document.getElementById('addGoalForm'); if(f.classList.contains('open')){ resetGoalForm(); } else { editingGoalId=null; document.getElementById('saveGoal').textContent=t('saveGoal'); f.classList.add('open'); } });
 document.getElementById('saveGoal').addEventListener('click', async ()=>{
   const name = document.getElementById('goalName').value.trim();
   const target = parseFloat(document.getElementById('goalTarget').value);
   if(!name || !target || target<=0){ showToast(t('toastAddNameTarget')); return; }
-  state.goals.push({id:genId(), name, target});
+  const deadline = document.getElementById('goalDeadline').value || null;
+  const wasEditing = !!editingGoalId;
+  if(wasEditing){
+    const g = state.goals.find(x=>x.id===editingGoalId);
+    if(g){ g.name = name; g.target = target; if(deadline) g.deadline = deadline; else delete g.deadline; }
+  } else {
+    const g = {id:genId(), name, target}; if(deadline) g.deadline = deadline;
+    state.goals.push(g);
+  }
   await saveGoals();
-  document.getElementById('goalName').value=''; document.getElementById('goalTarget').value='';
-  document.getElementById('addGoalForm').classList.remove('open');
+  resetGoalForm();
   renderGoals();
-  showToast(t('toastGoalAdded'));
+  checkGoalNotifications();
+  showToast(t(wasEditing ? 'toastGoalUpdated' : 'toastGoalAdded'));
 });
 
 /* ---------------- Trend chart (SVG) ---------------- */
@@ -948,7 +993,7 @@ function sanitizeImport(data){
   out.expenses = arr('expenses').filter(e=>DATE_RE.test(e.date||'') && num(e.amount)!==null).map(e=>{ e=withId(e); e.amount=num(e.amount); e.category=e.category||'Other'; e.desc=String(e.desc||''); return e; });
   out.incomes = arr('incomes').filter(e=>DATE_RE.test(e.date||'') && num(e.amount)!==null).map(e=>{ e=withId(e); e.amount=num(e.amount); e.desc=String(e.desc||''); return e; });
   out.recurring = arr('recurring').filter(r=>r.createdPeriod && isFinite(r.createdPeriod.year) && isFinite(r.createdPeriod.monthIdx) && num(r.amount)!==null).map(r=>{ r=withId(r); r.amount=num(r.amount); r.active=r.active!==false; r.category=r.category||'Other'; r.desc=String(r.desc||''); return r; });
-  out.goals = arr('goals').filter(g=>g.id && num(g.target)!==null).map(g=>({...g, target:num(g.target), name:String(g.name||'')}));
+  out.goals = arr('goals').filter(g=>g.id && num(g.target)!==null).map(g=>{ g={...g, target:num(g.target), name:String(g.name||'')}; if(!(typeof g.deadline==='string' && DATE_RE.test(g.deadline))) delete g.deadline; return g; });
   out.contributions = arr('contributions').filter(c=>c.id && c.goalId && DATE_RE.test(c.date||'') && num(c.amount)!==null).map(c=>({...c, amount:num(c.amount)}));
   out.receipts = (data.receipts && typeof data.receipts==='object') ? data.receipts : {};
   out.salary = num(data.salary);
