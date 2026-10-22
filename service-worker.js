@@ -2,7 +2,7 @@
 // Strategy: Cache First for all static assets (app shell, icons, fonts).
 // Falls back to network, and caches whatever comes back for next time.
 
-const CACHE_VERSION = 'ledger-v6';
+const CACHE_VERSION = 'ledger-v10';
 const APP_SHELL = [
   './',
   './index.html',
