@@ -119,6 +119,7 @@
   .coll.closed > .coll-body{ display:none; }
   .coll:not(.closed) > .coll-body{ margin-top:10px; }
   .sheet-coll{ margin:10px 0 4px; border-bottom:1px solid var(--paper-line); padding-bottom:6px; }
+  html.no-badges .badges-section{ display:none !important; }
   html.no-recurring .recur-section, html.no-recurring .subs-section, html.no-recurring #repeatRow{ display:none !important; }
   .coll-section > .coll-head{ background:var(--card); border-radius:10px; padding:10px 14px; box-shadow:var(--shadow); min-height:44px; }
   .inv-card.coll > .coll-head{ font-size:12.5px; letter-spacing:0; text-transform:none; color:var(--ink); font-family:inherit; }
@@ -3018,6 +3019,74 @@ document.getElementById('newCatBtn').addEventListener('click', ()=>{
   document.getElementById('newCatName').value=''; document.getElementById('newCatEmoji').value='';
   saveCatConfig(); catsChanged(); renderCatManager(); showToast(t('toastCatAdded'));
 });
+
+/* ================= Achievements ================= */
+function dayNum(str){ const [y,m,d] = str.split('-').map(Number); return Math.round(Date.UTC(y,m-1,d)/86400000); }
+function badgeContext(){
+  const days = [...new Set(state.expenses.map(e=>e.date))].map(dayNum).sort((a,b)=>a-b);
+  let longest = days.length?1:0, run = 1;
+  for(let i=1;i<days.length;i++){ run = days[i]===days[i-1]+1 ? run+1 : 1; if(run>longest) longest = run; }
+  const today = dayNum(todayStr());
+  const sweets = state.expenses.filter(e=>e.category==='Sweets').map(e=>dayNum(e.date));
+  const daysSinceSweets = sweets.length ? today - Math.max(...sweets) : null;
+  const loggedLast7 = days.filter(d=>d>today-7 && d<=today).length;
+  const totalSaved = state.contributions.reduce((a,c)=>a+parseFloat(c.amount),0);
+  const goalPcts = state.goals.map(g=>g.target>0 ? goalSaved(g.id)/g.target*100 : 0);
+  let under = 0, save20 = 0;
+  const f = firstDataPeriod(), cur = currentPeriod();
+  if(f){
+    let y=f.year, m=f.monthIdx, guard=0;
+    while((y<cur.year || (y===cur.year && m<cur.monthIdx)) && guard++<600){
+      const spent = periodExpenseTotal(y,m), income = periodBaseBudget(y,m);
+      if(spent>0 && income>0){
+        if(spent<=income) under++;
+        let nw=0; expensesForPeriod(y,m).forEach(e=>{ if(bucketOf(e.category)!=='savings') nw+=parseFloat(e.amount); });
+        if(income-nw >= income*0.2) save20++;
+      }
+      m++; if(m>11){ m=0; y++; }
+    }
+  }
+  return { count:state.expenses.length, longest, daysSinceSweets, loggedLast7, totalSaved, maxGoalPct: goalPcts.length?Math.max(...goalPcts):0, under, save20,
+    charity: state.expenses.filter(e=>e.category==='Charity').length, investor: state.investments.length>0, backup: !!LedgerLocal.get('didBackup'),
+    sweetsVisible: CATEGORY_KEYS.includes('Sweets') };
+}
+const BADGES = [
+  {id:'first',   emoji:'📝', test:c=>({ok:c.count>=1})},
+  {id:'streak7', emoji:'🔥', test:c=>({ok:c.longest>=7, prog:c.longest+'/7'})},
+  {id:'streak30',emoji:'🏆', test:c=>({ok:c.longest>=30, prog:c.longest+'/30'})},
+  {id:'noSweets',emoji:'🍃', visible:c=>c.sweetsVisible, test:c=>({ok:c.daysSinceSweets!==null && c.daysSinceSweets>=7 && c.loggedLast7>=3, prog:c.daysSinceSweets!==null ? Math.min(c.daysSinceSweets,7)+'/7' : ''})},
+  {id:'under1',  emoji:'✅', test:c=>({ok:c.under>=1})},
+  {id:'under3',  emoji:'⭐', test:c=>({ok:c.under>=3, prog:Math.min(c.under,3)+'/3'})},
+  {id:'save20',  emoji:'⚖️', test:c=>({ok:c.save20>=1})},
+  {id:'goalHalf',emoji:'🎯', test:c=>({ok:c.maxGoalPct>=50, prog:Math.floor(c.maxGoalPct)+'%/50%'})},
+  {id:'goalDone',emoji:'🏁', test:c=>({ok:c.maxGoalPct>=100, prog:Math.floor(c.maxGoalPct)+'%/100%'})},
+  {id:'saved1k', emoji:'💰', test:c=>({ok:c.totalSaved>=1000, prog:fmtShort(c.totalSaved)+'/1,000'})},
+  {id:'saved5k', emoji:'💎', test:c=>({ok:c.totalSaved>=5000, prog:fmtShort(c.totalSaved)+'/5,000'})},
+  {id:'saved10k',emoji:'👑', test:c=>({ok:c.totalSaved>=10000, prog:fmtShort(c.totalSaved)+'/10,000'})},
+  {id:'charity', emoji:'🤲', test:c=>({ok:c.charity>=1})},
+  {id:'investor',emoji:'📈', test:c=>({ok:c.investor})},
+  {id:'backup',  emoji:'🛟', test:c=>({ok:c.backup})}
+];
+const FEATURE_BADGES = false;   // switch to true to bring achievements back
+if(!FEATURE_BADGES) document.documentElement.classList.add('no-badges');
+function renderBadges(){
+  if(!FEATURE_BADGES) return;
+  const grid = document.getElementById('badgeGrid'); if(!grid) return;
+  const ctx = badgeContext();
+  let log = {}, seeded = false;
+  const raw = LedgerLocal.get('badgesUnlocked');
+  if(raw){ try{ log = JSON.parse(raw.value) || {}; seeded = true; }catch(e){ log = {}; } }
+  const list = BADGES.filter(b=>!b.visible || b.visible(ctx)).map(b=>({b, r:b.test(ctx)}));
+  const fresh = [];
+  list.forEach(({b,r})=>{ if(r.ok && !log[b.id]){ log[b.id] = todayStr(); fresh.push(b); } });
+  if(fresh.length || !raw){ LedgerLocal.set('badgesUnlocked', JSON.stringify(log)); }
+  if(seeded && fresh.length){
+    const first = t('bd_'+fresh[0].id);
+    showToast(t('badgeUnlocked', fresh[0].emoji+' '+first) + (fresh.length>1 ? ' (+'+(fresh.length-1)+')' : ''));
+  }
+  document.getElementById('badgeCount').textContent = list.filter(x=>x.r.ok).length+'/'+list.length;
+  grid.innerHTML = list.map(({b,r})=>`<div class="badge ${r.ok?'earned':'locked'}"><div class="b-emoji">${b.emoji}</div><div class="b-title">${escapeHtml(t('bd_'+b.id))}</div><div class="b-desc">${escapeHtml(t('bd_'+b.id+'_d'))}</div>${r.ok ? `<div class="b-prog">${escapeHtml(formatDate(log[b.id]||todayStr()))}</div>` : (r.prog ? `<div class="b-prog">${escapeHtml(r.prog)}</div>` : '')}</div>`).join('');
+}
 
 /* ================= Collapsible blocks ================= */
 (function initCollapsibles(){
