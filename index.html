@@ -103,8 +103,9 @@
   .report-doc tr.total td{ font-weight:700; border-top:2px solid #1B2A44; }
   .report-doc .neg{ color:#9B3B3B; } .report-doc .pos{ color:#3F6B4F; }
   @media print{
-    body > *:not(#reportOverlay){ display:none !important; }
-    #reportOverlay{ position:static !important; display:block !important; overflow:visible !important; }
+    body > *:not(.report-overlay){ display:none !important; }
+    .report-overlay{ display:none !important; }
+    .report-overlay.open{ position:static !important; display:block !important; overflow:visible !important; }
     .no-print{ display:none !important; }
     html, body{ background:#fff !important; }
   }
@@ -117,6 +118,8 @@
   .coll:not(.closed) > .coll-head .coll-arrow{ transform:rotate(90deg); }
   .coll.closed > .coll-body{ display:none; }
   .coll:not(.closed) > .coll-body{ margin-top:10px; }
+  .sheet-coll{ margin:10px 0 4px; border-bottom:1px solid var(--paper-line); padding-bottom:6px; }
+  html.no-recurring .recur-section, html.no-recurring .subs-section, html.no-recurring #repeatRow{ display:none !important; }
   .coll-section > .coll-head{ background:var(--card); border-radius:10px; padding:10px 14px; box-shadow:var(--shadow); min-height:44px; }
   .inv-card.coll > .coll-head{ font-size:12.5px; letter-spacing:0; text-transform:none; color:var(--ink); font-family:inherit; }
   .inv-card.coll > .coll-head .coll-t{ font-weight:600; }
@@ -420,6 +423,10 @@
     <div class="sal-hint" data-i18n="salaryHint">Months before the first change keep the base salary.</div>
   </div>
   <div class="sal-block">
+    <div class="sal-title" data-i18n="bonusSourcesLabel">Bonus sources (separate with commas)</div>
+    <input type="text" id="bonusSourcesInput" class="full-input" autocomplete="off">
+  </div>
+  <div class="sal-block">
     <div class="sal-title" data-i18n="quickItemsLabel">Quick items (separate with commas)</div>
     <input type="text" id="quickItemsInput" class="full-input" autocomplete="off">
   </div>
@@ -557,6 +564,7 @@
     <div class="row">
       <input type="date" id="fDate">
       <select id="fCategory"></select>
+      <select id="fSource" style="display:none"></select>
     </div>
     <div class="row goal-link-row" id="fGoalRow" style="display:none">
       <label for="fGoal" data-i18n="addToGoal">Add to goal</label>
@@ -587,7 +595,11 @@
 </div>
 
 <div class="report-overlay" id="yearOverlay">
-  <div class="report-bar no-print"><button type="button" id="yearClose" class="rb-close">✕</button></div>
+  <div class="report-bar no-print">
+    <button type="button" id="yearClose" class="rb-close">✕</button>
+    <button type="button" id="yearPdf" class="rb-main" data-i18n="reportPdf">Save as PDF</button>
+    <button type="button" id="yearXlsx" class="rb-main" data-i18n="reportExcel">Excel / share</button>
+  </div>
   <div class="report-doc" id="yearDoc"></div>
 </div>
 
@@ -627,10 +639,14 @@
     </div>
     <div class="subhead" data-i18n="byCategory">By category</div>
     <div class="cat-breakdown" id="sheetCats"></div>
-    <div class="subhead" data-i18n="compareTitle">Vs last month</div>
-    <div class="cmp-wrap" id="sheetCompare"></div>
-    <div class="subhead" data-i18n="ruleTitle">50 / 30 / 20 rule</div>
-    <div class="cmp-wrap" id="sheetRule"></div>
+    <div class="coll closed sheet-coll" data-coll="sheetCompare">
+      <button class="coll-head" type="button"><span class="coll-t" data-i18n="compareTitle">Vs last month</span><span class="coll-arrow">▸</span></button>
+      <div class="coll-body"><div class="cmp-wrap" id="sheetCompare"></div></div>
+    </div>
+    <div class="coll closed sheet-coll" data-coll="sheetRule">
+      <button class="coll-head" type="button"><span class="coll-t" data-i18n="ruleTitle">50 / 30 / 20 rule</span><span class="coll-arrow">▸</span></button>
+      <div class="coll-body"><div class="cmp-wrap" id="sheetRule"></div></div>
+    </div>
     <div class="subhead" data-i18n="expenses">Expenses</div>
     <div class="filter-row"><select id="sheetCatFilter" class="cat-filter"></select><span id="sheetFilterTotal" class="filter-total mono"></span></div>
     <div id="sheetEntries"></div>
@@ -697,7 +713,7 @@ const translations = {
     saveGoal: "Save goal", newGoal: "+ New goal", noGoalsYet: "No goals yet.",
     addAmountPlaceholder: "Amount", quickItemsLabel: "Quick items (separate with commas)", addToGoal: "Add to goal", voiceListening: 'Listening… say e.g. "Groceries 120"', voiceAdded: (d,a,c)=>`Added: ${d} · ${a} · ${c}`, voiceNoAmount: "Didn't catch the amount — say it in digits", voiceDenied: "Microphone permission is blocked", voiceFailed: "Couldn't hear that, try again",
     reportBtn: "📄 Report", reportPdf: "Save as PDF", reportExcel: "Excel / share", reportTitle: "Monthly report", rSalary: "Salary", rBonus: "Bonuses", rAvailable: "Total available", rRemaining: "Remaining", rVsPrev: "Spent vs last period", colDate: "Date", colDesc: "Description", colCategory: "Category", colAmount: "Amount", rBonuses: "Bonuses", rNone: "None", shSummary: "Summary", shCategories: "Categories", shExpenses: "Expenses", shBonuses: "Bonuses", toastPdfHint: 'Choose "Save as PDF" in the print screen', toastExcelReady: "Excel file ready",
-    investments: "Investments", newInvest: "+ Track an investment", invNamePlaceholder: "Name (e.g. Thndr)", invLinkedGoal: "Linked goal", saveInvest: "Save", updateInvest: "Update", invNoGoal: "— choose goal —", invInvested: "Invested", invNow: "Now", invProfit: "Profit / loss", invNoValue: "Add the current value to see your profit", invUpdated: (d)=>`Value updated ${d}`, invSince: (a)=>`+${a} deposited since`, invHistory: "History", catManage: "Categories", catManageBtn: "Manage", catManageNote: "Rename, change the emoji, or hide any category. Hidden ones disappear from the lists but old expenses keep them.", catNamePlaceholder: "New category name", catShow: "Show", catHide: "Hide", catDeleteTitle: "Delete this category?", catDeleteBody: (n,c)=>`"${n}" will be removed. ${c} expense(s) in it will move to Other.`, toastEnterCatName: "Enter a category name", toastCatAdded: "Category added",
+    investments: "Investments", newInvest: "+ Track an investment", invNamePlaceholder: "Name (e.g. Thndr)", invLinkedGoal: "Linked goal", saveInvest: "Save", updateInvest: "Update", invNoGoal: "— choose goal —", invInvested: "Invested", invNow: "Now", invProfit: "Profit / loss", invNoValue: "Add the current value to see your profit", invUpdated: (d)=>`Value updated ${d}`, invSince: (a)=>`+${a} deposited since`, invHistory: "History", bonusSourcesLabel: "Bonus sources (separate with commas)", bonusSourcePlaceholder: "— source —", bonusNoSource: "No source", colSource: "Source", shSources: "Sources", ysIncomeSplit: (s,b)=>`Salary ${s} + bonuses ${b}`, ysBonusTitle: "Bonuses", ysBonusNone: "No bonuses logged this year yet.", ysBonusTotal: "Total bonuses", ysBonusCount: "Number of bonuses", ysBonusAvg: "Average per bonus", ysBonusHighest: "Highest bonus", ysBonusFrom: "Where it came from", ysBonusTop: (n,p)=>`most from ${n} (${p}%)`, ysBonusMonths: "Months with bonuses", colMonth: "Month", colIncome: "Income", shMonths: "Months", catManage: "Categories", catManageBtn: "Manage", catManageNote: "Rename, change the emoji, or hide any category. Hidden ones disappear from the lists but old expenses keep them.", catNamePlaceholder: "New category name", catShow: "Show", catHide: "Hide", catDeleteTitle: "Delete this category?", catDeleteBody: (n,c)=>`"${n}" will be removed. ${c} expense(s) in it will move to Other.`, toastEnterCatName: "Enter a category name", toastCatAdded: "Category added",
     badges: "Achievements", badgeUnlocked: (n)=>`New achievement: ${n}`,
     bd_first: "First expense", bd_first_d: "Log your first expense", bd_streak7: "7-day streak", bd_streak7_d: "Log expenses 7 days in a row", bd_streak30: "30-day streak", bd_streak30_d: "Log expenses 30 days in a row", bd_noSweets: "A week without sweets", bd_noSweets_d: "7 days with no sweets while still logging", bd_under1: "Under budget", bd_under1_d: "Finish a month spending less than your income", bd_under3: "Three good months", bd_under3_d: "Finish 3 months under budget", bd_save20: "20% saver", bd_save20_d: "Keep 20% of a month's income unspent", bd_goalHalf: "Halfway there", bd_goalHalf_d: "Reach 50% of a goal", bd_goalDone: "Goal reached", bd_goalDone_d: "Reach 100% of a goal", bd_saved1k: "Saved 1,000", bd_saved1k_d: "1,000 EGP deposited to goals", bd_saved5k: "Saved 5,000", bd_saved5k_d: "5,000 EGP deposited to goals", bd_saved10k: "Saved 10,000", bd_saved10k_d: "10,000 EGP deposited to goals", bd_charity: "Giving", bd_charity_d: "Log a charity expense", bd_investor: "Investor", bd_investor_d: "Start tracking an investment", bd_backup: "Safe and sound", bd_backup_d: "Export or import a backup",
      ysBtn: "📊 Year summary", ysTitle: (l)=>`Year summary ${l}`, ysNone: "No spending in this year yet.", ysElapsed: (n)=>`Based on ${n} months so far`, ysSpent: "Total spent", ysIncome: "Salary + bonuses", ysSaved: "Left after spending", ysDeficit: "Overspent by", ysAvg: "Average per month", ysDeposits: "Deposited to goals", ysPriciest: "Most expensive month", ysCheapest: "Lightest month", ysBiggest: "Biggest single expense", ysTop5: "Where your money went",
@@ -775,7 +791,7 @@ const translations = {
     saveGoal: "حفظ الهدف", newGoal: "+ هدف جديد", noGoalsYet: "لا توجد أهداف بعد.",
     addAmountPlaceholder: "المبلغ", quickItemsLabel: "الأزرار السريعة (افصلي بينها بفاصلة)", addToGoal: "إضافة لهدف", voiceListening: 'بسمعك… قولي مثلًا «بقالة 120»', voiceAdded: (d,a,c)=>`تم التسجيل: ${d} · ${a} · ${c}`, voiceNoAmount: "ما سمعتش المبلغ — قوليه بالأرقام", voiceDenied: "إذن الميكروفون مقفول", voiceFailed: "ما سمعتش كويس، جرّبي تاني",
     reportBtn: "📄 تقرير", reportPdf: "حفظ PDF", reportExcel: "Excel / مشاركة", reportTitle: "التقرير الشهري", rSalary: "المرتب", rBonus: "المكافآت", rAvailable: "إجمالي المتاح", rRemaining: "المتبقي", rVsPrev: "الصرف مقارنة بالفترة السابقة", colDate: "التاريخ", colDesc: "الوصف", colCategory: "الفئة", colAmount: "المبلغ", rBonuses: "المكافآت", rNone: "لا يوجد", shSummary: "الملخص", shCategories: "الفئات", shExpenses: "المصاريف", shBonuses: "المكافآت", toastPdfHint: 'اختاري «حفظ كـ PDF» في شاشة الطباعة', toastExcelReady: "ملف Excel جاهز",
-    investments: "الاستثمارات", newInvest: "+ تتبّع استثمار", invNamePlaceholder: "الاسم (مثلًا Thndr)", invLinkedGoal: "الهدف المربوط", saveInvest: "حفظ", updateInvest: "تحديث", invNoGoal: "— اختاري الهدف —", invInvested: "اللي حطيتيه", invNow: "قيمته دلوقتي", invProfit: "الربح / الخسارة", invNoValue: "سجّلي القيمة الحالية عشان يظهر الربح", invUpdated: (d)=>`آخر تحديث للقيمة ${d}`, invSince: (a)=>`+${a} اتضاف بعدها`, invHistory: "السجل", catManage: "الفئات", catManageBtn: "إدارة", catManageNote: "غيّري الاسم أو الإيموجي أو اخفي أي فئة. اللي بتتخفي بتختفي من القوايم بس والمصاريف القديمة بتفضل ليها.", catNamePlaceholder: "اسم الفئة الجديدة", catShow: "إظهار", catHide: "إخفاء", catDeleteTitle: "حذف الفئة دي؟", catDeleteBody: (n,c)=>`هتتمسح "${n}". ${c} مصروف فيها هيروحوا لـ أخرى.`, toastEnterCatName: "اكتبي اسم الفئة", toastCatAdded: "تمت إضافة الفئة",
+    investments: "الاستثمارات", newInvest: "+ تتبّع استثمار", invNamePlaceholder: "الاسم (مثلًا Thndr)", invLinkedGoal: "الهدف المربوط", saveInvest: "حفظ", updateInvest: "تحديث", invNoGoal: "— اختاري الهدف —", invInvested: "اللي حطيتيه", invNow: "قيمته دلوقتي", invProfit: "الربح / الخسارة", invNoValue: "سجّلي القيمة الحالية عشان يظهر الربح", invUpdated: (d)=>`آخر تحديث للقيمة ${d}`, invSince: (a)=>`+${a} اتضاف بعدها`, invHistory: "السجل", bonusSourcesLabel: "مصادر المكافآت (افصلي بينها بفاصلة)", bonusSourcePlaceholder: "— المصدر —", bonusNoSource: "بدون مصدر", colSource: "المصدر", shSources: "المصادر", ysIncomeSplit: (s,b)=>`مرتب ${s} + مكافآت ${b}`, ysBonusTitle: "المكافآت", ysBonusNone: "مفيش مكافآت متسجّلة في السنة دي لسه.", ysBonusTotal: "إجمالي المكافآت", ysBonusCount: "عدد المكافآت", ysBonusAvg: "متوسط المكافأة", ysBonusHighest: "أعلى مكافأة", ysBonusFrom: "جاية منين", ysBonusTop: (n,p)=>`أكتر مصدر ${n} (${p}%)`, ysBonusMonths: "شهور فيها مكافآت", colMonth: "الشهر", colIncome: "الدخل", shMonths: "الشهور", catManage: "الفئات", catManageBtn: "إدارة", catManageNote: "غيّري الاسم أو الإيموجي أو اخفي أي فئة. اللي بتتخفي بتختفي من القوايم بس والمصاريف القديمة بتفضل ليها.", catNamePlaceholder: "اسم الفئة الجديدة", catShow: "إظهار", catHide: "إخفاء", catDeleteTitle: "حذف الفئة دي؟", catDeleteBody: (n,c)=>`هتتمسح "${n}". ${c} مصروف فيها هيروحوا لـ أخرى.`, toastEnterCatName: "اكتبي اسم الفئة", toastCatAdded: "تمت إضافة الفئة",
     badges: "الإنجازات", badgeUnlocked: (n)=>`إنجاز جديد: ${n}`,
     bd_first: "أول مصروف", bd_first_d: "سجّلي أول مصروف", bd_streak7: "أسبوع متواصل", bd_streak7_d: "سجّلي مصاريفك 7 أيام ورا بعض", bd_streak30: "30 يوم متواصل", bd_streak30_d: "سجّلي مصاريفك 30 يوم ورا بعض", bd_noSweets: "أسبوع بدون حلويات", bd_noSweets_d: "7 أيام من غير حلويات وإنتي بتسجّلي", bd_under1: "تحت الميزانية", bd_under1_d: "خلّصي شهر وصرفك أقل من دخلك", bd_under3: "تلات شهور حلوين", bd_under3_d: "خلّصي 3 شهور تحت الميزانية", bd_save20: "مدّخرة 20%", bd_save20_d: "فضّلتي 20% من دخل شهر من غير صرف", bd_goalHalf: "نص الطريق", bd_goalHalf_d: "وصلتي 50% من هدف", bd_goalDone: "هدف اتحقق", bd_goalDone_d: "وصلتي 100% من هدف", bd_saved1k: "حوّشتي 1,000", bd_saved1k_d: "1,000 جنيه إيداعات في الأهداف", bd_saved5k: "حوّشتي 5,000", bd_saved5k_d: "5,000 جنيه إيداعات في الأهداف", bd_saved10k: "حوّشتي 10,000", bd_saved10k_d: "10,000 جنيه إيداعات في الأهداف", bd_charity: "عطاء", bd_charity_d: "سجّلي مصروف صدقة", bd_investor: "مستثمرة", bd_investor_d: "ابدأي تتبّع استثمار", bd_backup: "بياناتك في أمان", bd_backup_d: "صدّري أو استوردي نسخة احتياطية",
      ysBtn: "📊 ملخص السنة", ysTitle: (l)=>`ملخص السنة ${l}`, ysNone: "مفيش مصاريف في السنة دي لسه.", ysElapsed: (n)=>`على أساس ${n} شهر لحد دلوقتي`, ysSpent: "إجمالي الصرف", ysIncome: "المرتب + المكافآت", ysSaved: "اللي فضل بعد الصرف", ysDeficit: "صرفتي زيادة بـ", ysAvg: "المتوسط في الشهر", ysDeposits: "إيداعات الأهداف", ysPriciest: "أغلى شهر", ysCheapest: "أخف شهر", ysBiggest: "أكبر مصروف", ysTop5: "فلوسك راحت فين",
@@ -935,7 +951,7 @@ const LedgerLocal = {
 /* ========================================================= */
 
 let state = {
-  salary: 6200, salaryChanges: [], quickItems: ['Midicine','باقة الموبايل','الانترنت','Thndr Investment'], payDay: 25,
+  salary: 6200, salaryChanges: [], quickItems: ['Midicine','باقة الموبايل','الانترنت','Thndr Investment'], bonusSources: ['Dad','Mama','AASTMT'], payDay: 25,
   expenses: [], incomes: [], recurring: [], goals: [], contributions: [], investments: [], subscriptions: [], budgetMap: {}, catConfig: {custom:[], overrides:{}},
   notificationsEnabled: false,
   notifyLog: { paydayDate: null, overspendPeriods: [], goalsNotified: [] },
@@ -968,6 +984,7 @@ function formatDate(dateStr){ const d=new Date(dateStr+'T00:00:00'); return d.to
 async function loadState(){
   // Simple settings from localStorage
   const s = LedgerLocal.get('salary'); if(s) state.salary = parseFloat(s.value);
+  try{ const bs = LedgerLocal.get('bonusSources'); if(bs){ const a = JSON.parse(bs.value); if(Array.isArray(a)) state.bonusSources = a.map(x=>String(x).trim()).filter(Boolean).slice(0,10); } }catch(e){}
   try{ const qi = LedgerLocal.get('quickItems'); if(qi){ const a = JSON.parse(qi.value); if(Array.isArray(a)) state.quickItems = a.map(x=>String(x).trim()).filter(Boolean).slice(0,8); } }catch(e){}
   try{ const cc = LedgerLocal.get('catConfig'); if(cc){ const o = JSON.parse(cc.value); if(o && Array.isArray(o.custom) && o.overrides && typeof o.overrides==='object') state.catConfig = o; } }catch(e){}
   recomputeCategoryKeys();
@@ -1118,7 +1135,10 @@ function yearPeriodsTotals(fy){ let spent=0,budget=0; for(let i=0;i<12;i++){ con
 function periodKey(year, monthIdx){ return year+'-'+monthIdx; }
 
 /* ---------------- Recurring expenses ---------------- */
+const FEATURE_RECURRING = false, FEATURE_SUBS = false;   // switch to true to bring them back
+if(!FEATURE_RECURRING || !FEATURE_SUBS) document.documentElement.classList.add('no-recurring');
 function applyRecurring(){
+  if(!FEATURE_RECURRING) return false;
   const cur = currentPeriod();
   let changed = false;
   const today = todayStr();
@@ -1351,7 +1371,7 @@ function sanitizeImport(data){
   const out = {};
   const withId = x => ({...x, id: (typeof x.id==='string' && x.id) ? x.id : genId()});
   out.expenses = arr('expenses').filter(e=>DATE_RE.test(e.date||'') && num(e.amount)!==null).map(e=>{ e=withId(e); e.amount=num(e.amount); e.category=(e.category && e.category!=='Rent/Housing')?e.category:'Other'; e.desc=String(e.desc||''); return e; });
-  out.incomes = arr('incomes').filter(e=>DATE_RE.test(e.date||'') && num(e.amount)!==null).map(e=>{ e=withId(e); e.amount=num(e.amount); e.desc=String(e.desc||''); return e; });
+  out.incomes = arr('incomes').filter(e=>DATE_RE.test(e.date||'') && num(e.amount)!==null).map(e=>{ e=withId(e); e.amount=num(e.amount); e.desc=String(e.desc||''); if(typeof e.source==='string' && e.source.trim()) e.source=e.source.trim().slice(0,30); else delete e.source; return e; });
   out.recurring = arr('recurring').filter(r=>r.createdPeriod && isFinite(r.createdPeriod.year) && isFinite(r.createdPeriod.monthIdx) && num(r.amount)!==null).map(r=>{ r=withId(r); r.amount=num(r.amount); r.active=r.active!==false; r.category=(r.category && r.category!=='Rent/Housing')?r.category:'Other'; r.desc=String(r.desc||''); return r; });
   out.goals = arr('goals').filter(g=>g.id && num(g.target)!==null).map(g=>{ g={...g, target:num(g.target), name:String(g.name||'')}; if(!(typeof g.deadline==='string' && DATE_RE.test(g.deadline))) delete g.deadline; return g; });
   out.investments = arr('investments').filter(v=>v.id && v.name).map(v=>({id:String(v.id), name:String(v.name), goalId:v.goalId||'', rate:(parseFloat(v.rate)>0 ? parseFloat(v.rate) : undefined), valuations:(Array.isArray(v.valuations)?v.valuations:[]).filter(x=>x && DATE_RE.test(x.date||'') && num(x.value)!==null).map(x=>({id:(typeof x.id==='string'&&x.id)?x.id:genId(), date:x.date, value:num(x.value)}))}));
@@ -1686,6 +1706,7 @@ function render(){
   document.getElementById('yearLabel').textContent = fyLabel(state.year);
   document.getElementById('salaryInput').value = state.salary;
   { const qi = document.getElementById('quickItemsInput'); if(document.activeElement!==qi) qi.value = state.quickItems.join(', '); }
+  { const bi = document.getElementById('bonusSourcesInput'); if(document.activeElement!==bi) bi.value = state.bonusSources.join(', '); }
   renderSalaryChanges();
   renderSubscriptions(); renderInsights(); renderBadges();
   { const cp = currentPeriod(); document.getElementById('compareLabel').textContent = '· '+monthName(cp.monthIdx); document.getElementById('compareBody').innerHTML = compareHtml(cp.year, cp.monthIdx); }
@@ -1777,11 +1798,23 @@ const categorySelect=document.getElementById('fCategory'), saveBtn=document.getE
 const receiptRow=document.getElementById('receiptRow'), formTitle=document.getElementById('formTitle');
 let addMode='expense';
 
+function refreshSourceSelect(preset){
+  const sel = document.getElementById('fSource'); if(!sel) return;
+  const prev = preset!==undefined ? preset : sel.value;
+  const list = state.bonusSources.slice();
+  if(prev && !list.includes(prev)) list.push(prev);
+  sel.innerHTML = `<option value="">${t('bonusSourcePlaceholder')}</option>` + list.map(x=>`<option value="${escapeHtml(x)}">${escapeHtml(x)}</option>`).join('');
+  let v = prev;
+  if(preset===undefined && !prev){ const l = LedgerLocal.get('lastBonusSource'); if(l && list.includes(l.value)) v = l.value; }
+  sel.value = list.includes(v) ? v : '';
+}
 function setAddMode(mode){
   addMode=mode;
   typeExpenseBtn.classList.toggle('active', mode==='expense');
   typeIncomeBtn.classList.toggle('active', mode==='income');
   categorySelect.style.display = mode==='expense' ? '' : 'none';
+  document.getElementById('fSource').style.display = mode==='income' ? '' : 'none';
+  refreshSourceSelect();
   repeatRow.style.display = mode==='expense' ? 'flex' : 'none';
   receiptRow.style.display = mode==='expense' ? 'block' : 'none';
   document.getElementById('fDesc').placeholder = mode==='expense' ? t('descriptionPlaceholder') : t('bonusDescPlaceholder');
@@ -1826,6 +1859,11 @@ function refreshQuickAdd(){
     });
     return;
   }
+  state.bonusSources.forEach(name=>{
+    const b=document.createElement('button'); b.type='button'; b.className='quick-chip'; b.textContent='👤 '+name;
+    b.addEventListener('click',()=>refreshSourceSelect(name));
+    chips.appendChild(b);
+  });
   const last = src.slice().sort((a,b)=> b.date.localeCompare(a.date))[0];
   const picks = []; if(last) picks.push({e:last, repeat:true});
   ranked.forEach(st=>{ if(picks.length<5 && !picks.some(p=>p.e.desc.trim().toLowerCase()===st.latest.desc.trim().toLowerCase())) picks.push({e:st.latest, repeat:false}); });
@@ -1926,6 +1964,7 @@ function fillFromEntry(e){
   document.getElementById('fDesc').value = e.desc;
   document.getElementById('fAmount').value = e.amount;
   if(addMode==='expense' && e.category && CATEGORY_KEYS.includes(e.category)) categorySelect.value = e.category;
+  if(addMode==='income') refreshSourceSelect(e.source||'');
   updateGoalRow();
 }
 (function(){
@@ -1995,6 +2034,7 @@ function openEditIncome(id){
   document.getElementById('fDate').value = e.date;
   document.getElementById('fDesc').value = e.desc;
   document.getElementById('fAmount').value = e.amount;
+  refreshSourceSelect(e.source||'');
   saveBtn.textContent = t('updateBonus');
   openAddBar();
 }
@@ -2066,9 +2106,12 @@ saveBtn.addEventListener('click', async ()=>{
       const idx = state.incomes.findIndex(x=>x.id===editingId);
       if(idx===-1){ showToast(t('toastEntryNotFound')); resetForm(); closeAddBar(); return; }
       state.incomes[idx] = { ...state.incomes[idx], date, desc: desc||'Bonus', amount };
+      { const sv = document.getElementById('fSource').value; if(sv){ state.incomes[idx].source = sv; LedgerLocal.set('lastBonusSource', sv); } else delete state.incomes[idx].source; }
       await saveIncomes();
     } else {
-      state.incomes.push({id:genId(), date, desc:desc||'Bonus', amount});
+      const inc = {id:genId(), date, desc:desc||'Bonus', amount};
+      { const sv = document.getElementById('fSource').value; if(sv){ inc.source = sv; LedgerLocal.set('lastBonusSource', sv); } }
+      state.incomes.push(inc);
       await saveIncomes();
     }
   }
@@ -2084,6 +2127,10 @@ saveBtn.addEventListener('click', async ()=>{
 /* ---------------- Settings ---------------- */
 let saveTimer;
 function debouncedSave(fn){ clearTimeout(saveTimer); saveTimer=setTimeout(fn,500); }
+document.getElementById('bonusSourcesInput').addEventListener('input',(e)=>{
+  state.bonusSources = e.target.value.split(/[,،]/).map(x=>x.trim()).filter(Boolean).slice(0,10);
+  debouncedSave(()=>{ LedgerLocal.set('bonusSources', JSON.stringify(state.bonusSources)); refreshSourceSelect(); refreshQuickAdd(); });
+});
 document.getElementById('quickItemsInput').addEventListener('input',(e)=>{
   state.quickItems = e.target.value.split(/[,،]/).map(x=>x.trim()).filter(Boolean).slice(0,8);
   debouncedSave(()=>{ LedgerLocal.set('quickItems', JSON.stringify(state.quickItems)); refreshQuickAdd(); });
@@ -2156,7 +2203,7 @@ function openPeriodSheet(monthIdx, silent){
     incomeHead.style.display='';
     incomesEl.innerHTML = incomeEntries.map(e=>`
       <div class="entry" data-entry-id="${e.id}">
-        <div class="entry-left"><div class="entry-text"><div class="entry-desc">${escapeHtml(e.desc)}</div><div class="entry-meta">${formatDate(e.date)}</div></div></div>
+        <div class="entry-left"><div class="entry-text"><div class="entry-desc">${escapeHtml(e.desc)}</div><div class="entry-meta">${formatDate(e.date)}${e.source ? ' · 👤 '+escapeHtml(e.source) : ''}</div></div></div>
         <div class="entry-right">
           <div class="entry-amt income">+EGP ${fmt(e.amount)}</div>
           <button class="entry-edit" data-kind="income" data-id="${e.id}">${t('edit')}</button>
@@ -2326,7 +2373,7 @@ function reportHtml(d){
   ${d.cats.length ? `<table><tr><th>${escapeHtml(t('colCategory'))}</th><th class="num">%</th><th class="num">${escapeHtml(t('colAmount'))}</th></tr>${d.cats.map(c=>`<tr><td>${escapeHtml(c.label)}</td><td class="num">${c.pct.toFixed(0)}%</td><td class="num">${fmt(c.amt)}</td></tr>`).join('')}</table>` : `<div>${escapeHtml(t('rNone'))}</div>`}
   <h3>${escapeHtml(t('expenses'))}</h3>
   ${d.entries.length ? `<table><tr><th>${escapeHtml(t('colDate'))}</th><th>${escapeHtml(t('colDesc'))}</th><th>${escapeHtml(t('colCategory'))}</th><th class="num">${escapeHtml(t('colAmount'))}</th></tr>${d.entries.map(e=>`<tr><td>${escapeHtml(formatDate(e.date))}</td><td>${escapeHtml(e.desc||'')}</td><td>${escapeHtml(categoryLabel(e.category))}</td><td class="num">${fmt(parseFloat(e.amount))}</td></tr>`).join('')}</table>` : `<div>${escapeHtml(t('rNone'))}</div>`}
-  ${d.incomes.length ? `<h3>${escapeHtml(t('rBonuses'))}</h3><table><tr><th>${escapeHtml(t('colDate'))}</th><th>${escapeHtml(t('colDesc'))}</th><th class="num">${escapeHtml(t('colAmount'))}</th></tr>${d.incomes.map(e=>`<tr><td>${escapeHtml(formatDate(e.date))}</td><td>${escapeHtml(e.desc||'')}</td><td class="num">${fmt(parseFloat(e.amount))}</td></tr>`).join('')}</table>` : ''}`;
+  ${d.incomes.length ? `<h3>${escapeHtml(t('rBonuses'))}</h3><table><tr><th>${escapeHtml(t('colDate'))}</th><th>${escapeHtml(t('colSource'))}</th><th>${escapeHtml(t('colDesc'))}</th><th class="num">${escapeHtml(t('colAmount'))}</th></tr>${d.incomes.map(e=>`<tr><td>${escapeHtml(formatDate(e.date))}</td><td>${escapeHtml(e.source||'')}</td><td>${escapeHtml(e.desc||'')}</td><td class="num">${fmt(parseFloat(e.amount))}</td></tr>`).join('')}</table>` : ''}`;
 }
 function openReport(year, monthIdx){
   reportCtx = buildReportData(year, monthIdx);
@@ -2394,13 +2441,16 @@ function buildReportXlsx(d){
   ];
   const cats = [[B(t('colCategory')), B('%'), B(t('colAmount'))], ...d.cats.map(c=>[c.label, Math.round(c.pct*10)/10, c.amt])];
   const exps = [[B(t('colDate')), B(t('colDesc')), B(t('colCategory')), B(t('colAmount'))], ...d.entries.map(e=>[e.date, e.desc||'', categoryLabel(e.category), parseFloat(e.amount)])];
-  const incs = [[B(t('colDate')), B(t('colDesc')), B(t('colAmount'))], ...d.incomes.map(e=>[e.date, e.desc||'', parseFloat(e.amount)])];
+  const incs = [[B(t('colDate')), B(t('colSource')), B(t('colDesc')), B(t('colAmount'))], ...d.incomes.map(e=>[e.date, e.source||'', e.desc||'', parseFloat(e.amount)])];
   const sheets = [
     {name:t('shSummary'), xml:xlsxSheet(summary,[26,18],rtl)},
     {name:t('shCategories'), xml:xlsxSheet(cats,[26,10,16],rtl)},
     {name:t('shExpenses'), xml:xlsxSheet(exps,[14,30,22,14],rtl)},
-    {name:t('shBonuses'), xml:xlsxSheet(incs,[14,30,14],rtl)}
+    {name:t('shBonuses'), xml:xlsxSheet(incs,[14,16,30,14],rtl)}
   ];
+  return xlsxPackage(sheets);
+}
+function xlsxPackage(sheets){
   const NS='http://schemas.openxmlformats.org/spreadsheetml/2006/main', RNS='http://schemas.openxmlformats.org/officeDocument/2006/relationships';
   const H='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>';
   const files = [
@@ -2674,6 +2724,7 @@ document.getElementById('saveSub').addEventListener('click', async ()=>{
   await saveSubscriptions(); resetSubForm(); renderSubscriptions(); checkNotifications(); showToast(t('toastSubSaved'));
 });
 function checkSubscriptionNotifications(){
+  if(!FEATURE_SUBS) return;
   if(!Array.isArray(state.notifyLog.subsNotified)) state.notifyLog.subsNotified = [];
   let changed = false;
   state.subscriptions.forEach(x=>{
@@ -2785,41 +2836,121 @@ function renderInsights(){
 }
 
 /* ================= Year summary ================= */
-function yearSummaryHtml(fy){
+function buildYearData(fy){
   const cur = currentPeriod(), curKey = cur.year*12+cur.monthIdx;
   const rows = [];
   for(let i=0;i<12;i++){
     const p = fyPeriod(fy,i);
     if(p.year*12+p.monthIdx > curKey) break;
-    rows.push({p, spent: periodExpenseTotal(p.year,p.monthIdx), income: periodBaseBudget(p.year,p.monthIdx), entries: expensesForPeriod(p.year,p.monthIdx)});
+    const bonusEntries = incomesForPeriod(p.year,p.monthIdx);
+    rows.push({p, spent: periodExpenseTotal(p.year,p.monthIdx), salary: salaryFor(p.year,p.monthIdx), bonusEntries, bonus: bonusEntries.reduce((a,e)=>a+parseFloat(e.amount),0), entries: expensesForPeriod(p.year,p.monthIdx)});
   }
-  const all = rows.flatMap(r=>r.entries);
-  if(!rows.length || !all.length) return `<h1>${t('ysTitle', fyLabel(fy))}</h1><div class="r-sub">${t('ysNone')}</div>`;
-  const spent = rows.reduce((a,r)=>a+r.spent,0), income = rows.reduce((a,r)=>a+r.income,0), left = income-spent;
+  rows.forEach(r=>{ r.income = r.salary + r.bonus; });
+  const all = rows.flatMap(r=>r.entries).sort((a,b)=>a.date.localeCompare(b.date));
+  if(!rows.length || !all.length) return {fy, empty:true};
+  const spent = rows.reduce((a,r)=>a+r.spent,0), income = rows.reduce((a,r)=>a+r.income,0);
   const active = rows.filter(r=>r.spent>0);
-  const priciest = active.reduce((a,b)=>b.spent>a.spent?b:a), lightest = active.reduce((a,b)=>b.spent<a.spent?b:a);
-  const biggest = all.reduce((a,b)=>parseFloat(b.amount)>parseFloat(a.amount)?b:a);
   const byCat = {}; all.forEach(e=>{ byCat[e.category]=(byCat[e.category]||0)+parseFloat(e.amount); });
-  const cats = Object.entries(byCat).sort((a,b)=>b[1]-a[1]);
-  const deposits = state.contributions.filter(c=>{ const per=periodOf(c.date); return fyOf(per.year,per.monthIdx)===fy; }).reduce((a,c)=>a+parseFloat(c.amount),0);
+  const bonuses = rows.flatMap(r=>r.bonusEntries).sort((a,b)=>a.date.localeCompare(b.date));
+  const bonusTotal = bonuses.reduce((a,e)=>a+parseFloat(e.amount),0);
+  const src = {}; bonuses.forEach(e=>{ const k = e.source || ''; if(!src[k]) src[k]={name:k, total:0, count:0}; src[k].total += parseFloat(e.amount); src[k].count++; });
+  return { fy, rows, all, spent, income, left: income-spent, salaryTotal: rows.reduce((a,r)=>a+r.salary,0),
+    priciest: active.reduce((a,b)=>b.spent>a.spent?b:a), lightest: active.reduce((a,b)=>b.spent<a.spent?b:a), activeCount: active.length,
+    biggest: all.reduce((a,b)=>parseFloat(b.amount)>parseFloat(a.amount)?b:a),
+    cats: Object.entries(byCat).sort((a,b)=>b[1]-a[1]),
+    deposits: state.contributions.filter(c=>{ const per=periodOf(c.date); return fyOf(per.year,per.monthIdx)===fy; }).reduce((a,c)=>a+parseFloat(c.amount),0),
+    bonuses, bonusTotal, bonusCount: bonuses.length, bonusAvg: bonuses.length ? bonusTotal/bonuses.length : 0,
+    bonusHighest: bonuses.length ? bonuses.reduce((a,b)=>parseFloat(b.amount)>parseFloat(a.amount)?b:a) : null,
+    bonusSources: Object.values(src).sort((a,b)=>b.total-a.total), bonusMonths: rows.filter(r=>r.bonus>0) };
+}
+function yearSummaryHtml(d){
+  if(d.empty) return `<h1>${t('ysTitle', fyLabel(d.fy))}</h1><div class="r-sub">${t('ysNone')}</div>`;
   const mLabel = r=>monthName(r.p.monthIdx)+' '+r.p.year;
   const card = (k,v,extra)=>`<div class="ys-card"><div class="k">${k}</div><div class="v">${v}</div>${extra?`<div class="k">${extra}</div>`:''}</div>`;
-  return `<h1>${t('ysTitle', fyLabel(fy))}</h1><div class="r-sub">${t('ysElapsed', rows.length)}</div>
+  const srcName = x=>x || t('bonusNoSource');
+  let bonusHtml = `<h3>${t('ysBonusTitle')}</h3>`;
+  if(!d.bonusCount) bonusHtml += `<div>${t('ysBonusNone')}</div>`;
+  else {
+    const top = d.bonusSources[0];
+    bonusHtml += `<div class="ys-grid">
+      ${card(t('ysBonusTotal'), '<span class="pos">EGP '+fmt(d.bonusTotal)+'</span>', t('ysBonusCount')+': '+d.bonusCount)}
+      ${card(t('ysBonusAvg'), 'EGP '+fmt(d.bonusAvg))}
+    </div>
+    ${card(t('ysBonusHighest'), 'EGP '+fmt(parseFloat(d.bonusHighest.amount)), escapeHtml((d.bonusHighest.source ? d.bonusHighest.source+' · ' : '')+formatDate(d.bonusHighest.date)))}
+    <div class="r-sub" style="margin:10px 0 4px">${t('ysBonusFrom')} — ${t('ysBonusTop', escapeHtml(srcName(top.name)), (top.total/d.bonusTotal*100).toFixed(0))}</div>
+    ${d.bonusSources.map(x=>`<div style="margin:7px 0"><div style="display:flex;justify-content:space-between"><span>${escapeHtml(srcName(x.name))} <small>(${x.count})</small></span><span class="num">${fmt(x.total)} · ${(x.total/d.bonusTotal*100).toFixed(0)}%</span></div><div class="ys-bar" style="width:${(x.total/top.total*100).toFixed(0)}%"></div></div>`).join('')}
+    <div class="r-sub" style="margin:12px 0 4px">${t('ysBonusMonths')}</div>
+    ${d.bonusMonths.map(r=>`<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid #eee"><span>${escapeHtml(mLabel(r))}</span><span class="num pos">+${fmt(r.bonus)}</span></div>`).join('')}`;
+  }
+  return `<h1>${t('ysTitle', fyLabel(d.fy))}</h1><div class="r-sub">${t('ysElapsed', d.rows.length)}</div>
   <div class="ys-grid">
-    ${card(t('ysSpent'), 'EGP '+fmt(spent))}
-    ${card(left>=0?t('ysSaved'):t('ysDeficit'), `<span class="${left>=0?'pos':'neg'}">EGP ${fmt(Math.abs(left))}</span>`, t('ysIncome')+': '+fmtShort(income))}
-    ${card(t('ysAvg'), 'EGP '+fmt(spent/rows.length))}
-    ${card(t('ysDeposits'), 'EGP '+fmt(deposits))}
+    ${card(t('ysSpent'), 'EGP '+fmt(d.spent))}
+    ${card(d.left>=0?t('ysSaved'):t('ysDeficit'), `<span class="${d.left>=0?'pos':'neg'}">EGP ${fmt(Math.abs(d.left))}</span>`, t('ysIncomeSplit', fmtShort(d.salaryTotal), fmtShort(d.bonusTotal)))}
+    ${card(t('ysAvg'), 'EGP '+fmt(d.spent/d.rows.length))}
+    ${card(t('ysDeposits'), 'EGP '+fmt(d.deposits))}
   </div>
-  ${card(t('ysPriciest'), escapeHtml(mLabel(priciest))+' · EGP '+fmt(priciest.spent))}
-  ${active.length>1 ? card(t('ysCheapest'), escapeHtml(mLabel(lightest))+' · EGP '+fmt(lightest.spent)) : ''}
-  ${card(t('ysBiggest'), 'EGP '+fmt(parseFloat(biggest.amount)), escapeHtml(biggest.desc||categoryLabel(biggest.category))+' · '+escapeHtml(formatDate(biggest.date)))}
+  ${card(t('ysPriciest'), escapeHtml(mLabel(d.priciest))+' · EGP '+fmt(d.priciest.spent))}
+  ${d.activeCount>1 ? card(t('ysCheapest'), escapeHtml(mLabel(d.lightest))+' · EGP '+fmt(d.lightest.spent)) : ''}
+  ${card(t('ysBiggest'), 'EGP '+fmt(parseFloat(d.biggest.amount)), escapeHtml(d.biggest.desc||categoryLabel(d.biggest.category))+' · '+escapeHtml(formatDate(d.biggest.date)))}
+  ${bonusHtml}
   <h3>${t('ysTop5')}</h3>
-  ${cats.slice(0,5).map(([c,a])=>`<div style="margin:7px 0"><div style="display:flex;justify-content:space-between"><span>${escapeHtml(categoryLabel(c))}</span><span class="num">${fmt(a)} · ${(a/spent*100).toFixed(0)}%</span></div><div class="ys-bar" style="width:${(a/cats[0][1]*100).toFixed(0)}%"></div></div>`).join('')}`;
+  ${d.cats.slice(0,5).map(([c,a])=>`<div style="margin:7px 0"><div style="display:flex;justify-content:space-between"><span>${escapeHtml(categoryLabel(c))}</span><span class="num">${fmt(a)} · ${(a/d.spent*100).toFixed(0)}%</span></div><div class="ys-bar" style="width:${(a/d.cats[0][1]*100).toFixed(0)}%"></div></div>`).join('')}`;
+}
+let yearCtx = null;
+function buildYearXlsx(d){
+  const rtl = state.lang==='ar'; const B = v=>({v, b:true});
+  const mName = r=>monthName(r.p.monthIdx)+' '+r.p.year;
+  const srcName = x=>x || t('bonusNoSource');
+  const summary = [
+    [B(t('ysTitle', fyLabel(d.fy)))], [t('ysElapsed', d.rows.length)], [],
+    [t('ysSpent'), d.spent], [t('rSalary'), d.salaryTotal], [t('rBonus'), d.bonusTotal],
+    [B(d.left>=0 ? t('ysSaved') : t('ysDeficit')), B(Math.abs(d.left))],
+    [t('ysAvg'), d.spent/d.rows.length], [t('ysDeposits'), d.deposits], [],
+    [t('ysPriciest'), mName(d.priciest), d.priciest.spent],
+    ...(d.activeCount>1 ? [[t('ysCheapest'), mName(d.lightest), d.lightest.spent]] : []),
+    [t('ysBiggest'), (d.biggest.desc||categoryLabel(d.biggest.category)), parseFloat(d.biggest.amount)], ['', formatDate(d.biggest.date)],
+    [],
+    [B(t('ysBonusTitle'))],
+    [t('ysBonusTotal'), d.bonusTotal], [t('ysBonusCount'), d.bonusCount], [t('ysBonusAvg'), d.bonusAvg],
+    ...(d.bonusHighest ? [[t('ysBonusHighest'), parseFloat(d.bonusHighest.amount), (d.bonusHighest.source||'')+' '+d.bonusHighest.date]] : [])
+  ];
+  const months = [[B(t('colMonth')), B(t('rSalary')), B(t('rBonus')), B(t('spent')), B(t('rRemaining'))], ...d.rows.map(r=>[mName(r), r.salary, r.bonus, r.spent, r.income-r.spent])];
+  const cats = [[B(t('colCategory')), B('%'), B(t('colAmount'))], ...d.cats.map(([c,a])=>[categoryLabel(c), Math.round(a/d.spent*1000)/10, a])];
+  const exps = [[B(t('colDate')), B(t('colDesc')), B(t('colCategory')), B(t('colAmount'))], ...d.all.map(e=>[e.date, e.desc||'', categoryLabel(e.category), parseFloat(e.amount)])];
+  const bon = [[B(t('colDate')), B(t('colSource')), B(t('colDesc')), B(t('colAmount'))], ...d.bonuses.map(e=>[e.date, e.source||'', e.desc||'', parseFloat(e.amount)])];
+  const srcs = [[B(t('colSource')), B(t('ysBonusCount')), B(t('colAmount')), B('%')], ...d.bonusSources.map(x=>[srcName(x.name), x.count, x.total, d.bonusTotal>0 ? Math.round(x.total/d.bonusTotal*1000)/10 : 0])];
+  return xlsxPackage([
+    {name:t('shSummary'), xml:xlsxSheet(summary,[26,22,22],rtl)},
+    {name:t('shMonths'), xml:xlsxSheet(months,[22,14,14,14,14],rtl)},
+    {name:t('shCategories'), xml:xlsxSheet(cats,[26,10,16],rtl)},
+    {name:t('shExpenses'), xml:xlsxSheet(exps,[14,30,22,14],rtl)},
+    {name:t('shBonuses'), xml:xlsxSheet(bon,[14,16,30,14],rtl)},
+    {name:t('shSources'), xml:xlsxSheet(srcs,[22,12,14,10],rtl)}
+  ]);
+}
+async function shareOrDownloadXlsx(blob, fname, title){
+  try{
+    const file = new File([blob], fname, {type:blob.type});
+    if(navigator.canShare && navigator.canShare({files:[file]})){ await navigator.share({files:[file], title}); return; }
+  }catch(e){ if(e && e.name==='AbortError') return; }
+  downloadBlob(blob, fname, blob.type);
+  showToast(t('toastExcelReady'));
 }
 document.getElementById('yearSummaryBtn').addEventListener('click', ()=>{
-  document.getElementById('yearDoc').innerHTML = yearSummaryHtml(state.year);
+  yearCtx = buildYearData(state.year);
+  document.getElementById('yearDoc').innerHTML = yearSummaryHtml(yearCtx);
   document.getElementById('yearOverlay').classList.add('open');
+});
+document.getElementById('yearPdf').addEventListener('click', ()=>{
+  if(!yearCtx || yearCtx.empty){ showToast(t('ysNone')); return; }
+  const oldTitle = document.title; document.title = 'Ledger-year-'+yearCtx.fy+'-'+(yearCtx.fy+1);
+  showToast(t('toastPdfHint'));
+  window.addEventListener('afterprint', ()=>{ document.title = oldTitle; }, {once:true});
+  setTimeout(()=>window.print(), 250);
+});
+document.getElementById('yearXlsx').addEventListener('click', async ()=>{
+  if(!yearCtx || yearCtx.empty){ showToast(t('ysNone')); return; }
+  await shareOrDownloadXlsx(buildYearXlsx(yearCtx), 'ledger-year-'+yearCtx.fy+'-'+(yearCtx.fy+1)+'.xlsx', t('ysTitle', fyLabel(yearCtx.fy)));
 });
 document.getElementById('yearClose').addEventListener('click', ()=>{ document.getElementById('yearOverlay').classList.remove('open'); });
 
@@ -2887,71 +3018,6 @@ document.getElementById('newCatBtn').addEventListener('click', ()=>{
   document.getElementById('newCatName').value=''; document.getElementById('newCatEmoji').value='';
   saveCatConfig(); catsChanged(); renderCatManager(); showToast(t('toastCatAdded'));
 });
-
-/* ================= Achievements ================= */
-function dayNum(str){ const [y,m,d] = str.split('-').map(Number); return Math.round(Date.UTC(y,m-1,d)/86400000); }
-function badgeContext(){
-  const days = [...new Set(state.expenses.map(e=>e.date))].map(dayNum).sort((a,b)=>a-b);
-  let longest = days.length?1:0, run = 1;
-  for(let i=1;i<days.length;i++){ run = days[i]===days[i-1]+1 ? run+1 : 1; if(run>longest) longest = run; }
-  const today = dayNum(todayStr());
-  const sweets = state.expenses.filter(e=>e.category==='Sweets').map(e=>dayNum(e.date));
-  const daysSinceSweets = sweets.length ? today - Math.max(...sweets) : null;
-  const loggedLast7 = days.filter(d=>d>today-7 && d<=today).length;
-  const totalSaved = state.contributions.reduce((a,c)=>a+parseFloat(c.amount),0);
-  const goalPcts = state.goals.map(g=>g.target>0 ? goalSaved(g.id)/g.target*100 : 0);
-  let under = 0, save20 = 0;
-  const f = firstDataPeriod(), cur = currentPeriod();
-  if(f){
-    let y=f.year, m=f.monthIdx, guard=0;
-    while((y<cur.year || (y===cur.year && m<cur.monthIdx)) && guard++<600){
-      const spent = periodExpenseTotal(y,m), income = periodBaseBudget(y,m);
-      if(spent>0 && income>0){
-        if(spent<=income) under++;
-        let nw=0; expensesForPeriod(y,m).forEach(e=>{ if(bucketOf(e.category)!=='savings') nw+=parseFloat(e.amount); });
-        if(income-nw >= income*0.2) save20++;
-      }
-      m++; if(m>11){ m=0; y++; }
-    }
-  }
-  return { count:state.expenses.length, longest, daysSinceSweets, loggedLast7, totalSaved, maxGoalPct: goalPcts.length?Math.max(...goalPcts):0, under, save20,
-    charity: state.expenses.filter(e=>e.category==='Charity').length, investor: state.investments.length>0, backup: !!LedgerLocal.get('didBackup'),
-    sweetsVisible: CATEGORY_KEYS.includes('Sweets') };
-}
-const BADGES = [
-  {id:'first',   emoji:'📝', test:c=>({ok:c.count>=1})},
-  {id:'streak7', emoji:'🔥', test:c=>({ok:c.longest>=7, prog:c.longest+'/7'})},
-  {id:'streak30',emoji:'🏆', test:c=>({ok:c.longest>=30, prog:c.longest+'/30'})},
-  {id:'noSweets',emoji:'🍃', visible:c=>c.sweetsVisible, test:c=>({ok:c.daysSinceSweets!==null && c.daysSinceSweets>=7 && c.loggedLast7>=3, prog:c.daysSinceSweets!==null ? Math.min(c.daysSinceSweets,7)+'/7' : ''})},
-  {id:'under1',  emoji:'✅', test:c=>({ok:c.under>=1})},
-  {id:'under3',  emoji:'⭐', test:c=>({ok:c.under>=3, prog:Math.min(c.under,3)+'/3'})},
-  {id:'save20',  emoji:'⚖️', test:c=>({ok:c.save20>=1})},
-  {id:'goalHalf',emoji:'🎯', test:c=>({ok:c.maxGoalPct>=50, prog:Math.floor(c.maxGoalPct)+'%/50%'})},
-  {id:'goalDone',emoji:'🏁', test:c=>({ok:c.maxGoalPct>=100, prog:Math.floor(c.maxGoalPct)+'%/100%'})},
-  {id:'saved1k', emoji:'💰', test:c=>({ok:c.totalSaved>=1000, prog:fmtShort(c.totalSaved)+'/1,000'})},
-  {id:'saved5k', emoji:'💎', test:c=>({ok:c.totalSaved>=5000, prog:fmtShort(c.totalSaved)+'/5,000'})},
-  {id:'saved10k',emoji:'👑', test:c=>({ok:c.totalSaved>=10000, prog:fmtShort(c.totalSaved)+'/10,000'})},
-  {id:'charity', emoji:'🤲', test:c=>({ok:c.charity>=1})},
-  {id:'investor',emoji:'📈', test:c=>({ok:c.investor})},
-  {id:'backup',  emoji:'🛟', test:c=>({ok:c.backup})}
-];
-function renderBadges(){
-  const grid = document.getElementById('badgeGrid'); if(!grid) return;
-  const ctx = badgeContext();
-  let log = {}, seeded = false;
-  const raw = LedgerLocal.get('badgesUnlocked');
-  if(raw){ try{ log = JSON.parse(raw.value) || {}; seeded = true; }catch(e){ log = {}; } }
-  const list = BADGES.filter(b=>!b.visible || b.visible(ctx)).map(b=>({b, r:b.test(ctx)}));
-  const fresh = [];
-  list.forEach(({b,r})=>{ if(r.ok && !log[b.id]){ log[b.id] = todayStr(); fresh.push(b); } });
-  if(fresh.length || !raw){ LedgerLocal.set('badgesUnlocked', JSON.stringify(log)); }
-  if(seeded && fresh.length){
-    const first = t('bd_'+fresh[0].id);
-    showToast(t('badgeUnlocked', fresh[0].emoji+' '+first) + (fresh.length>1 ? ' (+'+(fresh.length-1)+')' : ''));
-  }
-  document.getElementById('badgeCount').textContent = list.filter(x=>x.r.ok).length+'/'+list.length;
-  grid.innerHTML = list.map(({b,r})=>`<div class="badge ${r.ok?'earned':'locked'}"><div class="b-emoji">${b.emoji}</div><div class="b-title">${escapeHtml(t('bd_'+b.id))}</div><div class="b-desc">${escapeHtml(t('bd_'+b.id+'_d'))}</div>${r.ok ? `<div class="b-prog">${escapeHtml(formatDate(log[b.id]||todayStr()))}</div>` : (r.prog ? `<div class="b-prog">${escapeHtml(r.prog)}</div>` : '')}</div>`).join('');
-}
 
 /* ================= Collapsible blocks ================= */
 (function initCollapsibles(){
