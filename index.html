@@ -88,9 +88,11 @@
   .report-btn{ font-family:inherit; font-size:12px; font-weight:700; background:transparent; color:var(--ink); border:1px solid var(--brass); border-radius:14px; padding:5px 10px; cursor:pointer; }
   .report-overlay{ display:none; position:fixed; inset:0; z-index:200; background:#fff; color:#111; overflow:auto; -webkit-overflow-scrolling:touch; }
   .report-overlay.open{ display:block; }
-  .report-bar{ position:sticky; top:0; display:flex; gap:8px; padding:10px 12px; background:var(--ink); z-index:2; }
+  .report-bar{ position:sticky; top:0; display:flex; gap:8px; padding:calc(env(safe-area-inset-top, 0px) + 12px) 12px 12px; background:var(--ink); z-index:2; }
+  html.ios-standalone .report-bar{ padding-top:max(env(safe-area-inset-top, 0px) + 12px, 56px); }
+  .report-bar button{ min-height:44px; }
   .report-bar button{ font-family:inherit; font-size:13px; font-weight:700; border-radius:8px; padding:9px 12px; cursor:pointer; border:none; }
-  .rb-close{ background:transparent; color:#fff; border:1px solid #8592A8 !important; }
+  .rb-close{ background:transparent; color:#fff; border:1px solid #8592A8 !important; min-width:48px; }
   .rb-main{ flex:1; background:var(--brass); color:var(--ink); }
   .report-doc{ max-width:760px; margin:0 auto; padding:18px 16px 40px; font-size:13px; line-height:1.5; }
   .report-doc h1{ font-size:20px; margin:0 0 2px; } .report-doc .r-sub{ color:#555; margin-bottom:14px; }
@@ -107,6 +109,17 @@
     html, body{ background:#fff !important; }
   }
   .invest-section, .subs-section, .tools-section, .badges-section{ margin-bottom:18px; }
+  .coll-head{ display:flex; align-items:center; gap:8px; width:100%; background:none; border:none; padding:2px 0; cursor:pointer; text-align:start; font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:var(--ink-soft); min-height:34px; }
+  .coll-head .coll-t{ flex:0 1 auto; font-weight:700; }
+  .coll-head .coll-meta{ flex:1; font-size:10.5px; opacity:.8; letter-spacing:0.04em; }
+  .coll-arrow{ margin-inline-start:auto; font-size:14px; transition:transform .2s; display:inline-block; }
+  html[dir="rtl"] .coll-arrow{ transform:scaleX(-1); }
+  .coll:not(.closed) > .coll-head .coll-arrow{ transform:rotate(90deg); }
+  .coll.closed > .coll-body{ display:none; }
+  .coll:not(.closed) > .coll-body{ margin-top:10px; }
+  .coll-section > .coll-head{ background:var(--card); border-radius:10px; padding:10px 14px; box-shadow:var(--shadow); min-height:44px; }
+  .inv-card.coll > .coll-head{ font-size:12.5px; letter-spacing:0; text-transform:none; color:var(--ink); font-family:inherit; }
+  .inv-card.coll > .coll-head .coll-t{ font-weight:600; }
   .cat-row{ display:flex; align-items:center; gap:6px; padding:6px 0; border-bottom:1px solid var(--paper-line); }
   .cat-row.hidden-cat{ opacity:.5; }
   .cat-emoji{ width:44px; text-align:center; font-size:18px; }
@@ -437,9 +450,9 @@
   </div>
 </div>
 
-<div class="trend-wrap">
-  <div class="trend-title"><span data-i18n="compareTitle">Vs last month</span> <span id="compareLabel"></span></div>
-  <div class="cmp-wrap" id="compareBody"></div>
+<div class="trend-wrap coll closed" data-coll="compare">
+  <button class="coll-head" type="button"><span class="coll-t" data-i18n="compareTitle">Vs last month</span><span class="coll-meta" id="compareLabel"></span><span class="coll-arrow">▸</span></button>
+  <div class="coll-body"><div class="cmp-wrap" id="compareBody"></div></div>
 </div>
 
 <section class="months">
@@ -461,8 +474,9 @@
   <button class="btn-outline full" id="toggleAddGoal" data-i18n="newGoal">+ New goal</button>
 </section>
 
-<section class="invest-section">
-  <p class="section-title" data-i18n="investments">Investments</p>
+<section class="invest-section coll coll-section closed" data-coll="invest">
+  <button class="coll-head" type="button"><span class="coll-t" data-i18n="investments">Investments</span><span class="coll-meta" id="invMeta"></span><span class="coll-arrow">▸</span></button>
+  <div class="coll-body">
   <div id="investList"></div>
   <div class="add-goal-form" id="addInvestForm">
     <div class="row"><input type="text" id="invName" data-i18n-placeholder="invNamePlaceholder" placeholder="Name (e.g. Thndr)"></div>
@@ -482,6 +496,7 @@
     <div class="calc-total" id="calcTotal"></div>
     <div class="calc-note" id="calcNote"></div>
   </div>
+  </div>
 </section>
 
 <section class="subs-section">
@@ -498,13 +513,16 @@
   <button class="btn-outline full" id="toggleAddSub" data-i18n="newSub">+ Add a subscription</button>
 </section>
 
-<section class="tools-section">
-  <p class="section-title" data-i18n="insights">Insights</p>
-  <div class="inv-card">
-    <div class="goal-top"><div class="goal-name" data-i18n="ruleTitle">50 / 30 / 20 rule</div><div class="goal-nums mono" id="ruleLabel"></div></div>
-    <div id="ruleBody"></div>
-    <button class="dep-toggle" id="ruleEditToggle" type="button" data-i18n="ruleEdit">Edit classification</button>
-    <div id="ruleEditor" style="display:none"></div>
+<section class="tools-section coll coll-section closed" data-coll="insights">
+  <button class="coll-head" type="button"><span class="coll-t" data-i18n="insights">Insights</span><span class="coll-meta"></span><span class="coll-arrow">▸</span></button>
+  <div class="coll-body">
+  <div class="inv-card coll closed" data-coll="rule">
+    <button class="coll-head" type="button"><span class="coll-t" data-i18n="ruleTitle">50 / 30 / 20 rule</span><span class="coll-meta mono" id="ruleLabel"></span><span class="coll-arrow">▸</span></button>
+    <div class="coll-body">
+      <div id="ruleBody"></div>
+      <button class="dep-toggle" id="ruleEditToggle" type="button" data-i18n="ruleEdit">Edit classification</button>
+      <div id="ruleEditor" style="display:none"></div>
+    </div>
   </div>
   <button class="btn-outline full" id="toggleSim" type="button" data-i18n="simBtn">🔧 What if I cut back?</button>
   <div class="calc-card" id="simCard">
@@ -514,11 +532,12 @@
     <div class="row calc-row"><label for="simGoal" data-i18n="simGoal">Goal</label><select id="simGoal"></select></div>
     <div id="simOut" class="sim-out"></div>
   </div>
+  </div>
 </section>
 
-<section class="badges-section">
-  <p class="section-title"><span data-i18n="badges">Achievements</span> <span id="badgeCount" class="mono"></span></p>
-  <div class="badge-grid" id="badgeGrid"></div>
+<section class="badges-section coll coll-section closed" data-coll="badges">
+  <button class="coll-head" type="button"><span class="coll-t" data-i18n="badges">Achievements</span><span class="coll-meta mono" id="badgeCount"></span><span class="coll-arrow">▸</span></button>
+  <div class="coll-body"><div class="badge-grid" id="badgeGrid"></div></div>
 </section>
 
 <section class="recur-section">
@@ -2457,6 +2476,7 @@ function resetInvestForm(){
 }
 function renderInvestments(){
   const list = document.getElementById('investList'); if(!list) return;
+  { const m = document.getElementById('invMeta'); if(m) m.textContent = state.investments.length ? '· '+state.investments.length : ''; }
   if(typeof renderCalc==='function') renderCalc();
   const sel = document.getElementById('invGoal'); const keep = sel.value;
   sel.innerHTML = `<option value="">${t('invNoGoal')}</option>` + state.goals.map(g=>`<option value="${g.id}">${escapeHtml(g.name)}</option>`).join('');
@@ -2932,6 +2952,26 @@ function renderBadges(){
   document.getElementById('badgeCount').textContent = list.filter(x=>x.r.ok).length+'/'+list.length;
   grid.innerHTML = list.map(({b,r})=>`<div class="badge ${r.ok?'earned':'locked'}"><div class="b-emoji">${b.emoji}</div><div class="b-title">${escapeHtml(t('bd_'+b.id))}</div><div class="b-desc">${escapeHtml(t('bd_'+b.id+'_d'))}</div>${r.ok ? `<div class="b-prog">${escapeHtml(formatDate(log[b.id]||todayStr()))}</div>` : (r.prog ? `<div class="b-prog">${escapeHtml(r.prog)}</div>` : '')}</div>`).join('');
 }
+
+/* ================= Collapsible blocks ================= */
+(function initCollapsibles(){
+  let st = {}; try{ const r = LedgerLocal.get('collState'); if(r) st = JSON.parse(r.value) || {}; }catch(e){}
+  document.querySelectorAll('.coll').forEach(el=>{
+    const key = el.dataset.coll;
+    const head = Array.from(el.children).find(c=>c.classList.contains('coll-head')); if(!head) return;
+    if(st[key]) el.classList.remove('closed');
+    head.setAttribute('aria-expanded', String(!el.classList.contains('closed')));
+    head.addEventListener('click', ()=>{
+      el.classList.toggle('closed');
+      const open = !el.classList.contains('closed');
+      head.setAttribute('aria-expanded', String(open));
+      st[key] = open; LedgerLocal.set('collState', JSON.stringify(st));
+    });
+  });
+  if(window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches){
+    if(/iphone|ipad|ipod/i.test(navigator.userAgent)) document.documentElement.classList.add('ios-standalone');
+  }
+})();
 
 loadState();
 </script>
