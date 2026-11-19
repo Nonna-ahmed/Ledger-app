@@ -30,7 +30,7 @@
   body{ background: var(--paper); background-image: linear-gradient(var(--paper-line) 1px, transparent 1px); background-size: 100% 2.1em; font-family: 'Source Serif 4', serif; color: var(--ink); min-height: 100vh; padding-bottom: 116px; }
   html[lang="ar"] body{ font-family: 'Noto Naskh Arabic', 'Source Serif 4', serif; }
   .mono{ font-family: 'JetBrains Mono', monospace; direction: ltr; unicode-bidi: embed; }
-  header.top{ padding: 26px 20px 10px; display:flex; justify-content:space-between; align-items:flex-start; gap:10px; }
+  header.top{ padding: calc(env(safe-area-inset-top, 0px) + 14px) 20px 10px; display:flex; justify-content:space-between; align-items:flex-start; gap:10px; }
   .eyebrow{ font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--brass); margin: 0 0 4px; }
   h1{ font-size: 28px; font-weight: 700; margin: 0; letter-spacing: -0.01em; }
   .year-nav{ display:flex; align-items:center; gap: 10px; margin-top: 6px; }
@@ -455,7 +455,6 @@
   .day-head{ display:flex; align-items:center; gap:10px; padding:12px 0 6px; border-bottom:1px solid var(--ink-soft); }
   .day-n{ font-size:26px; font-weight:700; line-height:1; font-family:'JetBrains Mono',monospace; }
   .day-w{ flex:1; font-size:12px; display:flex; flex-direction:column; } .day-w small{ color:var(--ink-soft); font-size:11px; }
-  #fCategory{ display:none; }
   .cat-grid{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; max-height:200px; overflow-y:auto; margin:6px 0; }
   .cat-grid button{ border:1px solid transparent; background:rgba(255,255,255,.08); color:inherit; border-radius:10px; padding:7px 2px; font-family:inherit; font-size:10.5px; display:flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer; min-width:0; }
   .cat-grid .e{ font-size:20px; line-height:1; } .cat-grid .l{ max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
@@ -523,8 +522,6 @@
 <div class="banner info-banner" id="iosBanner"><span class="mark">📲</span><span data-i18n="iosInstall">To install: tap the Share icon, then "Add to Home Screen".</span><button class="dismiss" id="iosBannerDismiss">✕</button></div>
 
 <div class="summary-strip" id="summaryStrip" data-tab="home"></div>
-<div class="cc-head" id="ccHead" data-tab="home"><span data-i18n="lcTitle">Category limits (this period)</span><button type="button" id="lcEdit" data-i18n="lcEdit">Edit</button></div>
-<div class="lc-panel" id="lcPanel" data-tab="home" style="display:none"></div>
 <div class="cat-cards" id="catCards" data-tab="home"></div>
 <div class="qt-row" id="qtRow" data-tab="home"></div>
 
@@ -720,7 +717,7 @@
     <div class="quick-chips" id="quickChips"></div>
     <div class="row">
       <input type="date" id="fDate">
-      <select id="fCategory"></select><div class="cat-grid" id="catGrid"></div>
+      <select id="fCategory"></select>
       <select id="fSource" style="display:none"></select>
     </div>
     <div class="row goal-link-row" id="fGoalRow" style="display:none">
@@ -745,7 +742,7 @@
       <button type="button" id="removeReceiptBtn" data-i18n="removeReceipt">Remove receipt</button>
     </div>
     <div class="actions">
-      <button class="actbtn" id="qtSaveBtn" type="button" data-title-i18n="qtTip">⭐</button>
+      <button class="actbtn btn-cancel" id="qtSaveBtn" type="button" data-title-i18n="qtTip">⭐</button>
       <button class="actbtn btn-cancel" id="fCancel" type="button" data-i18n="cancel">Cancel</button>
       <button class="actbtn btn-save" id="fSave" type="button" data-i18n="saveEntry">Save entry</button>
     </div>
@@ -1220,7 +1217,7 @@ function populateCategoryOptions(){
   if(window.__lockRefresh) window.__lockRefresh();
   const sel = document.getElementById('fCategory');
   const prevValue = sel.value || 'Transport';
-  sel.innerHTML = CATEGORY_KEYS.map(k=>`<option value="${k}">${categoryLabel(k)}</option>`).join('');
+  sel.innerHTML = CATEGORY_KEYS.map(k=>`<option value="${k}">${categoryName(k)}</option>`).join('');
   sel.value = CATEGORY_KEYS.includes(prevValue) ? prevValue : 'Transport';
 }
 async function setLanguage(lang){
@@ -2172,7 +2169,7 @@ async function openEditExpense(id){
   typeExpenseBtn.disabled = true; typeIncomeBtn.disabled = true;
   formTitle.textContent = t('editExpense');
   document.getElementById('fDate').value = e.date;
-  { const fc = document.getElementById('fCategory'); if(![...fc.options].some(o=>o.value===e.category)){ const op=document.createElement('option'); op.value=e.category; op.textContent=categoryLabel(e.category); fc.appendChild(op); } fc.value = e.category; }
+  { const fc = document.getElementById('fCategory'); if(![...fc.options].some(o=>o.value===e.category)){ const op=document.createElement('option'); op.value=e.category; op.textContent=categoryName(e.category); fc.appendChild(op); } fc.value = e.category; }
   document.getElementById('fDesc').value = e.desc;
   document.getElementById('fAmount').value = e.amount;
   document.getElementById('fRepeat').checked = !!e.recurringId;
@@ -3435,44 +3432,19 @@ function renderStats(){
 })();
 
 /* ================= v27: category cards, day groups, icon grid ================= */
-var LC = {};
-try{ const q = LedgerLocal.get('catLimits'); if(q){ const o = JSON.parse(q.value); if(o && typeof o==='object') LC = o; } }catch(e){}
-function lcKey(p){ return p.year+'-'+p.monthIdx; }
-function lcPrev(p){ let y=p.year, m=p.monthIdx; for(let i=0;i<24;i++){ m--; if(m<0){ m=11; y--; } const o = LC[y+'-'+m]; if(o && Object.keys(o).length) return o; } return null; }
 function renderCatCards(){
   const el = document.getElementById('catCards'); if(!el) return;
-  const p = currentPeriod(), by = {}, lim = LC[lcKey(p)] || {};
+  const p = currentPeriod(), by = {};
   expensesForPeriod(p.year,p.monthIdx).forEach(e=>{ by[e.category]=(by[e.category]||0)+parseFloat(e.amount); });
-  Object.keys(lim).forEach(c=>{ if(!(c in by)) by[c]=0; });
-  const list = Object.entries(by).sort((a,b)=>b[1]-a[1]).slice(0,9);
+  const list = Object.entries(by).sort((a,b)=>b[1]-a[1]).slice(0,6);
   if(!list.length){ el.style.display='none'; return; }
   el.style.display = '';
   const bud = Math.max(periodBudget(p.year,p.monthIdx), 1);
   el.innerHTML = list.map(([c,a])=>{
-    const L = lim[c];
-    let r, col, sub;
-    if(L>0){ r = a/L; col = r>1 ? 'var(--red)' : r>=0.8 ? '#C9962E' : 'var(--green)'; sub = r>1 ? t('lcOver')+' '+fmtShort(a-L) : t('lcLeft')+' '+fmtShort(L-a); }
-    else { r = a/bud; col = 'var(--ink-soft)'; sub = t('lcNone'); }
-    return `<div class="cc" style="--c:${col}"><div class="cc-n">${categoryEmoji(c)||'•'} <span>${escapeHtml(categoryLabel(c))}</span></div><div class="cc-v mono">${fmt(a)}</div><div class="cc-b"><i style="width:${Math.min(100,r*100).toFixed(1)}%"></i></div><div class="cc-s">${sub}</div></div>`;
+    const r = a/bud, col = r>0.30 ? 'var(--red)' : r>0.15 ? '#C9962E' : 'var(--green)';
+    return `<div class="cc" style="--c:${col}"><div class="cc-n">${categoryEmoji(c)||'•'} <span>${escapeHtml(categoryName(c))}</span></div><div class="cc-v mono">${fmt(a)}</div><div class="cc-b"><i style="width:${Math.min(100,r*100).toFixed(1)}%"></i></div></div>`;
   }).join('');
 }
-function openLimits(){
-  const panel = document.getElementById('lcPanel');
-  if(panel.style.display!=='none'){ panel.style.display='none'; return; }
-  const p = currentPeriod(), key = lcKey(p);
-  const own = LC[key] && Object.keys(LC[key]).length ? LC[key] : null, src = own || lcPrev(p) || {};
-  panel.innerHTML = (own||!Object.keys(src).length ? '' : `<div class="lc-note">${escapeHtml(t('lcCopied'))}</div>`) +
-    CATEGORY_KEYS.map(k=>`<div class="lc-row"><span>${categoryEmoji(k)||'•'} ${escapeHtml(categoryLabel(k))}</span><input type="number" inputmode="decimal" data-lc="${escapeHtml(k)}" value="${src[k]||''}" placeholder="—"></div>`).join('') +
-    `<div class="lc-acts"><button type="button" id="lcCancel">${escapeHtml(t('cancel'))}</button><button type="button" class="go" id="lcSave">${escapeHtml(t('lcSave'))}</button></div>`;
-  panel.style.display = '';
-  document.getElementById('lcCancel').onclick = ()=>{ panel.style.display='none'; };
-  document.getElementById('lcSave').onclick = ()=>{
-    const o = {}; panel.querySelectorAll('[data-lc]').forEach(i=>{ const v = parseFloat(i.value); if(v>0) o[i.dataset.lc] = v; });
-    LC[key] = o; LedgerLocal.set('catLimits', JSON.stringify(LC));
-    panel.style.display='none'; renderCatCards(); showToast(t('lcSavedMsg'));
-  };
-}
-document.getElementById('lcEdit').addEventListener('click', openLimits);
 function groupByDay(list, rowFn){
   const groups = [], idx = {}, loc = state.lang==='ar' ? 'ar-EG' : 'en-GB';
   list.forEach(e=>{ if(!(e.date in idx)){ idx[e.date] = groups.length; groups.push({k:e.date, items:[]}); } groups[idx[e.date]].items.push(e); });
@@ -3481,17 +3453,6 @@ function groupByDay(list, rowFn){
     return `<div class="day-head"><span class="day-n">${d.getDate()}</span><span class="day-w">${d.toLocaleDateString(loc,{weekday:'long'})}<small>${d.toLocaleDateString(loc,{month:'long',year:'numeric'})}</small></span><b class="mono">EGP ${fmt(tot)}</b></div>` + g.items.map(rowFn).join('');
   }).join('');
 }
-(function(){
-  const sel = document.getElementById('fCategory'), grid = document.getElementById('catGrid');
-  const desc = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype,'value');
-  function build(){
-    const cur = desc.get.call(sel);
-    grid.innerHTML = Array.from(sel.options).map(o=>`<button type="button" data-k="${escapeHtml(o.value)}" class="${o.value===cur?'on':''}"><span class="e">${categoryEmoji(o.value)||'•'}</span><span class="l">${escapeHtml(o.textContent)}</span></button>`).join('');
-  }
-  Object.defineProperty(sel,'value',{ get(){ return desc.get.call(sel); }, set(v){ desc.set.call(sel,v); build(); } });
-  grid.addEventListener('click', e=>{ const b = e.target.closest('button'); if(!b) return; sel.value = b.dataset.k; sel.dispatchEvent(new Event('change')); });
-  build();
-})();
 
 (function(){
   const sel = document.getElementById('themeSel');
