@@ -433,10 +433,16 @@
   .st-main{ flex:1; min-width:0; } .st-line{ display:flex; justify-content:space-between; gap:8px; font-size:13.5px; } .st-line small{ color:var(--ink-soft); font-size:11.5px; margin-inline-start:4px; }
   .st-bar{ height:6px; background:var(--paper-line); border-radius:3px; margin-top:5px; overflow:hidden; } .st-bar i{ display:block; height:100%; background:var(--brass); border-radius:3px; }
   .st-bars{ touch-action:pan-y; cursor:pointer; -webkit-tap-highlight-color:transparent; }
-  .st-bars span.sel{ background:var(--ink) !important; }
-  .st-tip{ min-height:22px; font-family:'JetBrains Mono',monospace; font-size:12.5px; margin-bottom:6px; color:var(--ink); }
+  .st-bars span.sel{ outline:2px solid var(--ink); outline-offset:1px; }
+  .st-tip{ min-height:40px; font-family:'JetBrains Mono',monospace; font-size:12.5px; margin-bottom:6px; color:var(--ink); }
   .st-tip.hint{ color:var(--ink-soft); font-family:inherit; font-size:12px; }
-  .st-bars{ display:flex; align-items:flex-end; gap:2px; height:96px; } .st-bars span{ flex:1; background:var(--brass); border-radius:2px 2px 0 0; min-height:2px; }
+  .st-bars{ display:flex; align-items:flex-end; gap:2px; height:96px; } .st-bars span{ flex:1; display:flex; flex-direction:column-reverse; overflow:hidden; background:var(--paper-line); border-radius:3px 3px 0 0; min-height:2px; }
+  .st-bars span i{ display:block; width:100%; flex:none; }
+  .st-parts{ display:flex; flex-wrap:wrap; gap:4px 10px; margin-top:3px; font-family:inherit; font-size:11px; color:var(--ink-soft); }
+  .st-parts span i, .st-legend span i{ display:inline-block; width:8px; height:8px; border-radius:2px; margin-inline-end:4px; }
+  .drive-btns{ display:flex; gap:8px; margin:8px 0 6px; } .drive-btns .btn-outline{ flex:1; }
+  .drive-row{ display:flex; justify-content:space-between; align-items:center; gap:8px; padding:11px 4px; border-bottom:1px solid var(--paper-line); cursor:pointer; font-size:13px; } .drive-row small{ color:var(--ink-soft); }
+  .st-legend{ display:flex; flex-wrap:wrap; gap:4px 12px; margin-top:8px; font-size:11px; color:var(--ink-soft); }
   .st-axis{ display:flex; justify-content:space-between; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink-soft); margin-top:5px; direction:ltr; }
   .bnav .fab-wrap{ flex:0 0 76px; padding:0; min-height:52px; position:relative; }
   .bnav .fab-wrap span{ position:absolute; left:50%; top:-24px; transform:translateX(-50%); width:56px; height:56px; border-radius:50%; background:var(--brass); color:var(--ink); font-size:32px; font-weight:400; line-height:56px; text-align:center; box-shadow:0 4px 14px rgba(0,0,0,.28); border:4px solid var(--card); box-sizing:border-box; line-height:48px; }
@@ -561,7 +567,7 @@
   <div class="st-nav" id="stNav"><button type="button" id="stPrev">‹</button><span id="stLabel" class="mono"></span><button type="button" id="stNext">›</button></div>
   <div class="st-card" id="stDonut"></div>
   <div class="st-card"><div class="st-h" data-i18n="statsTop">Top categories</div><div id="stTop"></div></div>
-  <div class="st-card" id="stDailyCard"><div class="st-h" data-i18n="statsDaily">Daily spending</div><div id="stDaily"></div></div>
+  <div class="st-card" id="stDailyCard"><div class="st-h" id="stDailyTitle">Daily spending</div><div id="stDaily"></div></div>
 </section>
 <div class="sections-stack">
 <section class="goals-section coll coll-section closed" data-coll="goals" data-tab="plan">
@@ -686,6 +692,14 @@
     <label class="switch"><input type="checkbox" id="notifToggle"><span class="slider"></span></label>
   </div>
   <div class="set-note" id="notifNote"></div>
+  <div class="sal-block" id="driveBlock">
+    <div class="sal-title" data-i18n="driveTitle">Google Drive backup</div>
+    <input type="text" id="driveClientId" class="full-input" data-i18n-placeholder="driveClientPlaceholder" placeholder="Google OAuth Client ID" autocomplete="off" autocapitalize="off" spellcheck="false">
+    <div class="drive-btns"><button class="btn-outline" id="driveBackupBtn" type="button" data-i18n="driveBackup">Back up now</button><button class="btn-outline" id="driveRestoreBtn" type="button" data-i18n="driveRestore">Restore</button></div>
+    <div class="sal-hint" id="driveStatus"></div>
+    <div class="sal-hint"><span data-i18n="driveRedirectLabel">Redirect address to add in Google Cloud (tap to copy):</span> <b id="driveRedirect" class="mono" style="word-break:break-all;cursor:pointer"></b></div>
+    <button class="dep-toggle" id="driveForget" type="button" data-i18n="driveForget">Forget Google connection</button>
+  </div>
   <div class="set-row">
     <label data-i18n="catManage">Categories</label>
     <button class="install-btn" id="openCatManager" type="button" data-i18n="catManageBtn">Manage</button>
@@ -781,6 +795,14 @@
   <div class="report-doc" id="reportDoc"></div>
 </div>
 
+<div class="sheet-overlay" id="driveOverlay">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header"><h2 data-i18n="driveRestoreTitle">Restore from Drive</h2><button class="sheet-close" id="driveClose" type="button">✕</button></div>
+    <div id="driveList"></div>
+  </div>
+</div>
+
 <div class="sheet-overlay" id="catOverlay">
   <div class="sheet">
     <div class="sheet-handle"></div>
@@ -863,7 +885,8 @@ const DEFAULT_CAT_EMOJI = {"Transport":"🚌","Food/Groceries":"🛒","Utilities
 const translations = {
   en: {
     appEyebrow: "The Ledger", appTitle: "Annual Spending",
-    exportJson: "Export JSON", statsTipHint: "Touch a bar to see the date and amount", navHome:"Home", navPlan:"Goals & Invest", navBills:"Bills", lcTitle:"Category limits (this period)", lcEdit:"Edit", lcSave:"Save", lcCopied:"Carried over from the last period — adjust and save", lcSavedMsg:"Limits saved", lcLeft:"left", lcOver:"over", lcNone:"no limit", qtManage:"Quick templates", qtAdded:"Added", qtSaved:"Template saved", qtNeed:"Fill description and amount first", qtEmpty:"No templates yet. Fill the add form and tap ⭐.", qtTip:"Save as quick template", themeLabel:"Appearance", themeAuto:"Auto (phone)", themeLight:"Light", themeDark:"Dark", navStats:"Stats", statsMonth:"Month", statsYear:"Year", statsTop:"Top categories", statsDaily:"Daily spending", statsEmpty:"No expenses in this period", navSettings:"Settings", otherCats:"Other",
+    exportJson: "Export JSON", statsTipHint: "Touch a bar to see the date and amount", statsMonthly: "Monthly spending", driveTitle: "Google Drive backup", driveClientPlaceholder: "Google OAuth Client ID", driveBackup: "Back up now", driveRestore: "Restore", driveRestoreTitle: "Restore from Drive", driveRedirectLabel: "Redirect address to add in Google Cloud (tap to copy):", driveForget: "Forget Google connection", driveNoClient: "Paste your Google Client ID first", driveBackingUp: "Backing up to Drive…", driveDone: "Backup saved to Google Drive ✓", driveNoBackups: "No backups found in Drive yet.", driveSessionExpired: "Google session expired — tap again", driveError: (m)=>`Drive error: ${m}`, driveDenied: "Google sign-in was cancelled", driveLast: (d)=>`Last Drive backup: ${d}`, driveNever: "No Drive backup yet.", driveForgot: "Disconnected from Google", driveCopied: "Address copied", driveReminder: "It's been a week since your last Drive backup",
+     navHome:"Home", navPlan:"Goals & Invest", navBills:"Bills", lcTitle:"Category limits (this period)", lcEdit:"Edit", lcSave:"Save", lcCopied:"Carried over from the last period — adjust and save", lcSavedMsg:"Limits saved", lcLeft:"left", lcOver:"over", lcNone:"no limit", qtManage:"Quick templates", qtAdded:"Added", qtSaved:"Template saved", qtNeed:"Fill description and amount first", qtEmpty:"No templates yet. Fill the add form and tap ⭐.", qtTip:"Save as quick template", themeLabel:"Appearance", themeAuto:"Auto (phone)", themeLight:"Light", themeDark:"Dark", navStats:"Stats", statsMonth:"Month", statsYear:"Year", statsTop:"Top categories", statsDaily:"Daily spending", statsEmpty:"No expenses in this period", navSettings:"Settings", otherCats:"Other",
     lockEnter:"Enter PIN", lockSetTitle:"Choose a 4-digit PIN", lockConfirm:"Repeat the PIN", lockWrong:"Wrong PIN", lockMismatch:"PINs didn't match, try again", lockSaved:"Lock enabled", lockRemoved:"Lock removed", lockLabel:"App lock (PIN)", lockSet:"Set PIN", lockRemove:"Remove", lockBio:"Fingerprint / Face", lockBioLabel:"Fingerprint / Face unlock", lockRemoveTitle:"Enter PIN to remove the lock", bioFail:"Biometric setup failed", exportCsv: "Export CSV", importJson: "Import JSON", importTitle: "Import backup", importSummary: (e,i,g,c)=>`This file has ${e} expenses, ${i} bonuses, ${g} goals and ${c} deposits. Merge adds only what is missing. Replace deletes your current data first.`, importMerge: "Merge with current data", importReplace: "Replace everything", toastImportDone: (n,c)=>`Imported ${n} items`+(c?` · ${c} duplicate recurring cleaned`:""), toastImportFailed: "Not a valid Ledger backup file",
     monthlySalary: "Base salary (before any raise)", salaryChanges: "Salary changes (raises)", salaryFrom: "From", salaryHint: "Months before the first change keep the base salary.", toastSalarySaved: "Salary change saved", payday: "Payday (day of month)",
     notifications: "Notifications (payday, overspending, goals, bills)",
@@ -942,7 +965,8 @@ const translations = {
   },
   ar: {
     appEyebrow: "الدفتر", appTitle: "الإنفاق السنوي",
-    exportJson: "تصدير JSON", statsTipHint: "المسي أي عمود عشان تشوفي التاريخ والمبلغ", navHome:"الرئيسية", navPlan:"الأهداف والاستثمار", navBills:"الفواتير", lcTitle:"حدود الفئات (الفترة الحالية)", lcEdit:"تعديل", lcSave:"حفظ", lcCopied:"منقولة من الفترة السابقة، عدّلها واحفظ", lcSavedMsg:"تم حفظ الحدود", lcLeft:"متبقي", lcOver:"زيادة", lcNone:"بدون حد", qtManage:"القوالب السريعة", qtAdded:"تمت إضافة", qtSaved:"تم حفظ القالب", qtNeed:"اكتب الوصف والمبلغ الأول", qtEmpty:"مفيش قوالب لسه. املا فورم الإضافة واضغط ⭐", qtTip:"احفظ كقالب سريع", themeLabel:"المظهر", themeAuto:"تلقائي (حسب الموبايل)", themeLight:"فاتح", themeDark:"داكن", navStats:"الإحصائيات", statsMonth:"شهري", statsYear:"سنوي", statsTop:"أعلى الفئات", statsDaily:"المصروف اليومي", statsEmpty:"مفيش مصروفات في الفترة دي", navSettings:"الإعدادات", otherCats:"أخرى",
+    exportJson: "تصدير JSON", statsTipHint: "المسي أي عمود عشان تشوفي التاريخ والمبلغ", statsMonthly: "الصرف الشهري", driveTitle: "نسخة احتياطية على Google Drive", driveClientPlaceholder: "Google OAuth Client ID", driveBackup: "نسخ احتياطي الآن", driveRestore: "استرجاع", driveRestoreTitle: "استرجاع من Drive", driveRedirectLabel: "العنوان اللي تضيفيه في Google Cloud (اضغطي للنسخ):", driveForget: "إلغاء الربط مع Google", driveNoClient: "الصقي الـ Client ID بتاع Google الأول", driveBackingUp: "جاري النسخ على Drive…", driveDone: "اتحفظت النسخة على Google Drive ✓", driveNoBackups: "مفيش نسخ على Drive لسه.", driveSessionExpired: "جلسة Google خلصت — اضغطي تاني", driveError: (m)=>`خطأ في Drive: ${m}`, driveDenied: "تم إلغاء تسجيل الدخول لـ Google", driveLast: (d)=>`آخر نسخة على Drive: ${d}`, driveNever: "مفيش نسخة على Drive لسه.", driveForgot: "تم فصل الربط مع Google", driveCopied: "تم نسخ العنوان", driveReminder: "عدّى أسبوع من آخر نسخة على Drive",
+     navHome:"الرئيسية", navPlan:"الأهداف والاستثمار", navBills:"الفواتير", lcTitle:"حدود الفئات (الفترة الحالية)", lcEdit:"تعديل", lcSave:"حفظ", lcCopied:"منقولة من الفترة السابقة، عدّلها واحفظ", lcSavedMsg:"تم حفظ الحدود", lcLeft:"متبقي", lcOver:"زيادة", lcNone:"بدون حد", qtManage:"القوالب السريعة", qtAdded:"تمت إضافة", qtSaved:"تم حفظ القالب", qtNeed:"اكتب الوصف والمبلغ الأول", qtEmpty:"مفيش قوالب لسه. املا فورم الإضافة واضغط ⭐", qtTip:"احفظ كقالب سريع", themeLabel:"المظهر", themeAuto:"تلقائي (حسب الموبايل)", themeLight:"فاتح", themeDark:"داكن", navStats:"الإحصائيات", statsMonth:"شهري", statsYear:"سنوي", statsTop:"أعلى الفئات", statsDaily:"المصروف اليومي", statsEmpty:"مفيش مصروفات في الفترة دي", navSettings:"الإعدادات", otherCats:"أخرى",
     lockEnter:"اكتب الرقم السري", lockSetTitle:"اختار رقم سري من 4 أرقام", lockConfirm:"اكتب الرقم تاني للتأكيد", lockWrong:"الرقم غلط", lockMismatch:"الرقمين مش زي بعض، جرب تاني", lockSaved:"تم تفعيل القفل", lockRemoved:"تم إلغاء القفل", lockLabel:"قفل التطبيق (PIN)", lockSet:"تفعيل", lockRemove:"إلغاء", lockBio:"بصمة / وجه", lockBioLabel:"الفتح بالبصمة / الوجه", lockRemoveTitle:"اكتب الرقم السري لإلغاء القفل", bioFail:"تعذر تفعيل البصمة", exportCsv: "تصدير CSV", importJson: "استيراد JSON", importTitle: "استيراد نسخة احتياطية", importSummary: (e,i,g,c)=>`الملف فيه ${e} مصروف و${i} مكافأة و${g} هدف و${c} إيداع. الدمج بيضيف الناقص بس، والاستبدال بيمسح بياناتك الحالية الأول.`, importMerge: "دمج مع البيانات الحالية", importReplace: "استبدال كل حاجة", toastImportDone: (n,c)=>`تم استيراد ${n} عنصر`+(c?` · تم حذف ${c} مصروف متكرر مكرر`:""), toastImportFailed: "الملف ده مش نسخة احتياطية صالحة",
     monthlySalary: "الراتب الأساسي (قبل أي زيادة)", salaryChanges: "تغييرات المرتب (الزيادات)", salaryFrom: "من", salaryHint: "الشهور قبل أول تغيير بتفضل على الراتب الأساسي.", toastSalarySaved: "تم حفظ تغيير المرتب", payday: "يوم استلام الراتب (يوم الشهر)",
     notifications: "الإشعارات (الراتب، تجاوز الميزانية، الأهداف، الفواتير)",
@@ -1484,19 +1508,27 @@ document.getElementById('saveGoal').addEventListener('click', async ()=>{
 function renderTrend(){
   document.getElementById('trendYear').textContent = fyLabel(state.year);
   const svg = document.getElementById('trendSvg');
-  const W=320,H=90,pad=8;
-  const spentArr=[], budgetArr=[];
-  for(let i=0;i<12;i++){ const p=fyPeriod(state.year,i); spentArr.push(periodExpenseTotal(p.year,p.monthIdx)); budgetArr.push(periodBaseBudget(p.year,p.monthIdx)); }
+  const W=320, H=128, padX=16, top=24, bot=22;
+  svg.setAttribute('viewBox','0 0 '+W+' '+H); svg.setAttribute('height', String(H));
+  const cur = currentPeriod(), curKey = cur.year*12+cur.monthIdx;
+  const spentArr=[], budgetArr=[], past=[];
+  for(let i=0;i<12;i++){ const p=fyPeriod(state.year,i); spentArr.push(periodExpenseTotal(p.year,p.monthIdx)); budgetArr.push(periodBaseBudget(p.year,p.monthIdx)); past.push(p.year*12+p.monthIdx <= curKey); }
   const maxV = Math.max(1, ...spentArr, ...budgetArr);
-  const stepX = (W-2*pad)/11;
-  function pathFor(arr){
-    return arr.map((v,i)=>{ const x=pad+i*stepX; const y=H-pad-(v/maxV)*(H-2*pad); return (i===0?'M':'L')+x.toFixed(1)+','+y.toFixed(1); }).join(' ');
+  const stepX = (W-2*padX)/11;
+  const X = i=>padX+i*stepX, Y = v=>H-bot-(v/maxV)*(H-top-bot);
+  const path = arr => arr.map((v,i)=>(i===0?'M':'L')+X(i).toFixed(1)+','+Y(v).toFixed(1)).join(' ');
+  const kf = v=>{ if(v>=1000){ const k=v/1000; return (k>=100 ? String(Math.round(k)) : k.toFixed(1)).replace(/\.0$/,'')+'k'; } return String(Math.round(v)); };
+  let labels = '';
+  for(let i=0;i<12;i++){
+    const sp=spentArr[i], bu=budgetArr[i], spentAbove = sp>=bu;
+    if(sp>0){ const y = spentAbove ? Y(sp)-6 : Y(sp)+12; labels += `<text x="${X(i).toFixed(1)}" y="${y.toFixed(1)}" text-anchor="middle" font-size="8.5" font-weight="700" fill="#A87B3F" font-family="JetBrains Mono,monospace">${kf(sp)}</text>`; }
+    if(past[i] && bu>0){ const y = spentAbove ? Y(bu)+11 : Y(bu)-5; labels += `<text x="${X(i).toFixed(1)}" y="${y.toFixed(1)}" text-anchor="middle" font-size="7.5" style="fill:var(--ink-soft)" opacity="0.85" font-family="JetBrains Mono,monospace">${kf(bu)}</text>`; }
   }
   svg.innerHTML = `
-    <path d="${pathFor(budgetArr)}" fill="none" stroke="#4A5A73" stroke-width="1.5" stroke-dasharray="3,3" opacity="0.6"/>
-    <path d="${pathFor(spentArr)}" fill="none" stroke="#A87B3F" stroke-width="2.2"/>
-    ${spentArr.map((v,i)=>{ const x=pad+i*stepX; const y=H-pad-(v/maxV)*(H-2*pad); return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.4" fill="#A87B3F"/>`; }).join('')}
-  `;
+    <path d="${path(budgetArr)}" fill="none" stroke="#4A5A73" stroke-width="1.5" stroke-dasharray="3,3" opacity="0.6"/>
+    <path d="${path(spentArr)}" fill="none" stroke="#A87B3F" stroke-width="2.2"/>
+    ${spentArr.map((v,i)=>`<circle cx="${X(i).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="2.4" fill="#A87B3F"/>`).join('')}
+    ${labels}`;
 }
 
 /* ---------------- Export ---------------- */
@@ -1882,7 +1914,7 @@ function render(){
   { const qi = document.getElementById('quickItemsInput'); if(document.activeElement!==qi) qi.value = state.quickItems.join(', '); }
   { const bi = document.getElementById('bonusSourcesInput'); if(document.activeElement!==bi) bi.value = state.bonusSources.join(', '); }
   renderSalaryChanges();
-  renderSubscriptions(); renderInsights(); renderBadges(); renderStats(); renderCatCards(); renderQuick();
+  renderSubscriptions(); renderInsights(); renderBadges(); renderStats(); renderCatCards(); renderQuick(); updateDriveStatus();
   { const cp = currentPeriod(); document.getElementById('compareLabel').textContent = '· '+monthName(cp.monthIdx); document.getElementById('compareBody').innerHTML = compareHtml(cp.year, cp.monthIdx); }
   document.getElementById('payDayInput').value = state.payDay;
   document.getElementById('notifToggle').checked = state.notificationsEnabled;
@@ -3388,13 +3420,20 @@ function renderBadges(){
 
 /* ================= v24: Stats tab ================= */
 var ST = {mode:'month', p:null};
+const CAT_COLOR_MAP = {"Transport":"#4A5A73","Food/Groceries":"#3F6B4F","Utilities":"#C9A876","Phone/Internet":"#7FA3C7","Medical/Health":"#9B3B3B","Sport":"#4F9E96","Education":"#7A5C99","Debt Payment":"#6B4E23","Entertainment":"#D98BA6","Clothing":"#B5836A","Cosmetics":"#C0509A","Sweets":"#E0A458","Charity":"#8DB580","Savings":"#1B2A44","Other":"#8592A8"};
+const CAT_EXTRA = ["#2E86AB","#F18F01","#A23B72","#5B8E7D","#BC4B51","#6C757D","#8E7DBE","#3D5A80"];
+function catColor(key){
+  if(CAT_COLOR_MAP[key]) return CAT_COLOR_MAP[key];
+  let h = 0; for(const ch of String(key)) h = (h*31 + ch.charCodeAt(0)) >>> 0;
+  return CAT_EXTRA[h % CAT_EXTRA.length];
+}
 function renderStats(){
   if(!ST) return;
   const g = id=>document.getElementById(id);
   if(!ST.p) ST.p = currentPeriod();
   const yr = ST.mode==='year', p = ST.p;
   g('stMonth').classList.toggle('on', !yr); g('stYear').classList.toggle('on', yr);
-  g('stNav').style.display = yr ? 'none' : ''; g('stDailyCard').style.display = yr ? 'none' : '';
+  g('stNav').style.display = yr ? 'none' : '';
   let cats;
   if(yr){ const d = buildYearData(state.year); cats = d.empty ? [] : d.cats.map(([c,a])=>({c,amt:a})); }
   else { const by = {}; expensesForPeriod(p.year,p.monthIdx).forEach(e=>{ by[e.category]=(by[e.category]||0)+parseFloat(e.amount); }); cats = Object.entries(by).sort((a,b)=>b[1]-a[1]).map(([c,amt])=>({c,amt})); }
@@ -3403,29 +3442,49 @@ function renderStats(){
   if(!cats.length || !(total>0)){ g('stDonut').innerHTML = `<div class="empty-note">${escapeHtml(t('statsEmpty'))}</div>`; g('stTop').innerHTML=''; g('stDaily').innerHTML=''; return; }
   g('stDonut').innerHTML = pieHtml(cats.map(x=>({label:categoryLabel(x.c), amt:x.amt})), fmt(total));
   g('stTop').innerHTML = cats.map(x=>`<div class="st-row"><span class="st-ic">${categoryEmoji(x.c)||'•'}</span><div class="st-main"><div class="st-line"><span>${escapeHtml(categoryName(x.c))}<small>${(x.amt/total*100).toFixed(1)}%</small></span><b class="mono">${fmt(x.amt)}</b></div><div class="st-bar"><i style="width:${(x.amt/cats[0].amt*100).toFixed(1)}%"></i></div></div></div>`).join('');
+  /* stacked bars coloured by category: one bar per day (month view) or per month (year view) */
+  const fmtDay = k => new Date(k+'T00:00:00').toLocaleDateString(state.lang==='ar' ? 'ar-EG' : 'en-GB', {weekday:'short', day:'numeric', month:'short'});
+  const items = [];
   if(!yr){
-    const {start,end} = periodBounds(p.year,p.monthIdx), sums = {}, days = [];
-    expensesForPeriod(p.year,p.monthIdx).forEach(e=>{ sums[e.date]=(sums[e.date]||0)+parseFloat(e.amount); });
+    const {start,end} = periodBounds(p.year,p.monthIdx), byDay = {};
+    expensesForPeriod(p.year,p.monthIdx).forEach(e=>{ const m = byDay[e.date] || (byDay[e.date] = {}); m[e.category] = (m[e.category]||0) + parseFloat(e.amount); });
     for(let d=new Date(start); d<end; d.setDate(d.getDate()+1)){
       const k = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-      days.push({day:d.getDate(), key:k, v:sums[k]||0});
+      items.push({label:fmtDay(k), axis:String(d.getDate()), parts:byDay[k]||{}});
     }
-    const mx = Math.max(...days.map(x=>x.v), 1);
-    g('stDaily').innerHTML = `<div class="st-tip hint" id="stTip">${escapeHtml(t('statsTipHint'))}</div><div class="st-bars" id="stBars">${days.map(x=>`<span style="height:${Math.max(x.v/mx*100, x.v>0?4:2)}%"></span>`).join('')}</div><div class="st-axis"><span>${days[0].day}</span><span>max ${fmt(mx)}</span><span>${days[days.length-1].day}</span></div>`;
-    const bars = g('stBars'), tip = g('stTip'), spans = Array.from(bars.children);
-    const fmtDay = k => new Date(k+'T00:00:00').toLocaleDateString(state.lang==='ar' ? 'ar-EG' : 'en-GB', {weekday:'short', day:'numeric', month:'short'});
-    function pick(ev){
-      const r = bars.getBoundingClientRect(); if(!r.width) return;
-      const rtl = getComputedStyle(bars).direction==='rtl';
-      let i = Math.floor(((rtl ? r.right-ev.clientX : ev.clientX-r.left) / r.width) * days.length);
-      i = Math.max(0, Math.min(days.length-1, i));
-      spans.forEach((sp,j)=>sp.classList.toggle('sel', j===i));
-      tip.classList.remove('hint');
-      tip.textContent = fmtDay(days[i].key) + ' · EGP ' + fmt(days[i].v);
+  } else {
+    for(let i=0;i<12;i++){
+      const q = fyPeriod(state.year,i), m = {};
+      expensesForPeriod(q.year,q.monthIdx).forEach(e=>{ m[e.category] = (m[e.category]||0) + parseFloat(e.amount); });
+      items.push({label:monthName(q.monthIdx)+' '+q.year, axis:monthName(q.monthIdx).slice(0,3), parts:m});
     }
-    bars.addEventListener('pointerdown', pick);
-    bars.addEventListener('pointermove', pick);
   }
+  items.forEach(it=>{ it.total = Object.values(it.parts).reduce((a,b)=>a+b,0); });
+  const catTotals = {}; items.forEach(it=>Object.entries(it.parts).forEach(([c,a])=>{ catTotals[c] = (catTotals[c]||0) + a; }));
+  const order = Object.keys(catTotals).sort((a,b)=>catTotals[b]-catTotals[a]);
+  const mx = Math.max(...items.map(x=>x.total), 1);
+  g('stDailyTitle').textContent = t(yr ? 'statsMonthly' : 'statsDaily');
+  const barsHtml = items.map(it=>{
+    const h = it.total>0 ? Math.max(it.total/mx*100, 4) : 2;
+    const segs = order.filter(c=>it.parts[c]>0).map(c=>`<i style="height:${(it.parts[c]/it.total*100).toFixed(2)}%;background:${catColor(c)}"></i>`).join('');
+    return `<span style="height:${h}%">${segs}</span>`;
+  }).join('');
+  const legend = order.slice(0,6).map(c=>`<span><i style="background:${catColor(c)}"></i>${escapeHtml(categoryLabel(c))}</span>`).join('');
+  g('stDaily').innerHTML = `<div class="st-tip hint" id="stTip">${escapeHtml(t('statsTipHint'))}</div><div class="st-bars" id="stBars">${barsHtml}</div><div class="st-axis"><span>${escapeHtml(items[0].axis)}</span><span>max ${fmt(mx)}</span><span>${escapeHtml(items[items.length-1].axis)}</span></div><div class="st-legend">${legend}</div>`;
+  const bars = g('stBars'), tip = g('stTip'), spans = Array.from(bars.children);
+  function pick(ev){
+    const r = bars.getBoundingClientRect(); if(!r.width) return;
+    const rtl = getComputedStyle(bars).direction==='rtl';
+    let i = Math.floor(((rtl ? r.right-ev.clientX : ev.clientX-r.left) / r.width) * items.length);
+    i = Math.max(0, Math.min(items.length-1, i));
+    const it = items[i];
+    spans.forEach((sp,j)=>sp.classList.toggle('sel', j===i));
+    tip.classList.remove('hint');
+    const top = Object.keys(it.parts).filter(c=>it.parts[c]>0).sort((a,b)=>it.parts[b]-it.parts[a]).slice(0,4);
+    tip.innerHTML = `<b>${escapeHtml(it.label)}</b> · EGP ${fmt(it.total)}` + (top.length ? `<div class="st-parts">${top.map(c=>`<span><i style="background:${catColor(c)}"></i>${escapeHtml(categoryLabel(c))} ${fmtShort(it.parts[c])}</span>`).join('')}</div>` : '');
+  }
+  bars.addEventListener('pointerdown', pick);
+  bars.addEventListener('pointermove', pick);
 }
 (function(){
   const g = id=>document.getElementById(id);
@@ -3580,7 +3639,147 @@ function amountValue(){ return evalAmountExpr(document.getElementById('fAmount')
   Object.defineProperty(field,'value',{ get(){ return d.get.call(field); }, set(v){ d.set.call(field,v); update(); } });
 })();
 
-loadState();
+/* ================= Google Drive backup (OAuth redirect flow, drive.file scope) ================= */
+const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
+const DRIVE_FOLDER = 'The Ledger Backups';
+const DRIVE_KEEP = 10;
+function driveClient(){ const v = LedgerLocal.get('gdriveClientId'); return v ? v.value.trim() : ''; }
+function driveRedirectUri(){ return location.origin + location.pathname.replace(/index\.html$/,''); }
+function driveNavigate(url){ window.location.href = url; }
+function driveToken(){
+  const v = LedgerLocal.get('gdriveToken'); if(!v) return null;
+  try{ const o = JSON.parse(v.value); if(o && o.token && o.exp > Date.now()) return o.token; }catch(e){}
+  LedgerLocal.delete('gdriveToken'); return null;
+}
+/* the page is reloaded by Google with #access_token=... : read it first thing, then clean the address bar */
+(function captureDriveToken(){
+  const h = location.hash; if(!h || h.length<2) return;
+  const q = new URLSearchParams(h.slice(1));
+  const tok = q.get('access_token'), err = q.get('error');
+  if(!tok && !err) return;
+  const expected = (LedgerLocal.get('gdriveState')||{}).value;
+  if(tok && expected && q.get('state')===expected){
+    LedgerLocal.set('gdriveToken', JSON.stringify({token:tok, exp: Date.now() + (parseInt(q.get('expires_in'))||3600)*1000 - 60000}));
+  } else if(err){ LedgerLocal.set('gdriveError', err); LedgerLocal.delete('gdrivePending'); }
+  LedgerLocal.delete('gdriveState');
+  try{ history.replaceState(null, '', location.pathname + location.search); }catch(e){}
+})();
+function startDriveAuth(action){
+  const cid = driveClient(); if(!cid){ showToast(t('driveNoClient')); return; }
+  const nonce = genId()+genId();
+  LedgerLocal.set('gdriveState', nonce); LedgerLocal.set('gdrivePending', action);
+  driveNavigate('https://accounts.google.com/o/oauth2/v2/auth?' + new URLSearchParams({client_id:cid, redirect_uri:driveRedirectUri(), response_type:'token', scope:DRIVE_SCOPE, state:nonce, include_granted_scopes:'true'}).toString());
+}
+async function driveApi(token, url, opts){
+  const o = opts || {}; o.headers = Object.assign({Authorization:'Bearer '+token}, o.headers||{});
+  const r = await fetch(url, o);
+  if(r.status===401){ LedgerLocal.delete('gdriveToken'); const e = new Error('auth'); e.auth = true; throw e; }
+  if(!r.ok){ let msg = 'HTTP '+r.status; try{ const j = await r.json(); if(j.error && j.error.message) msg = j.error.message; }catch(e){} throw new Error(msg); }
+  return r;
+}
+async function driveEnsureFolder(token){
+  const q = encodeURIComponent(`name='${DRIVE_FOLDER}' and mimeType='application/vnd.google-apps.folder' and trashed=false`);
+  const r = await driveApi(token, `https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)&spaces=drive`);
+  const j = await r.json();
+  if(j.files && j.files.length) return j.files[0].id;
+  const c = await driveApi(token, 'https://www.googleapis.com/drive/v3/files?fields=id', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({name:DRIVE_FOLDER, mimeType:'application/vnd.google-apps.folder'})});
+  return (await c.json()).id;
+}
+async function driveList(token, folderId){
+  const q = encodeURIComponent(`'${folderId}' in parents and trashed=false`);
+  const r = await driveApi(token, `https://www.googleapis.com/drive/v3/files?q=${q}&orderBy=createdTime%20desc&pageSize=100&fields=files(id,name,createdTime,size)`);
+  return (await r.json()).files || [];
+}
+async function driveUpload(token, folderId, name, content){
+  const boundary = 'ledger'+genId();
+  const meta = JSON.stringify({name, parents:[folderId], mimeType:'application/json'});
+  const body = `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${meta}\r\n--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${content}\r\n--${boundary}--`;
+  const r = await driveApi(token, 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name', {method:'POST', headers:{'Content-Type':'multipart/related; boundary='+boundary}, body});
+  return r.json();
+}
+function driveFail(e, action){
+  if(e && e.auth){ showToast(t('driveSessionExpired')); return; }
+  showToast(t('driveError', (e && e.message) ? e.message : String(e)));
+}
+async function doDriveBackup(){
+  const token = driveToken(); if(!token){ startDriveAuth('backup'); return; }
+  showToast(t('driveBackingUp'));
+  try{
+    const folderId = await driveEnsureFolder(token);
+    const data = await buildExportData();
+    const stamp = new Date().toISOString().slice(0,16).replace(/[:T]/g,'-');
+    await driveUpload(token, folderId, 'ledger-backup-'+stamp+'.json', JSON.stringify(data));
+    LedgerLocal.set('lastDriveBackup', new Date().toISOString());
+    LedgerLocal.set('didBackup','1');
+    try{ const files = await driveList(token, folderId); for(const f of files.slice(DRIVE_KEEP)){ await driveApi(token, 'https://www.googleapis.com/drive/v3/files/'+f.id, {method:'DELETE'}); } }catch(e){}
+    updateDriveStatus(); showToast(t('driveDone'));
+  }catch(e){ driveFail(e,'backup'); }
+}
+async function openDriveRestore(){
+  const token = driveToken(); if(!token){ startDriveAuth('restore'); return; }
+  const list = document.getElementById('driveList');
+  list.innerHTML = `<div class="empty-note">…</div>`;
+  document.getElementById('driveOverlay').classList.add('open');
+  try{
+    const folderId = await driveEnsureFolder(token);
+    const files = await driveList(token, folderId);
+    if(!files.length){ list.innerHTML = `<div class="empty-note">${escapeHtml(t('driveNoBackups'))}</div>`; return; }
+    list.innerHTML = files.map(f=>`<div class="drive-row" data-id="${escapeHtml(f.id)}"><span>${escapeHtml(new Date(f.createdTime).toLocaleString(currentLocale(), {dateStyle:'medium', timeStyle:'short'}))}</span><small>${f.size ? Math.max(1,Math.round(f.size/1024))+' KB' : ''}</small></div>`).join('');
+    list.querySelectorAll('.drive-row').forEach(row=>row.addEventListener('click', async ()=>{
+      try{
+        const r = await driveApi(token, 'https://www.googleapis.com/drive/v3/files/'+row.dataset.id+'?alt=media');
+        pendingImport = sanitizeImport(JSON.parse(await r.text()));
+        document.getElementById('driveOverlay').classList.remove('open');
+        document.getElementById('importSummary').textContent = t('importSummary', pendingImport.expenses.length, pendingImport.incomes.length, pendingImport.goals.length, pendingImport.contributions.length);
+        importOverlay.classList.add('open');
+      }catch(e){ if(e && e.message==='bad'){ showToast(t('toastImportFailed')); } else driveFail(e,'restore'); }
+    }));
+  }catch(e){ document.getElementById('driveOverlay').classList.remove('open'); driveFail(e,'restore'); }
+}
+function updateDriveStatus(){
+  const el = document.getElementById('driveStatus'); if(!el) return;
+  const last = LedgerLocal.get('lastDriveBackup');
+  el.textContent = last ? t('driveLast', new Date(last.value).toLocaleString(currentLocale(), {dateStyle:'medium', timeStyle:'short'})) : t('driveNever');
+  const ci = document.getElementById('driveClientId'); if(ci && document.activeElement!==ci) ci.value = driveClient();
+  document.getElementById('driveRedirect').textContent = driveRedirectUri();
+}
+function resumeDrive(){
+  const err = LedgerLocal.get('gdriveError');
+  if(err){ LedgerLocal.delete('gdriveError'); showToast(t('driveDenied')); return; }
+  const pending = (LedgerLocal.get('gdrivePending')||{}).value;
+  if(pending && driveToken()){
+    LedgerLocal.delete('gdrivePending');
+    document.querySelectorAll('[data-tab-go="settings"]').forEach(b=>b.click());
+    if(pending==='backup') doDriveBackup(); else if(pending==='restore') openDriveRestore();
+    return;
+  }
+  // gentle weekly reminder (needs a tap because Google sign-in must start from a user action)
+  if(driveClient() && state.expenses.length){
+    const last = LedgerLocal.get('lastDriveBackup'); const age = last ? (Date.now()-new Date(last.value).getTime())/86400000 : 999;
+    const remDay = (LedgerLocal.get('gdriveRemindDay')||{}).value;
+    if(age>=7 && remDay!==todayStr()){ LedgerLocal.set('gdriveRemindDay', todayStr()); setTimeout(()=>showToast(t('driveReminder'), {label:t('driveBackup'), fn:doDriveBackup}), 1500); }
+  }
+}
+document.getElementById('driveClientId').addEventListener('change', e=>{ LedgerLocal.set('gdriveClientId', e.target.value.trim()); LedgerLocal.delete('gdriveToken'); });
+document.getElementById('driveBackupBtn').addEventListener('click', ()=>{
+  const ci = document.getElementById('driveClientId'); if(ci.value.trim()!==driveClient()){ LedgerLocal.set('gdriveClientId', ci.value.trim()); }
+  doDriveBackup();
+});
+document.getElementById('driveRestoreBtn').addEventListener('click', ()=>{
+  const ci = document.getElementById('driveClientId'); if(ci.value.trim()!==driveClient()){ LedgerLocal.set('gdriveClientId', ci.value.trim()); }
+  openDriveRestore();
+});
+document.getElementById('driveClose').addEventListener('click', ()=>document.getElementById('driveOverlay').classList.remove('open'));
+document.getElementById('driveOverlay').addEventListener('click', e=>{ if(e.target.id==='driveOverlay') e.target.classList.remove('open'); });
+document.getElementById('driveForget').addEventListener('click', async ()=>{
+  const tok = driveToken();
+  if(tok){ try{ await fetch('https://oauth2.googleapis.com/revoke?token='+encodeURIComponent(tok), {method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}}); }catch(e){} }
+  ['gdriveToken','gdriveState','gdrivePending'].forEach(k=>LedgerLocal.delete(k));
+  showToast(t('driveForgot'));
+});
+document.getElementById('driveRedirect').addEventListener('click', ()=>{ try{ navigator.clipboard.writeText(driveRedirectUri()); showToast(t('driveCopied')); }catch(e){} });
+
+loadState().then(()=>{ try{ resumeDrive(); }catch(e){ console.error(e); } });
 </script>
 </body>
 </html>
