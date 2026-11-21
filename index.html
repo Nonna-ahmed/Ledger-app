@@ -218,6 +218,7 @@
   .sum-value.red{ color: var(--red); } .sum-value.green{ color: var(--green); }
   .sum-sub{ font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--ink-soft); margin-top:3px; }
 
+  .trend-wrap[data-coll="compare"]{ display:none !important; }
   .trend-wrap{ margin: 6px 20px 4px; background: var(--card); border-radius: 10px; padding: 14px 14px 8px; box-shadow: var(--shadow); }
   .trend-title{ font-family:'JetBrains Mono',monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:0.1em; color:var(--ink-soft); margin-bottom:6px; }
   .trend-legend{ display:flex; gap:14px; font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--ink-soft); margin-top:4px; }
@@ -309,6 +310,11 @@
   .add-form input, .add-form select{ font-family:'JetBrains Mono',monospace; font-size:14px; background:#26364F; border:1px solid #3B4B66; color: var(--paper); border-radius:7px; padding:9px 10px; width:100%; }
   html[lang="ar"] .add-form input, html[lang="ar"] .add-form select, html[lang="ar"] .add-goal-form input{ font-family:'Noto Naskh Arabic','JetBrains Mono',monospace; }
   .add-form input::placeholder{ color:#8592A8; }
+  .amt-keys{ display:flex; gap:6px; align-items:center; margin:-2px 0 8px; direction:ltr; }
+  .amt-keys button{ width:36px; height:32px; border-radius:8px; border:1px solid #3B4B66; background:#26364F; color:var(--paper); font-family:'JetBrains Mono',monospace; font-size:16px; cursor:pointer; padding:0; }
+  .amt-keys button.eq{ background:var(--brass); color:var(--ink); border-color:var(--brass); font-weight:700; }
+  .amt-preview{ margin-inline-start:auto; font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:700; color:#8FC9A0; }
+  .amt-preview.bad{ color:#E3A1AE; }
   .add-form input[type=file]{ font-size:12px; padding:8px 6px; }
   .repeat-row{ display:flex; align-items:center; gap:8px; margin-bottom:8px; font-family:'JetBrains Mono',monospace; font-size:12.5px; color:#C9CFDB; }
   .receipt-row{ margin-bottom:8px; }
@@ -426,6 +432,10 @@
   .st-ic{ width:34px; height:34px; border-radius:50%; background:var(--paper); display:flex; align-items:center; justify-content:center; font-size:17px; flex-shrink:0; }
   .st-main{ flex:1; min-width:0; } .st-line{ display:flex; justify-content:space-between; gap:8px; font-size:13.5px; } .st-line small{ color:var(--ink-soft); font-size:11.5px; margin-inline-start:4px; }
   .st-bar{ height:6px; background:var(--paper-line); border-radius:3px; margin-top:5px; overflow:hidden; } .st-bar i{ display:block; height:100%; background:var(--brass); border-radius:3px; }
+  .st-bars{ touch-action:pan-y; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+  .st-bars span.sel{ background:var(--ink) !important; }
+  .st-tip{ min-height:22px; font-family:'JetBrains Mono',monospace; font-size:12.5px; margin-bottom:6px; color:var(--ink); }
+  .st-tip.hint{ color:var(--ink-soft); font-family:inherit; font-size:12px; }
   .st-bars{ display:flex; align-items:flex-end; gap:2px; height:96px; } .st-bars span{ flex:1; background:var(--brass); border-radius:2px 2px 0 0; min-height:2px; }
   .st-axis{ display:flex; justify-content:space-between; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink-soft); margin-top:5px; direction:ltr; }
   .bnav .fab-wrap{ flex:0 0 76px; padding:0; min-height:52px; position:relative; }
@@ -726,7 +736,11 @@
     </div>
     <div class="row">
       <input type="text" id="fDesc" autocomplete="off" data-i18n-placeholder="descriptionPlaceholder" placeholder="Description (e.g. O2 monitor)">
-      <input type="number" id="fAmount" inputmode="decimal" data-i18n-placeholder="amountPlaceholder" placeholder="Amount EGP" style="max-width:130px;">
+      <input type="text" id="fAmount" inputmode="decimal" autocomplete="off" data-i18n-placeholder="amountPlaceholder" placeholder="Amount EGP" style="max-width:130px;">
+    </div>
+    <div class="amt-keys" id="amtKeys">
+      <button type="button" data-k="+">+</button><button type="button" data-k="-">−</button><button type="button" data-k="*">×</button><button type="button" data-k="/">÷</button><button type="button" data-k="(">(</button><button type="button" data-k=")">)</button><button type="button" class="eq" data-k="=">=</button>
+      <span class="amt-preview" id="amtPreview"></span>
     </div>
     <div class="quick-chips" id="suggestRow"></div>
     <datalist id="descList"></datalist>
@@ -849,7 +863,7 @@ const DEFAULT_CAT_EMOJI = {"Transport":"🚌","Food/Groceries":"🛒","Utilities
 const translations = {
   en: {
     appEyebrow: "The Ledger", appTitle: "Annual Spending",
-    exportJson: "Export JSON", navHome:"Home", navPlan:"Goals & Invest", navBills:"Bills", lcTitle:"Category limits (this period)", lcEdit:"Edit", lcSave:"Save", lcCopied:"Carried over from the last period — adjust and save", lcSavedMsg:"Limits saved", lcLeft:"left", lcOver:"over", lcNone:"no limit", qtManage:"Quick templates", qtAdded:"Added", qtSaved:"Template saved", qtNeed:"Fill description and amount first", qtEmpty:"No templates yet. Fill the add form and tap ⭐.", qtTip:"Save as quick template", themeLabel:"Appearance", themeAuto:"Auto (phone)", themeLight:"Light", themeDark:"Dark", navStats:"Stats", statsMonth:"Month", statsYear:"Year", statsTop:"Top categories", statsDaily:"Daily spending", statsEmpty:"No expenses in this period", navSettings:"Settings", otherCats:"Other",
+    exportJson: "Export JSON", statsTipHint: "Touch a bar to see the date and amount", navHome:"Home", navPlan:"Goals & Invest", navBills:"Bills", lcTitle:"Category limits (this period)", lcEdit:"Edit", lcSave:"Save", lcCopied:"Carried over from the last period — adjust and save", lcSavedMsg:"Limits saved", lcLeft:"left", lcOver:"over", lcNone:"no limit", qtManage:"Quick templates", qtAdded:"Added", qtSaved:"Template saved", qtNeed:"Fill description and amount first", qtEmpty:"No templates yet. Fill the add form and tap ⭐.", qtTip:"Save as quick template", themeLabel:"Appearance", themeAuto:"Auto (phone)", themeLight:"Light", themeDark:"Dark", navStats:"Stats", statsMonth:"Month", statsYear:"Year", statsTop:"Top categories", statsDaily:"Daily spending", statsEmpty:"No expenses in this period", navSettings:"Settings", otherCats:"Other",
     lockEnter:"Enter PIN", lockSetTitle:"Choose a 4-digit PIN", lockConfirm:"Repeat the PIN", lockWrong:"Wrong PIN", lockMismatch:"PINs didn't match, try again", lockSaved:"Lock enabled", lockRemoved:"Lock removed", lockLabel:"App lock (PIN)", lockSet:"Set PIN", lockRemove:"Remove", lockBio:"Fingerprint / Face", lockBioLabel:"Fingerprint / Face unlock", lockRemoveTitle:"Enter PIN to remove the lock", bioFail:"Biometric setup failed", exportCsv: "Export CSV", importJson: "Import JSON", importTitle: "Import backup", importSummary: (e,i,g,c)=>`This file has ${e} expenses, ${i} bonuses, ${g} goals and ${c} deposits. Merge adds only what is missing. Replace deletes your current data first.`, importMerge: "Merge with current data", importReplace: "Replace everything", toastImportDone: (n,c)=>`Imported ${n} items`+(c?` · ${c} duplicate recurring cleaned`:""), toastImportFailed: "Not a valid Ledger backup file",
     monthlySalary: "Base salary (before any raise)", salaryChanges: "Salary changes (raises)", salaryFrom: "From", salaryHint: "Months before the first change keep the base salary.", toastSalarySaved: "Salary change saved", payday: "Payday (day of month)",
     notifications: "Notifications (payday, overspending, goals, bills)",
@@ -928,7 +942,7 @@ const translations = {
   },
   ar: {
     appEyebrow: "الدفتر", appTitle: "الإنفاق السنوي",
-    exportJson: "تصدير JSON", navHome:"الرئيسية", navPlan:"الأهداف والاستثمار", navBills:"الفواتير", lcTitle:"حدود الفئات (الفترة الحالية)", lcEdit:"تعديل", lcSave:"حفظ", lcCopied:"منقولة من الفترة السابقة، عدّلها واحفظ", lcSavedMsg:"تم حفظ الحدود", lcLeft:"متبقي", lcOver:"زيادة", lcNone:"بدون حد", qtManage:"القوالب السريعة", qtAdded:"تمت إضافة", qtSaved:"تم حفظ القالب", qtNeed:"اكتب الوصف والمبلغ الأول", qtEmpty:"مفيش قوالب لسه. املا فورم الإضافة واضغط ⭐", qtTip:"احفظ كقالب سريع", themeLabel:"المظهر", themeAuto:"تلقائي (حسب الموبايل)", themeLight:"فاتح", themeDark:"داكن", navStats:"الإحصائيات", statsMonth:"شهري", statsYear:"سنوي", statsTop:"أعلى الفئات", statsDaily:"المصروف اليومي", statsEmpty:"مفيش مصروفات في الفترة دي", navSettings:"الإعدادات", otherCats:"أخرى",
+    exportJson: "تصدير JSON", statsTipHint: "المسي أي عمود عشان تشوفي التاريخ والمبلغ", navHome:"الرئيسية", navPlan:"الأهداف والاستثمار", navBills:"الفواتير", lcTitle:"حدود الفئات (الفترة الحالية)", lcEdit:"تعديل", lcSave:"حفظ", lcCopied:"منقولة من الفترة السابقة، عدّلها واحفظ", lcSavedMsg:"تم حفظ الحدود", lcLeft:"متبقي", lcOver:"زيادة", lcNone:"بدون حد", qtManage:"القوالب السريعة", qtAdded:"تمت إضافة", qtSaved:"تم حفظ القالب", qtNeed:"اكتب الوصف والمبلغ الأول", qtEmpty:"مفيش قوالب لسه. املا فورم الإضافة واضغط ⭐", qtTip:"احفظ كقالب سريع", themeLabel:"المظهر", themeAuto:"تلقائي (حسب الموبايل)", themeLight:"فاتح", themeDark:"داكن", navStats:"الإحصائيات", statsMonth:"شهري", statsYear:"سنوي", statsTop:"أعلى الفئات", statsDaily:"المصروف اليومي", statsEmpty:"مفيش مصروفات في الفترة دي", navSettings:"الإعدادات", otherCats:"أخرى",
     lockEnter:"اكتب الرقم السري", lockSetTitle:"اختار رقم سري من 4 أرقام", lockConfirm:"اكتب الرقم تاني للتأكيد", lockWrong:"الرقم غلط", lockMismatch:"الرقمين مش زي بعض، جرب تاني", lockSaved:"تم تفعيل القفل", lockRemoved:"تم إلغاء القفل", lockLabel:"قفل التطبيق (PIN)", lockSet:"تفعيل", lockRemove:"إلغاء", lockBio:"بصمة / وجه", lockBioLabel:"الفتح بالبصمة / الوجه", lockRemoveTitle:"اكتب الرقم السري لإلغاء القفل", bioFail:"تعذر تفعيل البصمة", exportCsv: "تصدير CSV", importJson: "استيراد JSON", importTitle: "استيراد نسخة احتياطية", importSummary: (e,i,g,c)=>`الملف فيه ${e} مصروف و${i} مكافأة و${g} هدف و${c} إيداع. الدمج بيضيف الناقص بس، والاستبدال بيمسح بياناتك الحالية الأول.`, importMerge: "دمج مع البيانات الحالية", importReplace: "استبدال كل حاجة", toastImportDone: (n,c)=>`تم استيراد ${n} عنصر`+(c?` · تم حذف ${c} مصروف متكرر مكرر`:""), toastImportFailed: "الملف ده مش نسخة احتياطية صالحة",
     monthlySalary: "الراتب الأساسي (قبل أي زيادة)", salaryChanges: "تغييرات المرتب (الزيادات)", salaryFrom: "من", salaryHint: "الشهور قبل أول تغيير بتفضل على الراتب الأساسي.", toastSalarySaved: "تم حفظ تغيير المرتب", payday: "يوم استلام الراتب (يوم الشهر)",
     notifications: "الإشعارات (الراتب، تجاوز الميزانية، الأهداف، الفواتير)",
@@ -2202,7 +2216,7 @@ function openEditIncome(id){
 saveBtn.addEventListener('click', async ()=>{
   const date=document.getElementById('fDate').value;
   const desc=document.getElementById('fDesc').value.trim();
-  const amount=parseFloat(document.getElementById('fAmount').value);
+  const amount=amountValue();
   if(!date || !amount || amount<=0){ showToast(t('toastAddDateAmount')); return; }
   const wasEditing = !!editingId;
 
@@ -3394,10 +3408,23 @@ function renderStats(){
     expensesForPeriod(p.year,p.monthIdx).forEach(e=>{ sums[e.date]=(sums[e.date]||0)+parseFloat(e.amount); });
     for(let d=new Date(start); d<end; d.setDate(d.getDate()+1)){
       const k = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-      days.push({day:d.getDate(), v:sums[k]||0});
+      days.push({day:d.getDate(), key:k, v:sums[k]||0});
     }
     const mx = Math.max(...days.map(x=>x.v), 1);
-    g('stDaily').innerHTML = `<div class="st-bars">${days.map(x=>`<span title="${x.day}: ${fmt(x.v)}" style="height:${Math.max(x.v/mx*100, x.v>0?4:2)}%"></span>`).join('')}</div><div class="st-axis"><span>${days[0].day}</span><span>max ${fmt(mx)}</span><span>${days[days.length-1].day}</span></div>`;
+    g('stDaily').innerHTML = `<div class="st-tip hint" id="stTip">${escapeHtml(t('statsTipHint'))}</div><div class="st-bars" id="stBars">${days.map(x=>`<span style="height:${Math.max(x.v/mx*100, x.v>0?4:2)}%"></span>`).join('')}</div><div class="st-axis"><span>${days[0].day}</span><span>max ${fmt(mx)}</span><span>${days[days.length-1].day}</span></div>`;
+    const bars = g('stBars'), tip = g('stTip'), spans = Array.from(bars.children);
+    const fmtDay = k => new Date(k+'T00:00:00').toLocaleDateString(state.lang==='ar' ? 'ar-EG' : 'en-GB', {weekday:'short', day:'numeric', month:'short'});
+    function pick(ev){
+      const r = bars.getBoundingClientRect(); if(!r.width) return;
+      const rtl = getComputedStyle(bars).direction==='rtl';
+      let i = Math.floor(((rtl ? r.right-ev.clientX : ev.clientX-r.left) / r.width) * days.length);
+      i = Math.max(0, Math.min(days.length-1, i));
+      spans.forEach((sp,j)=>sp.classList.toggle('sel', j===i));
+      tip.classList.remove('hint');
+      tip.textContent = fmtDay(days[i].key) + ' · EGP ' + fmt(days[i].v);
+    }
+    bars.addEventListener('pointerdown', pick);
+    bars.addEventListener('pointermove', pick);
   }
 }
 (function(){
@@ -3493,12 +3520,65 @@ async function quickAdd(tp){
 document.getElementById('qtRow').addEventListener('click', e=>{ const b = e.target.closest('[data-qt]'); if(!b) return; const tp = QT.find(x=>x.id===b.dataset.qt); if(tp) quickAdd(tp); });
 document.getElementById('qtList').addEventListener('click', e=>{ const b = e.target.closest('[data-qt-del]'); if(!b) return; QT = QT.filter(x=>x.id!==b.dataset.qtDel); saveQT(); renderQuick(); });
 document.getElementById('qtSaveBtn').addEventListener('click', ()=>{
-  const desc = document.getElementById('fDesc').value.trim(), amount = parseFloat(document.getElementById('fAmount').value), category = categorySelect.value;
+  const desc = document.getElementById('fDesc').value.trim(), amount = amountValue(), category = categorySelect.value;
   if(addMode!=='expense' || !desc || !(amount>0)){ showToast(t('qtNeed')); return; }
   if(!QT.some(x=>x.desc===desc && x.amount===amount && x.category===category)){ QT.push({id:genId(), desc, amount, category}); if(QT.length>12) QT.shift(); saveQT(); }
   renderQuick(); showToast(t('qtSaved'));
 });
 renderQuick();
+
+/* ================= Calculator inside the amount field ================= */
+function normalizeExpr(str){
+  let s = normalizeDigits(String(str||'')).replace(/\s+/g,'');
+  s = s.replace(/[×xX]/g,'*').replace(/÷/g,'/').replace(/[−–—]/g,'-');
+  let guard = 0;
+  while(/(\d),(\d{3})(?!\d)/.test(s) && guard++<10) s = s.replace(/(\d),(\d{3})(?!\d)/, '$1$2');
+  return s.replace(/,/g,'.');
+}
+/* tiny recursive-descent parser: numbers, + - * / and parentheses (no eval) */
+function evalAmountExpr(str){
+  const s = normalizeExpr(str);
+  if(!s || !/^[0-9+\-*\/().]+$/.test(s)) return NaN;
+  let i = 0;
+  const fail = ()=>{ throw new Error('x'); };
+  function number(){ const j=i; while(i<s.length && /[0-9.]/.test(s[i])) i++; const tok=s.slice(j,i); if(!/^(\d+\.?\d*|\.\d+)$/.test(tok)) fail(); return parseFloat(tok); }
+  function factor(){
+    if(s[i]==='-'){ i++; return -factor(); }
+    if(s[i]==='+'){ i++; return factor(); }
+    if(s[i]==='('){ i++; const v=expr(); if(s[i]!==')') fail(); i++; return v; }
+    return number();
+  }
+  function term(){ let v=factor(); while(s[i]==='*' || s[i]==='/'){ const op=s[i++], r=factor(); if(op==='/'){ if(r===0) fail(); v/=r; } else v*=r; } return v; }
+  function expr(){ let v=term(); while(s[i]==='+' || s[i]==='-'){ const op=s[i++], r=term(); v = op==='+' ? v+r : v-r; } return v; }
+  try{
+    const v = expr(); if(i!==s.length) return NaN;
+    return isFinite(v) ? Math.round(v*100)/100 : NaN;
+  }catch(e){ return NaN; }
+}
+function amountValue(){ return evalAmountExpr(document.getElementById('fAmount').value); }
+(function(){
+  const field = document.getElementById('fAmount'), prev = document.getElementById('amtPreview');
+  function hasOp(){ const n = normalizeExpr(field.value).replace(/^-/,''); return /[+\-*\/()]/.test(n); }
+  function update(){
+    if(!hasOp()){ prev.textContent=''; prev.classList.remove('bad'); return; }
+    const v = evalAmountExpr(field.value);
+    prev.textContent = isNaN(v) ? '= ?' : '= '+fmt(v); prev.classList.toggle('bad', isNaN(v));
+  }
+  function commit(){ if(!hasOp()) return; const v = evalAmountExpr(field.value); if(!isNaN(v) && v>0){ field.value = String(v); update(); } }
+  field.addEventListener('input', update);
+  field.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); commit(); } });
+  document.getElementById('amtKeys').addEventListener('click', e=>{
+    const b = e.target.closest('button'); if(!b) return;
+    if(b.dataset.k==='='){ commit(); field.focus(); return; }
+    const a = field.selectionStart!=null ? field.selectionStart : field.value.length, z = field.selectionEnd!=null ? field.selectionEnd : a;
+    field.value = field.value.slice(0,a) + b.dataset.k + field.value.slice(z);
+    const pos = a + b.dataset.k.length; field.focus(); try{ field.setSelectionRange(pos,pos); }catch(err){}
+    update();
+  });
+  // keep the preview in sync when other code fills / clears the field
+  const d = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value');
+  Object.defineProperty(field,'value',{ get(){ return d.get.call(field); }, set(v){ d.set.call(field,v); update(); } });
+})();
 
 loadState();
 </script>
