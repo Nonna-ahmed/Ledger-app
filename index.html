@@ -182,6 +182,7 @@
   .calc-total{ text-align:center; font-family:'JetBrains Mono',monospace; font-size:20px; font-weight:700; color:var(--green); }
   .calc-note{ text-align:center; font-size:11.5px; color:var(--ink-soft); margin-top:6px; }
   .inv-card{ background:var(--card); border-radius:10px; padding:12px 14px; margin-bottom:9px; box-shadow:var(--shadow); }
+  .inv-picker{ width:100%; margin-bottom:8px; font-family:inherit; font-size:14px; font-weight:600; background:var(--card); color:var(--ink); border:1px solid var(--paper-line); border-radius:8px; padding:10px; }
   .inv-grid{ display:flex; gap:6px; margin:8px 0 6px; }
   .inv-grid > div{ flex:1; background:var(--paper); border-radius:8px; padding:7px 8px; min-width:0; }
   .inv-grid span{ display:block; font-size:10.5px; color:var(--ink-soft); }
@@ -592,6 +593,7 @@
   <div class="add-goal-form" id="addInvestForm">
     <div class="row"><input type="text" id="invName" data-i18n-placeholder="invNamePlaceholder" placeholder="Name (e.g. Thndr)"></div>
     <div class="row goal-link-row"><label for="invGoal" data-i18n="invLinkedGoal">Linked goal</label><select id="invGoal"></select></div>
+    <div class="row" id="invManualRow"><input type="number" id="invInvested" inputmode="decimal" data-i18n-placeholder="invInvestedPlaceholder" placeholder="Amount invested (if no goal)"><input type="date" id="invSince"></div>
     <div class="row"><input type="number" id="invRate" inputmode="decimal" step="0.01" data-i18n-placeholder="invRatePlaceholder" placeholder="Annual return % (optional, e.g. 17.03)"></div>
     <div class="row"><button class="btn-outline full" id="saveInvest" data-i18n="saveInvest">Save</button></div>
   </div>
@@ -906,7 +908,7 @@ const translations = {
     saveGoal: "Save goal", newGoal: "+ New goal", noGoalsYet: "No goals yet.",
     addAmountPlaceholder: "Amount", quickItemsLabel: "Quick items (separate with commas)", addToGoal: "Add to goal", voiceListening: 'Listening… say e.g. "Groceries 120"', voiceAdded: (d,a,c)=>`Added: ${d} · ${a} · ${c}`, voiceNoAmount: "Didn't catch the amount — say it in digits", voiceDenied: "Microphone permission is blocked", voiceFailed: "Couldn't hear that, try again",
     reportBtn: "📄 Report", reportPdf: "Save as PDF", reportExcel: "Excel / share", reportTitle: "Monthly report", rSalary: "Salary", rBonus: "Bonuses", rAvailable: "Total available", rRemaining: "Remaining", rVsPrev: "Spent vs last period", colDate: "Date", colDesc: "Description", colCategory: "Category", colAmount: "Amount", rBonuses: "Bonuses", rNone: "None", shSummary: "Summary", shCategories: "Categories", shExpenses: "Expenses", shBonuses: "Bonuses", toastPdfHint: 'Choose "Save as PDF" in the print screen', toastExcelReady: "Excel file ready",
-    investments: "Investments", newInvest: "+ Track an investment", invNamePlaceholder: "Name (e.g. Thndr)", invLinkedGoal: "Linked goal", saveInvest: "Save", updateInvest: "Update", invNoGoal: "— choose goal —", invInvested: "Invested", invNow: "Now", invProfit: "Profit / loss", invNoValue: "Add the current value to see your profit", invUpdated: (d)=>`Value updated ${d}`, invSince: (a)=>`+${a} deposited since`, invHistory: "History", bonusSourcesLabel: "Bonus sources (separate with commas)", bonusSourcePlaceholder: "— source —", bonusNoSource: "No source", colSource: "Source", shSources: "Sources", ysIncomeSplit: (s,b)=>`Salary ${s} + bonuses ${b}`, ysBonusTitle: "Bonuses", ysBonusNone: "No bonuses logged this year yet.", ysBonusTotal: "Total bonuses", ysBonusCount: "Number of bonuses", ysBonusAvg: "Average per bonus", ysBonusHighest: "Highest bonus", ysBonusFrom: "Where it came from", ysBonusTop: (n,p)=>`most from ${n} (${p}%)`, ysBonusMonths: "Months with bonuses", colMonth: "Month", colIncome: "Income", shMonths: "Months", catManage: "Categories", catManageBtn: "Manage", catManageNote: "Rename, change the emoji, or hide any category. Hidden ones disappear from the lists but old expenses keep them.", catNamePlaceholder: "New category name", catShow: "Show", catHide: "Hide", catDeleteTitle: "Delete this category?", catDeleteBody: (n,c)=>`"${n}" will be removed. ${c} expense(s) in it will move to Other.`, toastEnterCatName: "Enter a category name", toastCatAdded: "Category added",
+    investments: "Investments", newInvest: "+ Track an investment", invNamePlaceholder: "Name (e.g. Thndr)", invLinkedGoal: "Linked goal", saveInvest: "Save", updateInvest: "Update", invNoGoal: "— no goal (optional) —", invInvested: "Invested", invNow: "Now", invProfit: "Profit / loss", invNoValue: "Add the current value to see your profit", invUpdated: (d)=>`Value updated ${d}`, invSince: (a)=>`+${a} deposited since`, invHistory: "History", bonusSourcesLabel: "Bonus sources (separate with commas)", bonusSourcePlaceholder: "— source —", bonusNoSource: "No source", colSource: "Source", shSources: "Sources", ysIncomeSplit: (s,b)=>`Salary ${s} + bonuses ${b}`, ysBonusTitle: "Bonuses", ysBonusNone: "No bonuses logged this year yet.", ysBonusTotal: "Total bonuses", ysBonusCount: "Number of bonuses", ysBonusAvg: "Average per bonus", ysBonusHighest: "Highest bonus", ysBonusFrom: "Where it came from", ysBonusTop: (n,p)=>`most from ${n} (${p}%)`, ysBonusMonths: "Months with bonuses", colMonth: "Month", colIncome: "Income", shMonths: "Months", catManage: "Categories", catManageBtn: "Manage", catManageNote: "Rename, change the emoji, or hide any category. Hidden ones disappear from the lists but old expenses keep them.", catNamePlaceholder: "New category name", catShow: "Show", catHide: "Hide", catDeleteTitle: "Delete this category?", catDeleteBody: (n,c)=>`"${n}" will be removed. ${c} expense(s) in it will move to Other.`, toastEnterCatName: "Enter a category name", toastCatAdded: "Category added",
     badges: "Achievements", badgeUnlocked: (n)=>`New achievement: ${n}`,
     bd_first: "First expense", bd_first_d: "Log your first expense", bd_streak7: "7-day streak", bd_streak7_d: "Log expenses 7 days in a row", bd_streak30: "30-day streak", bd_streak30_d: "Log expenses 30 days in a row", bd_noSweets: "A week without sweets", bd_noSweets_d: "7 days with no sweets while still logging", bd_under1: "Under budget", bd_under1_d: "Finish a month spending less than your income", bd_under3: "Three good months", bd_under3_d: "Finish 3 months under budget", bd_save20: "20% saver", bd_save20_d: "Keep 20% of a month's income unspent", bd_goalHalf: "Halfway there", bd_goalHalf_d: "Reach 50% of a goal", bd_goalDone: "Goal reached", bd_goalDone_d: "Reach 100% of a goal", bd_saved1k: "Saved 1,000", bd_saved1k_d: "1,000 EGP deposited to goals", bd_saved5k: "Saved 5,000", bd_saved5k_d: "5,000 EGP deposited to goals", bd_saved10k: "Saved 10,000", bd_saved10k_d: "10,000 EGP deposited to goals", bd_charity: "Giving", bd_charity_d: "Log a charity expense", bd_investor: "Investor", bd_investor_d: "Start tracking an investment", bd_backup: "Safe and sound", bd_backup_d: "Export or import a backup",
      ysBtn: "📊 Year summary", ysTitle: (l)=>`Year summary ${l}`, ysNone: "No spending in this year yet.", ysElapsed: (n)=>`Based on ${n} months so far`, ysSpent: "Total spent", ysIncome: "Salary + bonuses", ysSaved: "Left after spending", ysDeficit: "Overspent by", ysAvg: "Average per month", ysDeposits: "Deposited to goals", ysPriciest: "Most expensive month", ysCheapest: "Lightest month", ysBiggest: "Biggest single expense", ysTop5: "Where your money went",
@@ -915,7 +917,7 @@ const translations = {
     simBtn: "🔧 What if I cut back?", simCat: "Category", simPct: "Cut by %", simGoal: "Goal", simNoGoal: "— no goal —", simAvg: (c,a)=>`You spend about ${a} a month on ${c}.`, simSave: (m,y)=>`Cutting it saves ${m} a month — ${y} a year.`, simFaster: (m0,m1,d,e)=>`You'd reach the goal in ${m1} months instead of ${m0} (${d} sooner), around ${e}.`, simReach: (m1,e)=>`At that pace you'd reach the goal in about ${m1} months, around ${e}.`, simBefore: "That's before your deadline ✓", simAfter: "That's still after your deadline.", simDone: "This goal is already reached.", simNoData: "No spending in this category yet.",
      invRatePlaceholder: "Annual return % (optional, e.g. 17.03)", invNowEst: "Now (est.)", invEstNote: (r)=>`Estimated at ${r}% / year`, invEstFromReal: (d)=>`from your real value on ${d}`, invEstNoReal: "no real value entered yet",
     calcBtn: "🧮 Returns calculator", calcAmount: "Amount", calcRate: "Annual rate %", calcGains: "Expected gains per month", calcTotalLabel: "Sum of 12 months gains", calcDay: "/day", calcWithdraw: (p,a)=>`Withdrawing monthly gains earns ${p}%, or ${a} EGP a year.`,
-     invValuePlaceholder: "Current value", invGoalMissing: "Linked goal was deleted", invAtThen: (a)=>`invested ${a}`, noInvestYet: "No investments tracked yet.", toastEnterValue: "Enter the current value", toastInvestUpdated: "Value updated", toastInvestSaved: "Investment saved", toastNeedGoal: "Create a savings goal first, then link it", toastPickGoal: "Pick the goal that holds your deposits", deleteInvestTitle: "Delete this investment?", deleteInvestBody: (n)=>`"${n}" and its value history will be removed. Your goal and deposits stay.`,
+     invValuePlaceholder: "Current value", invGoalMissing: "Linked goal was deleted", invInvestedPlaceholder: "Amount invested (if no goal)", invNoGoalLabel: "No linked goal", invNeedInvested: "add the amount you invested to see profit", invAtThen: (a)=>`invested ${a}`, noInvestYet: "No investments tracked yet.", toastEnterValue: "Enter the current value", toastInvestUpdated: "Value updated", toastInvestSaved: "Investment saved", toastNeedGoal: "Create a savings goal first, then link it", toastPickGoal: "Pick the goal that holds your deposits", deleteInvestTitle: "Delete this investment?", deleteInvestBody: (n)=>`"${n}" and its value history will be removed. Your goal and deposits stay.`,
      noGoalOpt: "— No goal —", linkedDeposit: "from an expense", compareTitle: "Vs last month", compareNoPrev: "No spending last month to compare with.", compareSame: "No real change vs last month.", compareMore: "more than last month", compareLess: "less than last month", undoBtn: "Undo", toastRepeated: (d,a)=>`Added again: ${d} · ${a}`, toastUndone: "Removed", goalDeadlineLabel: "Deadline (optional)", updateGoal: "Update goal", toastGoalUpdated: "Goal updated", goalDueIn: (d,n)=>`Due ${d} · ${n} days left`, goalDueToday: (d)=>`Due today (${d})`, goalLate: (d,n)=>`Was due ${d} · ${n} days late`, goalPerMonth: (a)=>`≈ EGP ${a} / month needed`, goalDone: "Goal reached ✓", carriedOver: "Carried over", allCategories: "All categories", filteredTotal: "Total", depositHistory: "Deposits", hideHistory: "Hide", noDepositsYet: "No deposits yet.", deleteDepositTitle: "Delete this deposit?", deleteDepositBody: "This will reduce the saved amount.", toastDepositDeleted: "Deposit deleted", toastEnterDate: "Pick a date", addBtn: "+ Add", delete: "Delete",
     recurringExpenses: "Recurring expenses",
     noRecurringYet: 'None yet — check "repeat every pay period" when adding an expense.',
@@ -986,7 +988,7 @@ const translations = {
     saveGoal: "حفظ الهدف", newGoal: "+ هدف جديد", noGoalsYet: "لا توجد أهداف بعد.",
     addAmountPlaceholder: "المبلغ", quickItemsLabel: "الأزرار السريعة (افصلي بينها بفاصلة)", addToGoal: "إضافة لهدف", voiceListening: 'بسمعك… قولي مثلًا «بقالة 120»', voiceAdded: (d,a,c)=>`تم التسجيل: ${d} · ${a} · ${c}`, voiceNoAmount: "ما سمعتش المبلغ — قوليه بالأرقام", voiceDenied: "إذن الميكروفون مقفول", voiceFailed: "ما سمعتش كويس، جرّبي تاني",
     reportBtn: "📄 تقرير", reportPdf: "حفظ PDF", reportExcel: "Excel / مشاركة", reportTitle: "التقرير الشهري", rSalary: "المرتب", rBonus: "المكافآت", rAvailable: "إجمالي المتاح", rRemaining: "المتبقي", rVsPrev: "الصرف مقارنة بالفترة السابقة", colDate: "التاريخ", colDesc: "الوصف", colCategory: "الفئة", colAmount: "المبلغ", rBonuses: "المكافآت", rNone: "لا يوجد", shSummary: "الملخص", shCategories: "الفئات", shExpenses: "المصاريف", shBonuses: "المكافآت", toastPdfHint: 'اختاري «حفظ كـ PDF» في شاشة الطباعة', toastExcelReady: "ملف Excel جاهز",
-    investments: "الاستثمارات", newInvest: "+ تتبّع استثمار", invNamePlaceholder: "الاسم (مثلًا Thndr)", invLinkedGoal: "الهدف المربوط", saveInvest: "حفظ", updateInvest: "تحديث", invNoGoal: "— اختاري الهدف —", invInvested: "اللي حطيتيه", invNow: "قيمته دلوقتي", invProfit: "الربح / الخسارة", invNoValue: "سجّلي القيمة الحالية عشان يظهر الربح", invUpdated: (d)=>`آخر تحديث للقيمة ${d}`, invSince: (a)=>`+${a} اتضاف بعدها`, invHistory: "السجل", bonusSourcesLabel: "مصادر المكافآت (افصلي بينها بفاصلة)", bonusSourcePlaceholder: "— المصدر —", bonusNoSource: "بدون مصدر", colSource: "المصدر", shSources: "المصادر", ysIncomeSplit: (s,b)=>`مرتب ${s} + مكافآت ${b}`, ysBonusTitle: "المكافآت", ysBonusNone: "مفيش مكافآت متسجّلة في السنة دي لسه.", ysBonusTotal: "إجمالي المكافآت", ysBonusCount: "عدد المكافآت", ysBonusAvg: "متوسط المكافأة", ysBonusHighest: "أعلى مكافأة", ysBonusFrom: "جاية منين", ysBonusTop: (n,p)=>`أكتر مصدر ${n} (${p}%)`, ysBonusMonths: "شهور فيها مكافآت", colMonth: "الشهر", colIncome: "الدخل", shMonths: "الشهور", catManage: "الفئات", catManageBtn: "إدارة", catManageNote: "غيّري الاسم أو الإيموجي أو اخفي أي فئة. اللي بتتخفي بتختفي من القوايم بس والمصاريف القديمة بتفضل ليها.", catNamePlaceholder: "اسم الفئة الجديدة", catShow: "إظهار", catHide: "إخفاء", catDeleteTitle: "حذف الفئة دي؟", catDeleteBody: (n,c)=>`هتتمسح "${n}". ${c} مصروف فيها هيروحوا لـ أخرى.`, toastEnterCatName: "اكتبي اسم الفئة", toastCatAdded: "تمت إضافة الفئة",
+    investments: "الاستثمارات", newInvest: "+ تتبّع استثمار", invNamePlaceholder: "الاسم (مثلًا Thndr)", invLinkedGoal: "الهدف المربوط", saveInvest: "حفظ", updateInvest: "تحديث", invNoGoal: "— بدون هدف (اختياري) —", invInvested: "اللي حطيتيه", invNow: "قيمته دلوقتي", invProfit: "الربح / الخسارة", invNoValue: "سجّلي القيمة الحالية عشان يظهر الربح", invUpdated: (d)=>`آخر تحديث للقيمة ${d}`, invSince: (a)=>`+${a} اتضاف بعدها`, invHistory: "السجل", bonusSourcesLabel: "مصادر المكافآت (افصلي بينها بفاصلة)", bonusSourcePlaceholder: "— المصدر —", bonusNoSource: "بدون مصدر", colSource: "المصدر", shSources: "المصادر", ysIncomeSplit: (s,b)=>`مرتب ${s} + مكافآت ${b}`, ysBonusTitle: "المكافآت", ysBonusNone: "مفيش مكافآت متسجّلة في السنة دي لسه.", ysBonusTotal: "إجمالي المكافآت", ysBonusCount: "عدد المكافآت", ysBonusAvg: "متوسط المكافأة", ysBonusHighest: "أعلى مكافأة", ysBonusFrom: "جاية منين", ysBonusTop: (n,p)=>`أكتر مصدر ${n} (${p}%)`, ysBonusMonths: "شهور فيها مكافآت", colMonth: "الشهر", colIncome: "الدخل", shMonths: "الشهور", catManage: "الفئات", catManageBtn: "إدارة", catManageNote: "غيّري الاسم أو الإيموجي أو اخفي أي فئة. اللي بتتخفي بتختفي من القوايم بس والمصاريف القديمة بتفضل ليها.", catNamePlaceholder: "اسم الفئة الجديدة", catShow: "إظهار", catHide: "إخفاء", catDeleteTitle: "حذف الفئة دي؟", catDeleteBody: (n,c)=>`هتتمسح "${n}". ${c} مصروف فيها هيروحوا لـ أخرى.`, toastEnterCatName: "اكتبي اسم الفئة", toastCatAdded: "تمت إضافة الفئة",
     badges: "الإنجازات", badgeUnlocked: (n)=>`إنجاز جديد: ${n}`,
     bd_first: "أول مصروف", bd_first_d: "سجّلي أول مصروف", bd_streak7: "أسبوع متواصل", bd_streak7_d: "سجّلي مصاريفك 7 أيام ورا بعض", bd_streak30: "30 يوم متواصل", bd_streak30_d: "سجّلي مصاريفك 30 يوم ورا بعض", bd_noSweets: "أسبوع بدون حلويات", bd_noSweets_d: "7 أيام من غير حلويات وإنتي بتسجّلي", bd_under1: "تحت الميزانية", bd_under1_d: "خلّصي شهر وصرفك أقل من دخلك", bd_under3: "تلات شهور حلوين", bd_under3_d: "خلّصي 3 شهور تحت الميزانية", bd_save20: "مدّخرة 20%", bd_save20_d: "فضّلتي 20% من دخل شهر من غير صرف", bd_goalHalf: "نص الطريق", bd_goalHalf_d: "وصلتي 50% من هدف", bd_goalDone: "هدف اتحقق", bd_goalDone_d: "وصلتي 100% من هدف", bd_saved1k: "حوّشتي 1,000", bd_saved1k_d: "1,000 جنيه إيداعات في الأهداف", bd_saved5k: "حوّشتي 5,000", bd_saved5k_d: "5,000 جنيه إيداعات في الأهداف", bd_saved10k: "حوّشتي 10,000", bd_saved10k_d: "10,000 جنيه إيداعات في الأهداف", bd_charity: "عطاء", bd_charity_d: "سجّلي مصروف صدقة", bd_investor: "مستثمرة", bd_investor_d: "ابدأي تتبّع استثمار", bd_backup: "بياناتك في أمان", bd_backup_d: "صدّري أو استوردي نسخة احتياطية",
      ysBtn: "📊 ملخص السنة", ysTitle: (l)=>`ملخص السنة ${l}`, ysNone: "مفيش مصاريف في السنة دي لسه.", ysElapsed: (n)=>`على أساس ${n} شهر لحد دلوقتي`, ysSpent: "إجمالي الصرف", ysIncome: "المرتب + المكافآت", ysSaved: "اللي فضل بعد الصرف", ysDeficit: "صرفتي زيادة بـ", ysAvg: "المتوسط في الشهر", ysDeposits: "إيداعات الأهداف", ysPriciest: "أغلى شهر", ysCheapest: "أخف شهر", ysBiggest: "أكبر مصروف", ysTop5: "فلوسك راحت فين",
@@ -995,7 +997,7 @@ const translations = {
     simBtn: "🔧 لو قللت؟", simCat: "الفئة", simPct: "التقليل %", simGoal: "الهدف", simNoGoal: "— بدون هدف —", simAvg: (c,a)=>`بتصرفي حوالي ${a} في الشهر على ${c}.`, simSave: (m,y)=>`لو قللتيها هتوفّري ${m} في الشهر، يعني ${y} في السنة.`, simFaster: (m0,m1,d,e)=>`هتوصلي للهدف في ${m1} شهر بدل ${m0} (أسرع بـ ${d})، تقريبًا ${e}.`, simReach: (m1,e)=>`بالسرعة دي هتوصلي للهدف في حوالي ${m1} شهر، تقريبًا ${e}.`, simBefore: "ده قبل ميعاد الهدف ✓", simAfter: "ده لسه بعد ميعاد الهدف.", simDone: "الهدف ده اتحقق بالفعل.", simNoData: "مفيش مصاريف على الفئة دي لسه.",
      invRatePlaceholder: "العائد السنوي % (اختياري، مثلًا 17.03)", invNowEst: "قيمته الآن (تقدير)", invEstNote: (r)=>`تقدير بمعدل ${r}% في السنة`, invEstFromReal: (d)=>`من قيمتك الحقيقية يوم ${d}`, invEstNoReal: "لسه ما سجّلتيش قيمة حقيقية",
     calcBtn: "🧮 حاسبة العائد", calcAmount: "المبلغ", calcRate: "العائد السنوي %", calcGains: "الأرباح المتوقعة كل شهر", calcTotalLabel: "مجموع أرباح 12 شهر", calcDay: "/يوم", calcWithdraw: (p,a)=>`لو سحبتي الأرباح كل شهر العائد ${p}%، يعني ${a} جنيه في السنة.`,
-     invValuePlaceholder: "القيمة الحالية", invGoalMissing: "الهدف المربوط اتمسح", invAtThen: (a)=>`كان محطوط ${a}`, noInvestYet: "لسه مفيش استثمارات متتبّعة.", toastEnterValue: "اكتبي القيمة الحالية", toastInvestUpdated: "تم تحديث القيمة", toastInvestSaved: "تم حفظ الاستثمار", toastNeedGoal: "اعملي هدف ادخار الأول وبعدين اربطيه", toastPickGoal: "اختاري الهدف اللي فيه إيداعاتك", deleteInvestTitle: "حذف الاستثمار ده؟", deleteInvestBody: (n)=>`سيتم حذف "${n}" وسجل قيمته. الهدف والإيداعات هيفضلوا زي ما هم.`,
+     invValuePlaceholder: "القيمة الحالية", invGoalMissing: "الهدف المربوط اتمسح", invInvestedPlaceholder: "المبلغ اللي حطيتيه (لو بدون هدف)", invNoGoalLabel: "بدون هدف مربوط", invNeedInvested: "سجّلي المبلغ اللي حطيتيه عشان يظهر الربح", invAtThen: (a)=>`كان محطوط ${a}`, noInvestYet: "لسه مفيش استثمارات متتبّعة.", toastEnterValue: "اكتبي القيمة الحالية", toastInvestUpdated: "تم تحديث القيمة", toastInvestSaved: "تم حفظ الاستثمار", toastNeedGoal: "اعملي هدف ادخار الأول وبعدين اربطيه", toastPickGoal: "اختاري الهدف اللي فيه إيداعاتك", deleteInvestTitle: "حذف الاستثمار ده؟", deleteInvestBody: (n)=>`سيتم حذف "${n}" وسجل قيمته. الهدف والإيداعات هيفضلوا زي ما هم.`,
      noGoalOpt: "— بدون هدف —", linkedDeposit: "من مصروف", compareTitle: "مقارنة بالشهر السابق", compareNoPrev: "مفيش مصاريف في الشهر السابق للمقارنة.", compareSame: "مفيش تغيير يُذكر عن الشهر السابق.", compareMore: "أكتر من الشهر السابق", compareLess: "أقل من الشهر السابق", undoBtn: "تراجع", toastRepeated: (d,a)=>`اتضاف تاني: ${d} · ${a}`, toastUndone: "تم الحذف", goalDeadlineLabel: "تاريخ الانتهاء (اختياري)", updateGoal: "تحديث الهدف", toastGoalUpdated: "تم تحديث الهدف", goalDueIn: (d,n)=>`ينتهي ${d} · باقي ${n} يوم`, goalDueToday: (d)=>`ينتهي النهارده (${d})`, goalLate: (d,n)=>`كان ينتهي ${d} · متأخر ${n} يوم`, goalPerMonth: (a)=>`≈ ${a} جنيه / شهر مطلوب`, goalDone: "تم تحقيق الهدف ✓", carriedOver: "المرحَّل من الشهر السابق", allCategories: "كل الفئات", filteredTotal: "الإجمالي", depositHistory: "الإيداعات", hideHistory: "إخفاء", noDepositsYet: "لا توجد إيداعات بعد.", deleteDepositTitle: "حذف هذا الإيداع؟", deleteDepositBody: "سيتم خصم المبلغ من المدخر.", toastDepositDeleted: "تم حذف الإيداع", toastEnterDate: "اختر التاريخ", addBtn: "+ إضافة", delete: "حذف",
     recurringExpenses: "المصروفات المتكررة",
     noRecurringYet: 'لا يوجد بعد — فعّل خيار "تكرار كل فترة راتب" عند إضافة مصروف.',
@@ -1580,7 +1582,7 @@ function sanitizeImport(data){
   out.incomes = arr('incomes').filter(e=>DATE_RE.test(e.date||'') && num(e.amount)!==null).map(e=>{ e=withId(e); e.amount=num(e.amount); e.desc=String(e.desc||''); if(typeof e.source==='string' && e.source.trim()) e.source=e.source.trim().slice(0,30); else delete e.source; return e; });
   out.recurring = arr('recurring').filter(r=>r.createdPeriod && isFinite(r.createdPeriod.year) && isFinite(r.createdPeriod.monthIdx) && num(r.amount)!==null).map(r=>{ r=withId(r); r.amount=num(r.amount); r.active=r.active!==false; r.category=(r.category && r.category!=='Rent/Housing')?r.category:'Other'; r.desc=String(r.desc||''); return r; });
   out.goals = arr('goals').filter(g=>g.id && num(g.target)!==null).map(g=>{ g={...g, target:num(g.target), name:String(g.name||'')}; if(!(typeof g.deadline==='string' && DATE_RE.test(g.deadline))) delete g.deadline; return g; });
-  out.investments = arr('investments').filter(v=>v.id && v.name).map(v=>({id:String(v.id), name:String(v.name), goalId:v.goalId||'', rate:(parseFloat(v.rate)>0 ? parseFloat(v.rate) : undefined), valuations:(Array.isArray(v.valuations)?v.valuations:[]).filter(x=>x && DATE_RE.test(x.date||'') && num(x.value)!==null).map(x=>({id:(typeof x.id==='string'&&x.id)?x.id:genId(), date:x.date, value:num(x.value)}))}));
+  out.investments = arr('investments').filter(v=>v.id && v.name).map(v=>({id:String(v.id), name:String(v.name), goalId:v.goalId||'', invested:(parseFloat(v.invested)>0 ? parseFloat(v.invested) : undefined), investedDate:((typeof v.investedDate==='string' && DATE_RE.test(v.investedDate)) ? v.investedDate : undefined), rate:(parseFloat(v.rate)>0 ? parseFloat(v.rate) : undefined), valuations:(Array.isArray(v.valuations)?v.valuations:[]).filter(x=>x && DATE_RE.test(x.date||'') && num(x.value)!==null).map(x=>({id:(typeof x.id==='string'&&x.id)?x.id:genId(), date:x.date, value:num(x.value)}))}));
   out.subscriptions = arr('subscriptions').filter(x=>x.name && num(x.amount)!==null && parseInt(x.day)>=1 && parseInt(x.day)<=31).map(x=>({id:(typeof x.id==='string'&&x.id)?x.id:genId(), name:String(x.name), amount:num(x.amount), day:parseInt(x.day), category:x.category||'Other', remind:[0,1,2].includes(parseInt(x.remind))?parseInt(x.remind):1, active:x.active!==false}));
   { const cc = data.catConfig || {}; const clean = v=>String(v||'').replace(/[<>]/g,'').trim();
     out.catConfig = { custom: (Array.isArray(cc.custom)?cc.custom:[]).filter(c=>c && typeof c.key==='string' && c.key && clean(c.name)).map(c=>({key:c.key, name:clean(c.name).slice(0,30), emoji:clean(c.emoji).slice(0,8)})), overrides:{} };
@@ -2702,6 +2704,12 @@ let editingInvId = null;
 function invSaved(goalId, uptoDate){
   return state.contributions.filter(c=>c.goalId===goalId && (!uptoDate || c.date<=uptoDate)).reduce((a,c)=>a+parseFloat(c.amount),0);
 }
+function invDeposits(v){
+  if(v.goalId) return state.contributions.filter(c=>c.goalId===v.goalId).map(c=>({date:c.date, amount:parseFloat(c.amount)}));
+  const m = parseFloat(v.invested);
+  return m>0 ? [{date: v.investedDate || todayStr(), amount: m}] : [];
+}
+function invSavedFor(v, uptoDate){ return invDeposits(v).filter(d=>!uptoDate || d.date<=uptoDate).reduce((a,d)=>a+d.amount,0); }
 function invGrow(amount, fromDate, toDate, rate){
   const days = Math.max(0, (new Date(toDate+'T00:00:00') - new Date(fromDate+'T00:00:00'))/86400000);
   return amount * Math.pow(1+rate/100, days/365);
@@ -2711,7 +2719,7 @@ function invEstimate(v, toDate){
   const rate = parseFloat(v.rate); if(!(rate>0)) return null;
   const vals = (v.valuations||[]).slice().sort((a,b)=>b.date.localeCompare(a.date));
   const last = vals[0];
-  const deposits = state.contributions.filter(c=>c.goalId===v.goalId);
+  const deposits = invDeposits(v);
   let est = 0;
   if(last){ est += invGrow(last.value, last.date, toDate, rate); deposits.filter(c=>c.date>last.date).forEach(c=>{ est += invGrow(parseFloat(c.amount), c.date, toDate, rate); }); }
   else deposits.forEach(c=>{ est += invGrow(parseFloat(c.amount), c.date, toDate, rate); });
@@ -2719,12 +2727,12 @@ function invEstimate(v, toDate){
 }
 function invStats(v){
   const vals = (v.valuations||[]).slice().sort((a,b)=>b.date.localeCompare(a.date));
-  const investedNow = invSaved(v.goalId);
+  const investedNow = invSavedFor(v);
   const last = vals[0];
   const est = invEstimate(v, todayStr());
   const out = {investedNow, last: last||null, est};
   if(last){
-    out.investedAt = invSaved(v.goalId, last.date);
+    out.investedAt = invSavedFor(v, last.date);
     out.pl = last.value - out.investedAt;
     out.pct = out.investedAt>0 ? out.pl/out.investedAt*100 : null;
     out.since = investedNow - out.investedAt;
@@ -2737,9 +2745,11 @@ function invStats(v){
   return out;
 }
 function fmtPct(p){ return p===null ? '—' : (p>=0?'+':'−')+Math.abs(p).toFixed(1)+'%'; }
+function updateInvManual(){ const r = document.getElementById('invManualRow'); if(r) r.style.display = document.getElementById('invGoal').value ? 'none' : 'flex'; }
+document.getElementById('invGoal').addEventListener('change', updateInvManual);
 function resetInvestForm(){
   editingInvId = null;
-  document.getElementById('invName').value=''; document.getElementById('invRate').value=''; document.getElementById('saveInvest').textContent = t('saveInvest');
+  document.getElementById('invName').value=''; document.getElementById('invRate').value=''; document.getElementById('invInvested').value=''; document.getElementById('invSince').value=''; updateInvManual(); document.getElementById('saveInvest').textContent = t('saveInvest');
   document.getElementById('addInvestForm').classList.remove('open');
 }
 function renderInvestments(){
@@ -2749,8 +2759,12 @@ function renderInvestments(){
   const sel = document.getElementById('invGoal'); const keep = sel.value;
   sel.innerHTML = `<option value="">${t('invNoGoal')}</option>` + state.goals.map(g=>`<option value="${g.id}">${escapeHtml(g.name)}</option>`).join('');
   sel.value = state.goals.some(g=>g.id===keep) ? keep : '';
+  updateInvManual();
   if(!state.investments.length){ list.innerHTML = `<div class="empty-note">${t('noInvestYet')}</div>`; return; }
-  list.innerHTML = state.investments.map(v=>{
+  const invSel = (()=>{ const stored = (LedgerLocal.get('invSelected')||{}).value; return state.investments.some(x=>x.id===stored) ? stored : state.investments[0].id; })();
+  const shownInv = state.investments.length>1 ? state.investments.filter(x=>x.id===invSel) : state.investments;
+  const pickerHtml = state.investments.length>1 ? `<select id="invPicker" class="inv-picker">${state.investments.map(x=>`<option value="${x.id}"${x.id===invSel?' selected':''}>${escapeHtml(x.name)}</option>`).join('')}</select>` : '';
+  list.innerHTML = pickerHtml + shownInv.map(v=>{
     const st = invStats(v); const goal = state.goals.find(g=>g.id===v.goalId);
     const open = expandedInv.has(v.id);
     const useEst = st.est!==null;
@@ -2758,17 +2772,20 @@ function renderInvestments(){
     const pl = useEst ? st.plEst : st.pl, pct = useEst ? st.pctEst : st.pct;
     const shownInvested = useEst ? st.investedNow : (st.last ? st.investedAt : st.investedNow);
     const shownNow = useEst ? st.est : (st.last ? st.last.value : null);
-    const plCls = hasVal ? (pl>=0 ? 'green' : 'red') : '';
+    const base = useEst ? st.investedNow : (st.last ? st.investedAt : st.investedNow);
+    const hasPL = hasVal && base>0;
+    const plCls = hasPL ? (pl>=0 ? 'green' : 'red') : '';
     const vals = (v.valuations||[]).slice().sort((a,b)=>b.date.localeCompare(a.date));
     let note;
     if(useEst) note = t('invEstNote', parseFloat(v.rate)) + ' · ' + (st.last ? t('invEstFromReal', formatDate(st.last.date)) : t('invEstNoReal')) + (st.perDay>0 ? ' · ≈ +'+st.perDay.toFixed(2)+t('calcDay') : '');
     else note = st.last ? t('invUpdated', formatDate(st.last.date)) + (st.since>0.5 ? ' · '+t('invSince', fmtShort(st.since)) : '') : t('invNoValue');
+    if(hasVal && !hasPL) note += ' · '+t('invNeedInvested');
     return `<div class="inv-card">
-      <div class="goal-top"><div class="goal-name">${escapeHtml(v.name)} ${hasVal ? `<span class="goal-pct mono" style="color:var(--${pl>=0?'green':'red'})">${fmtPct(pct)}</span>` : ''}</div><div class="goal-nums mono">${goal ? escapeHtml(goal.name) : t('invGoalMissing')}</div></div>
+      <div class="goal-top"><div class="goal-name">${escapeHtml(v.name)} ${hasPL ? `<span class="goal-pct mono" style="color:var(--${pl>=0?'green':'red'})">${fmtPct(pct)}</span>` : ''}</div><div class="goal-nums mono">${v.goalId ? (goal ? escapeHtml(goal.name) : t('invGoalMissing')) : t('invNoGoalLabel')}</div></div>
       <div class="inv-grid">
         <div><span>${t('invInvested')}</span><b>${fmtShort(shownInvested)}</b></div>
         <div><span>${useEst ? t('invNowEst') : t('invNow')}</span><b>${shownNow!==null ? fmtShort(shownNow) : '—'}</b></div>
-        <div><span>${t('invProfit')}</span><b class="${plCls}">${hasVal ? (pl>=0?'+':'−')+fmtShort(Math.abs(pl)) : '—'}</b></div>
+        <div><span>${t('invProfit')}</span><b class="${plCls}">${hasPL ? (pl>=0?'+':'−')+fmtShort(Math.abs(pl)) : '—'}</b></div>
       </div>
       <div class="inv-note">${note}</div>
       <div class="inv-actions">
@@ -2779,9 +2796,10 @@ function renderInvestments(){
         <button class="inv-del" data-id="${v.id}">${t('delete')}</button>
       </div>
       <button class="dep-toggle inv-toggle" data-id="${v.id}">${open?'▾':'▸'} ${t('invHistory')} (${vals.length})</button>
-      ${open ? `<div class="dep-list">${vals.length ? vals.map(x=>{ const inv = invSaved(v.goalId, x.date); const p = inv>0 ? (x.value-inv)/inv*100 : null; return `<div class="inv-hist-row"><span class="mono">${formatDate(x.date)}</span><span class="mono v">${fmtShort(x.value)}</span><span class="mono" style="color:var(--ink-soft)">${t('invAtThen', fmtShort(inv))} · ${fmtPct(p)}</span><button class="dep-del inv-hist-del" data-v="${v.id}" data-id="${x.id}" title="${t('delete')}">✕</button></div>`; }).join('') : `<div class="empty-note">${t('invNoValue')}</div>`}</div>` : ''}
+      ${open ? `<div class="dep-list">${vals.length ? vals.map(x=>{ const inv = invSavedFor(v, x.date); const p = inv>0 ? (x.value-inv)/inv*100 : null; return `<div class="inv-hist-row"><span class="mono">${formatDate(x.date)}</span><span class="mono v">${fmtShort(x.value)}</span><span class="mono" style="color:var(--ink-soft)">${t('invAtThen', fmtShort(inv))} · ${fmtPct(p)}</span><button class="dep-del inv-hist-del" data-v="${v.id}" data-id="${x.id}" title="${t('delete')}">✕</button></div>`; }).join('') : `<div class="empty-note">${t('invNoValue')}</div>`}</div>` : ''}
     </div>`;
   }).join('');
+  { const pk = document.getElementById('invPicker'); if(pk) pk.addEventListener('change', ()=>{ LedgerLocal.set('invSelected', pk.value); renderInvestments(); }); }
   list.querySelectorAll('.inv-upd').forEach(b=>b.addEventListener('click', async ()=>{
     const v = state.investments.find(x=>x.id===b.dataset.id); if(!v) return;
     const val = parseFloat(document.getElementById('invval-'+v.id).value);
@@ -2795,7 +2813,7 @@ function renderInvestments(){
   list.querySelectorAll('.inv-edit').forEach(b=>b.addEventListener('click', ()=>{
     const v = state.investments.find(x=>x.id===b.dataset.id); if(!v) return;
     editingInvId = v.id;
-    document.getElementById('invName').value = v.name; document.getElementById('invGoal').value = v.goalId || ''; document.getElementById('invRate').value = v.rate || '';
+    document.getElementById('invName').value = v.name; document.getElementById('invGoal').value = v.goalId || ''; document.getElementById('invRate').value = v.rate || ''; document.getElementById('invInvested').value = v.invested || ''; document.getElementById('invSince').value = v.investedDate || ''; updateInvManual();
     document.getElementById('saveInvest').textContent = t('saveInvest');
     const f = document.getElementById('addInvestForm'); f.classList.add('open'); f.scrollIntoView({behavior:'smooth', block:'center'});
   }));
@@ -2825,13 +2843,13 @@ document.getElementById('saveInvest').addEventListener('click', async ()=>{
   const goalId = document.getElementById('invGoal').value;
   const rate = parseFloat(document.getElementById('invRate').value);
   if(!name){ showToast(t('toastEnterAmount')); return; }
-  if(!state.goals.length){ showToast(t('toastNeedGoal')); return; }
-  if(!goalId){ showToast(t('toastPickGoal')); return; }
+  const invested = parseFloat(document.getElementById('invInvested').value), since = document.getElementById('invSince').value || todayStr();
+  const manual = (o)=>{ if(!goalId && invested>0){ o.invested = invested; o.investedDate = since; } else { delete o.invested; delete o.investedDate; } };
   if(editingInvId){
-    const v = state.investments.find(x=>x.id===editingInvId); if(v){ v.name = name; v.goalId = goalId; if(rate>0) v.rate = rate; else delete v.rate; }
+    const v = state.investments.find(x=>x.id===editingInvId); if(v){ v.name = name; v.goalId = goalId; if(rate>0) v.rate = rate; else delete v.rate; manual(v); }
   } else {
-    const nv = {id:genId(), name, goalId, valuations:[]}; if(rate>0) nv.rate = rate;
-    state.investments.push(nv);
+    const nv = {id:genId(), name, goalId, valuations:[]}; if(rate>0) nv.rate = rate; manual(nv);
+    state.investments.push(nv); LedgerLocal.set('invSelected', nv.id);
   }
   await saveInvestments(); resetInvestForm(); renderInvestments(); showToast(t('toastInvestSaved'));
 });
