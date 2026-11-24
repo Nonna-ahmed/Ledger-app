@@ -1510,27 +1510,53 @@ document.getElementById('saveGoal').addEventListener('click', async ()=>{
 function renderTrend(){
   document.getElementById('trendYear').textContent = fyLabel(state.year);
   const svg = document.getElementById('trendSvg');
-  const W=320, H=128, padX=16, top=24, bot=22;
+  const W=320, H=150, padX=16, top=26, bot=52;
   svg.setAttribute('viewBox','0 0 '+W+' '+H); svg.setAttribute('height', String(H));
-  const cur = currentPeriod(), curKey = cur.year*12+cur.monthIdx;
-  const spentArr=[], budgetArr=[], past=[];
-  for(let i=0;i<12;i++){ const p=fyPeriod(state.year,i); spentArr.push(periodExpenseTotal(p.year,p.monthIdx)); budgetArr.push(periodBaseBudget(p.year,p.monthIdx)); past.push(p.year*12+p.monthIdx <= curKey); }
+  const spentArr=[], budgetArr=[], months=[];
+  for(let i=0;i<12;i++){ const p=fyPeriod(state.year,i); spentArr.push(periodExpenseTotal(p.year,p.monthIdx)); budgetArr.push(periodBaseBudget(p.year,p.monthIdx)); months.push(p.monthIdx+1); }
   const maxV = Math.max(1, ...spentArr, ...budgetArr);
   const stepX = (W-2*padX)/11;
   const X = i=>padX+i*stepX, Y = v=>H-bot-(v/maxV)*(H-top-bot);
   const path = arr => arr.map((v,i)=>(i===0?'M':'L')+X(i).toFixed(1)+','+Y(v).toFixed(1)).join(' ');
   const kf = v=>{ if(v>=1000){ const k=v/1000; return (k>=100 ? String(Math.round(k)) : k.toFixed(1)).replace(/\.0$/,'')+'k'; } return String(Math.round(v)); };
+  /* spent labels sit on the points; each one is placed where it does not touch another label */
+  const placed = [];
+  const box = (x,y,txt)=>{ const w=txt.length*5.4; return {x0:x-w/2, x1:x+w/2, y0:y-9, y1:y+2}; };
+  const hit = (a,c)=>!(a.x1<c.x0||c.x1<a.x0||a.y1<c.y0||c.y1<a.y0);
   let labels = '';
   for(let i=0;i<12;i++){
-    const sp=spentArr[i], bu=budgetArr[i], spentAbove = sp>=bu;
-    if(sp>0){ const y = spentAbove ? Y(sp)-6 : Y(sp)+12; labels += `<text x="${X(i).toFixed(1)}" y="${y.toFixed(1)}" text-anchor="middle" font-size="8.5" font-weight="700" fill="#A87B3F" font-family="JetBrains Mono,monospace">${kf(sp)}</text>`; }
-    if(past[i] && bu>0){ const y = spentAbove ? Y(bu)+11 : Y(bu)-5; labels += `<text x="${X(i).toFixed(1)}" y="${y.toFixed(1)}" text-anchor="middle" font-size="7.5" style="fill:var(--ink-soft)" opacity="0.85" font-family="JetBrains Mono,monospace">${kf(bu)}</text>`; }
+    const v = spentArr[i]; if(!(v>0)) continue;
+    const pv = i>0 ? spentArr[i-1] : null, nx = i<11 ? spentArr[i+1] : null;
+    let pref;
+    if(pv===null) pref = nx>v ? 'below' : 'above';
+    else if(nx===null) pref = pv>v ? 'below' : 'above';
+    else if(v>=pv && v>=nx) pref = 'above';
+    else if(v<=pv && v<=nx) pref = 'below';
+    else pref = nx>v ? 'above' : 'below';
+    const txt = kf(v);
+    for(const side of [pref, pref==='above'?'below':'above']){
+      const y = side==='above' ? Y(v)-6 : Y(v)+13, bx = box(X(i), y, txt);
+      if(placed.some(c=>hit(bx,c))) continue;
+      placed.push(bx);
+      const common = `x="${X(i).toFixed(1)}" y="${y.toFixed(1)}" text-anchor="middle" font-size="8.5" font-weight="700" font-family="JetBrains Mono,monospace"`;
+      labels += `<text ${common} fill="none" style="stroke:var(--card);stroke-width:3px;stroke-linejoin:round">${txt}</text><text ${common} fill="#A87B3F">${txt}</text>`;
+      break;
+    }
+  }
+  /* month number + budget amount in two quiet rows under the chart (no overlap possible) */
+  const rowM = H-24, rowB = H-10;
+  let rows = '';
+  for(let i=0;i<12;i++){
+    rows += `<text x="${X(i).toFixed(1)}" y="${rowM}" text-anchor="middle" font-size="7.5" style="fill:var(--ink-soft)" opacity="0.65" font-family="JetBrains Mono,monospace">${months[i]}</text>`;
+    rows += `<text x="${X(i).toFixed(1)}" y="${rowB}" text-anchor="middle" font-size="7.5" style="fill:var(--ink-soft)" font-family="JetBrains Mono,monospace">${kf(budgetArr[i])}</text>`;
   }
   svg.innerHTML = `
     <path d="${path(budgetArr)}" fill="none" stroke="#4A5A73" stroke-width="1.5" stroke-dasharray="3,3" opacity="0.6"/>
     <path d="${path(spentArr)}" fill="none" stroke="#A87B3F" stroke-width="2.2"/>
     ${spentArr.map((v,i)=>`<circle cx="${X(i).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="2.4" fill="#A87B3F"/>`).join('')}
-    ${labels}`;
+    ${labels}
+    <line x1="${padX-8}" x2="${W-padX+8}" y1="${H-36}" y2="${H-36}" style="stroke:var(--paper-line)" stroke-width="0.8"/>
+    ${rows}`;
 }
 
 /* ---------------- Export ---------------- */
