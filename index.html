@@ -389,6 +389,33 @@
   .sheet-stats b{ display:block; color:var(--ink); font-size:15px; margin-top:2px; }
   .subhead{ font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-soft); margin: 14px 0 8px; }
   .cat-breakdown{ margin-bottom: 6px; }
+  .sum-hero{ background:var(--card); border-radius:14px; box-shadow:var(--shadow); padding:14px; margin:10px 0 4px; }
+  .sh-lab{ font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-soft); }
+  .sh-big{ display:block; font-size:26px; font-weight:700; margin-top:2px; }
+  .sh-big.red{ color:var(--red); } .sh-big.green{ color:var(--green); }
+  .sh-bar{ height:8px; border-radius:4px; background:var(--paper-line); overflow:hidden; margin:10px 0; }
+  .sh-fill{ height:100%; background:var(--brass); border-radius:4px; }
+  .sh-fill.over{ background:var(--red); }
+  .sh-row{ display:flex; justify-content:space-between; gap:8px; font-size:11px; color:var(--ink-soft); }
+  .sh-row b{ display:block; font-family:'JetBrains Mono',monospace; font-size:12.5px; color:var(--ink); margin-top:2px; direction:ltr; }
+  .sh-hint{ font-size:11.5px; color:var(--brass); font-weight:700; margin:-2px 0 4px; }
+  .cat-breakdown .cat-row{ width:100%; background:none; border:none; border-bottom:1px solid var(--paper-line); border-radius:8px; margin:0; padding:9px 6px; color:inherit; font:inherit; cursor:pointer; text-align:start; }
+  .cat-breakdown .cat-row.sel{ background:rgba(168,123,63,.16); outline:1.5px solid var(--brass); border-bottom-color:transparent; }
+  .cat-row .cpct{ font-family:'JetBrains Mono',monospace; font-size:10.5px; width:32px; text-align:end; flex-shrink:0; color:var(--ink-soft); }
+  .cat-row .cname{ width:132px; color:var(--ink); }
+  .cat-more{ display:block; width:100%; background:none; border:none; color:var(--brass); font-family:inherit; font-size:12.5px; font-weight:700; padding:9px 0; cursor:pointer; }
+  .filter-pillrow{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin:0 0 6px; }
+  .fpill{ background:var(--brass); color:#fff; border:none; border-radius:14px; padding:6px 12px; font-family:inherit; font-size:12.5px; font-weight:700; cursor:pointer; }
+  .fall{ background:none; border:none; color:var(--brass); font-family:inherit; font-size:12.5px; font-weight:700; cursor:pointer; padding:6px 0; }
+  .entry[hidden], .cat-more[hidden], .filter-pillrow[hidden], .sh-hint[hidden]{ display:none !important; }
+  .day-head.fold{ cursor:pointer; }
+  .day-head .day-arrow{ color:var(--ink-soft); font-size:12px; transition:transform .2s; display:inline-block; }
+  .day-head.shut .day-arrow{ transform:rotate(-90deg); }
+  .entry-dots{ background:none; border:1px solid var(--paper-line); border-radius:9px; width:32px; height:28px; color:var(--ink-soft); font-size:15px; font-weight:700; cursor:pointer; line-height:1; padding:0; }
+  .entry-dots[aria-expanded="true"]{ background:var(--card); border-color:var(--brass); color:var(--brass); }
+  .entry.has-actions{ flex-wrap:wrap; }
+  .entry-actions{ display:none; flex-basis:100%; justify-content:flex-end; gap:8px; padding-top:2px; }
+  .entry.open-actions .entry-actions{ display:flex; }
   .cat-row{ display:flex; align-items:center; gap:8px; margin-bottom:6px; }
   .cat-row .cname{ font-size:12.5px; width: 118px; flex-shrink:0; color: var(--ink-soft); }
   .cat-row .ctrack{ flex:1; height:6px; background: var(--paper-line); border-radius:3px; overflow:hidden; }
@@ -921,24 +948,31 @@
     <div class="sheet-handle"></div>
     <div class="sheet-header"><h2 id="sheetTitle">Period</h2><div class="sheet-actions"><button class="report-btn" id="sheetReportBtn" type="button" data-i18n="reportBtn">📄 Report</button><button class="sheet-close" id="sheetClose">✕</button></div></div>
     <div class="sheet-range" id="sheetRange"></div>
-    <div class="sheet-stats">
-      <div><span data-i18n="salaryBonus">Salary + bonus</span> <b id="sheetBudget" class="mono">—</b></div>
-      <div><span data-i18n="carriedOver">Carried over</span> <b id="sheetCarry" class="mono">—</b></div>
-      <div><span data-i18n="spent">Spent</span> <b id="sheetSpent" class="mono">—</b></div>
-      <div><span data-i18n="remaining">Remaining</span> <b id="sheetRemaining" class="mono">—</b></div>
+    <div class="sum-hero">
+      <div class="sh-lab" data-i18n="remaining">Remaining</div>
+      <b id="sheetRemaining" class="mono sh-big">—</b>
+      <div class="sh-bar"><div class="sh-fill" id="sheetBar"></div></div>
+      <div class="sh-row">
+        <div><span data-i18n="salaryBonus">Salary + bonus</span><b id="sheetBudget" class="mono">—</b></div>
+        <div><span data-i18n="carriedOver">Carried over</span><b id="sheetCarry" class="mono">—</b></div>
+        <div><span data-i18n="spent">Spent</span><b id="sheetSpent" class="mono">—</b></div>
+      </div>
     </div>
     <div class="subhead" data-i18n="byCategory">By category</div>
+    <div class="sh-hint" id="sheetCatHint" data-i18n="tapCatHint">Tap a category to see its expenses</div>
     <div class="cat-breakdown" id="sheetCats"></div>
+    <button class="cat-more" id="sheetCatMore" type="button" hidden></button>
     <div class="coll closed sheet-coll" data-coll="sheetCompare">
-      <button class="coll-head" type="button"><span class="coll-t" data-i18n="compareTitle">Vs last month</span><span class="coll-arrow">▸</span></button>
+      <button class="coll-head" type="button"><span class="coll-t" data-i18n="compareTitle">Vs last month</span><span class="coll-meta" id="sheetCompareLabel"></span><span class="coll-arrow">▸</span></button>
       <div class="coll-body"><div class="cmp-wrap" id="sheetCompare"></div></div>
     </div>
     <div class="coll closed sheet-coll" data-coll="sheetRule">
       <button class="coll-head" type="button"><span class="coll-t" data-i18n="ruleTitle">50 / 30 / 20 rule</span><span class="coll-arrow">▸</span></button>
       <div class="coll-body"><div class="cmp-wrap" id="sheetRule"></div></div>
     </div>
-    <div class="subhead" data-i18n="expenses">Expenses</div>
+    <div class="subhead" id="sheetExpHead" data-i18n="expenses">Expenses</div>
     <div class="filter-row"><select id="sheetCatFilter" class="cat-filter"></select><span id="sheetFilterTotal" class="filter-total mono"></span></div>
+    <div class="filter-pillrow" id="sheetFilterPill" hidden></div>
     <div id="sheetEntries"></div>
     <div class="subhead" id="sheetIncomeHead" style="display:none;" data-i18n="bonusesRewards">Bonuses / rewards</div>
     <div id="sheetIncomes"></div>
@@ -1028,7 +1062,7 @@ const translations = {
     cancel: "Cancel", saveEntry: "Save entry", saveBonus: "Save bonus",
     updateEntry: "Update entry", updateBonus: "Update bonus", removeReceipt: "Remove receipt",
     salaryBonus: "Salary + bonus", remaining: "Remaining", byCategory: "By category",
-    expenses: "Expenses", bonusesRewards: "Bonuses / rewards",
+    expenses: "Expenses", bonusesRewards: "Bonuses / rewards", tapCatHint: "Tap a category to see its expenses", showAllCats: (n)=>`Show all ${n} categories ▾`, showFewerCats: "Show fewer ▴", showAllExpenses: "Show all expenses", moreActions: "More",
     noExpensesYet: "No expenses yet.", noEntriesYetPeriod: "No entries yet this period.",
     edit: "Edit",
     deleteEntryTitle: "Delete entry?",
@@ -1109,7 +1143,7 @@ const translations = {
     cancel: "إلغاء", saveEntry: "حفظ القيد", saveBonus: "حفظ المكافأة",
     updateEntry: "تحديث القيد", updateBonus: "تحديث المكافأة", removeReceipt: "إزالة الإيصال",
     salaryBonus: "الراتب + المكافآت", remaining: "المتبقي", byCategory: "حسب الفئة",
-    expenses: "المصروفات", bonusesRewards: "المكافآت / الحوافز",
+    expenses: "المصروفات", bonusesRewards: "المكافآت / الحوافز", tapCatHint: "اضغطي على فئة لعرض مصروفاتها", showAllCats: (n)=>`عرض كل الفئات (${n}) ▾`, showFewerCats: "عرض أقل ▴", showAllExpenses: "عرض كل المصروفات", moreActions: "المزيد",
     noExpensesYet: "لا توجد مصروفات بعد.", noEntriesYetPeriod: "لا توجد قيود بعد لهذه الفترة.",
     edit: "تعديل",
     deleteEntryTitle: "حذف هذا القيد؟",
@@ -2535,9 +2569,9 @@ const sheetOverlay=document.getElementById('sheetOverlay');
 document.getElementById('sheetClose').addEventListener('click', ()=>{ sheetOverlay.classList.remove('open'); currentSheetMonthIdx=null; });
 sheetOverlay.addEventListener('click',(e)=>{ if(e.target===sheetOverlay){ sheetOverlay.classList.remove('open'); currentSheetMonthIdx=null; } });
 
-let sheetCatFilter = 'all';
+let sheetCatFilter = 'all', sheetCatsOpen = false, sheetFoldedDays = new Set();
 function openPeriodSheet(monthIdx, silent){
-  if(!silent) sheetCatFilter = 'all';
+  if(!silent){ sheetCatFilter = 'all'; sheetCatsOpen = false; sheetFoldedDays = new Set(); }
   currentSheetMonthIdx = monthIdx;
   const sy=fyYearFor(monthIdx);
   const entries=expensesForPeriod(sy,monthIdx).sort((a,b)=>b.date.localeCompare(a.date));
@@ -2553,14 +2587,32 @@ function openPeriodSheet(monthIdx, silent){
   document.getElementById('sheetBudget').textContent='EGP '+fmt(budget);
   document.getElementById('sheetCarry').textContent='EGP '+fmt(carry);
   document.getElementById('sheetSpent').textContent='EGP '+fmt(spent);
-  const remEl=document.getElementById('sheetRemaining'); remEl.textContent='EGP '+fmt(remaining); remEl.className='mono '+(remaining<0?'red':'green');
+  const remEl=document.getElementById('sheetRemaining'); remEl.textContent='EGP '+fmt(remaining); remEl.className='mono sh-big '+(remaining<0?'red':'green');
+  { const avail=budget+carry, bar=document.getElementById('sheetBar'); bar.style.width=(avail>0?Math.min(100,Math.max(0,spent/avail*100)):(spent>0?100:0))+'%'; bar.classList.toggle('over', spent>avail); }
 
   const byCat={}; entries.forEach(e=>{ byCat[e.category]=(byCat[e.category]||0)+parseFloat(e.amount); });
   const maxCat=Math.max(1,...Object.values(byCat));
-  document.getElementById('sheetCats').innerHTML = Object.keys(byCat).length ? Object.entries(byCat).sort((a,b)=>b[1]-a[1]).map(([cat,amt])=>`
-    <div class="cat-row"><div class="cname">${escapeHtml(categoryLabel(cat))}</div><div class="ctrack"><div class="cfill" style="width:${(amt/maxCat)*100}%"></div></div><div class="camt">${fmt(amt)}</div></div>`).join('') : `<div class="empty-note">${t('noExpensesYet')}</div>`;
+  const catList = Object.entries(byCat).sort((a,b)=>b[1]-a[1]);
+  const catShown = sheetCatsOpen ? catList : catList.slice(0,4);
+  // keep a selected category visible even when the list is folded
+  if(sheetCatFilter!=='all' && !catShown.some(([c])=>c===sheetCatFilter) && byCat[sheetCatFilter]!==undefined) catShown.push([sheetCatFilter, byCat[sheetCatFilter]]);
+  document.getElementById('sheetCats').innerHTML = catList.length ? catShown.map(([cat,amt])=>`
+    <button type="button" class="cat-row${cat===sheetCatFilter?' sel':''}" data-cat="${escapeHtml(cat)}" aria-pressed="${cat===sheetCatFilter}"><div class="cname">${escapeHtml(categoryLabel(cat))}</div><div class="ctrack"><div class="cfill" style="width:${(amt/maxCat)*100}%"></div></div><div class="camt">${fmt(amt)}</div><div class="cpct">${spent>0?Math.round(amt/spent*100):0}%</div></button>`).join('') : `<div class="empty-note">${t('noExpensesYet')}</div>`;
+  document.getElementById('sheetCatHint').hidden = !catList.length;
+  const moreBtn = document.getElementById('sheetCatMore');
+  moreBtn.hidden = catList.length<=4;
+  moreBtn.textContent = sheetCatsOpen ? t('showFewerCats') : t('showAllCats', catList.length);
+  moreBtn.onclick = ()=>{ sheetCatsOpen = !sheetCatsOpen; openPeriodSheet(currentSheetMonthIdx, true); };
+  document.querySelectorAll('#sheetCats .cat-row').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      sheetCatFilter = (sheetCatFilter===b.dataset.cat) ? 'all' : b.dataset.cat;
+      openPeriodSheet(currentSheetMonthIdx, true);
+      if(sheetCatFilter!=='all') document.getElementById('sheetExpHead').scrollIntoView({behavior:'smooth', block:'start'});
+    });
+  });
 
   document.getElementById('sheetCompare').innerHTML = compareHtml(sy, monthIdx);
+  { const m = document.getElementById('sheetCompare').querySelector('.cmp-total'); const mm = m && m.textContent.replace(/\s+/g,' ').trim().match(/^[▲▼]\s*EGP\s*[\d,.]+/); document.getElementById('sheetCompareLabel').textContent = mm ? mm[0] : ''; }
   document.getElementById('sheetRule').innerHTML = ruleHtml(sy, monthIdx);
   const catSet = CATEGORY_KEYS.slice(); Object.keys(byCat).forEach(c=>{ if(!catSet.includes(c)) catSet.push(c); });
   if(sheetCatFilter!=='all' && !catSet.includes(sheetCatFilter)) sheetCatFilter='all';
@@ -2570,9 +2622,17 @@ function openPeriodSheet(monthIdx, silent){
   filterEl.onchange = ()=>{ sheetCatFilter = filterEl.value; openPeriodSheet(currentSheetMonthIdx, true); };
   const shown = sheetCatFilter==='all' ? entries : entries.filter(e=>e.category===sheetCatFilter);
   document.getElementById('sheetFilterTotal').textContent = sheetCatFilter==='all' ? '' : t('filteredTotal')+': EGP '+fmt(shown.reduce((a,e)=>a+parseFloat(e.amount),0));
+  const pillRow = document.getElementById('sheetFilterPill');
+  if(sheetCatFilter==='all'){ pillRow.hidden = true; pillRow.innerHTML=''; }
+  else {
+    pillRow.hidden = false;
+    pillRow.innerHTML = `<button type="button" class="fpill" id="sheetPillX">${escapeHtml(categoryLabel(sheetCatFilter))} ✕</button><button type="button" class="fall" id="sheetShowAll">${t('showAllExpenses')}</button>`;
+    const clear = ()=>{ sheetCatFilter='all'; openPeriodSheet(currentSheetMonthIdx, true); };
+    document.getElementById('sheetPillX').onclick = clear; document.getElementById('sheetShowAll').onclick = clear;
+  }
 
   document.getElementById('sheetEntries').innerHTML = shown.length ? groupByDay(shown, e=>`
-    <div class="entry" data-entry-id="${e.id}">
+    <div class="entry has-actions" data-entry-id="${e.id}" data-day="${e.date}"${sheetFoldedDays.has(e.date)?' hidden':''}>
       <div class="entry-left">
         ${e.hasReceipt ? `<button class="receipt-badge" data-view-receipt="${e.id}" title="Receipt">🧾</button>` : ''}
         <div class="entry-text">
@@ -2582,6 +2642,9 @@ function openPeriodSheet(monthIdx, silent){
       </div>
       <div class="entry-right">
         <div class="entry-amt">EGP ${fmt(e.amount)}</div>
+        <button class="entry-dots" type="button" aria-label="${t('moreActions')}" aria-expanded="false">⋯</button>
+      </div>
+      <div class="entry-actions">
         <button class="entry-edit" data-kind="expense" data-id="${e.id}">${t('edit')}</button>
         <button class="entry-del" data-kind="expense" data-id="${e.id}">${t('delete')}</button>
       </div>
@@ -2601,6 +2664,18 @@ function openPeriodSheet(monthIdx, silent){
       </div>`).join('');
   } else { incomeHead.style.display='none'; incomesEl.innerHTML=''; }
 
+  document.querySelectorAll('#sheetEntries .entry-dots').forEach(b=>{
+    b.addEventListener('click', ()=>{ const row=b.closest('.entry'); const o=row.classList.toggle('open-actions'); b.setAttribute('aria-expanded', String(o)); });
+  });
+  document.querySelectorAll('#sheetEntries .day-head').forEach(h=>{
+    const day = h.dataset.day; if(!day) return;
+    h.classList.add('fold'); h.classList.toggle('shut', sheetFoldedDays.has(day));
+    h.addEventListener('click', ()=>{
+      if(sheetFoldedDays.has(day)) sheetFoldedDays.delete(day); else sheetFoldedDays.add(day);
+      h.classList.toggle('shut', sheetFoldedDays.has(day));
+      document.querySelectorAll('#sheetEntries .entry[data-day="'+day+'"]').forEach(r=>{ r.hidden = sheetFoldedDays.has(day); });
+    });
+  });
   document.querySelectorAll('[data-view-receipt]').forEach(btn=>{
     btn.addEventListener('click', ()=> viewReceipt(btn.dataset.viewReceipt));
   });
@@ -3800,7 +3875,7 @@ function groupByDay(list, rowFn){
   list.forEach(e=>{ if(!(e.date in idx)){ idx[e.date] = groups.length; groups.push({k:e.date, items:[]}); } groups[idx[e.date]].items.push(e); });
   return groups.map(g=>{
     const d = new Date(g.k+'T00:00:00'), tot = g.items.reduce((a,e)=>a+parseFloat(e.amount),0);
-    return `<div class="day-head"><span class="day-n">${d.getDate()}</span><span class="day-w">${d.toLocaleDateString(loc,{weekday:'long'})}<small>${d.toLocaleDateString(loc,{month:'long',year:'numeric'})}</small></span><b class="mono">EGP ${fmt(tot)}</b></div>` + g.items.map(rowFn).join('');
+    return `<div class="day-head" data-day="${g.k}"><span class="day-n">${d.getDate()}</span><span class="day-w">${d.toLocaleDateString(loc,{weekday:'long'})}<small>${d.toLocaleDateString(loc,{month:'long',year:'numeric'})}</small></span><b class="mono">EGP ${fmt(tot)}</b><span class="day-arrow" aria-hidden="true">▾</span></div>` + g.items.map(rowFn).join('');
   }).join('');
 }
 
