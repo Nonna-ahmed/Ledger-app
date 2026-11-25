@@ -524,6 +524,36 @@
   .lc-row{ display:flex; align-items:center; gap:8px; padding:5px 0; } .lc-row span{ flex:1; font-size:13px; }
   .lc-row input{ width:100px; font-family:'JetBrains Mono',monospace; font-size:14px; text-align:center; background:transparent; color:var(--ink); border:1px solid var(--paper-line); border-radius:7px; padding:7px; }
   .lc-acts{ display:flex; gap:8px; margin-top:10px; } .lc-acts button{ flex:1; padding:10px; border-radius:8px; border:1px solid var(--paper-line); background:var(--card); color:var(--ink); font-family:inherit; font-size:13px; cursor:pointer; } .lc-acts .go{ background:var(--brass); border-color:var(--brass); color:#1B2A44; font-weight:700; }
+
+  .plan-sum{ background:var(--ink); color:#fff; border-radius:14px; padding:14px 16px; margin:0 20px 12px; box-shadow:var(--shadow); }
+  .plan-sum .ps-l{ font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--brass-soft); }
+  .plan-sum .ps-v{ font-family:'JetBrains Mono',monospace; font-size:28px; font-weight:700; margin:4px 0; direction:ltr; }
+  .plan-sum .ps-v small{ font-size:14px; font-weight:400; }
+  .plan-sum .ps-s{ font-size:12px; color:#d5dbe6; }
+  .pill{ display:inline-block; padding:2px 9px; border-radius:20px; font-size:11px; font-weight:700; background:#dfe9e1; color:var(--green); }
+  .pill.warn{ background:#f1e3c8; color:#8a5f1f; } .pill.bad{ background:#f0d9d9; color:var(--red); }
+  .goal-bar{ display:flex; align-items:center; gap:6px; flex-wrap:nowrap; margin-top:10px; }
+  .goal-bar .gm-add{ background:var(--brass); color:#fff; border:none; border-radius:9px; padding:9px 11px; font-weight:700; font-size:13px; font-family:inherit; cursor:pointer; white-space:nowrap; }
+  .goal-bar .dep-toggle{ padding:0; font-size:11px; white-space:nowrap; } .goal-bar .goal-edit,.goal-bar .goal-del{ background:none; border:none; color:var(--ink-soft); font-family:'JetBrains Mono',monospace; font-size:11.5px; cursor:pointer; padding:4px; }
+  .goal-bar .goal-del{ color:var(--red); }
+  .goal-bar .sp{ flex:1; }
+  .goal-actions.gm-form{ display:none; margin-top:10px; } .goal-actions.gm-form.open{ display:flex; }
+  .goal-pace{ font-size:11px; color:var(--ink-soft); margin-top:2px; }
+  .st-sum .sts-l{ font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-soft); }
+  .st-sum .sts-v{ font-family:'JetBrains Mono',monospace; font-size:26px; font-weight:700; direction:ltr; margin:2px 0 6px; }
+  .st-sum .sts-s{ font-size:12px; color:var(--ink-soft); margin-top:4px; }
+  .st-sum .st-bar2{ height:9px; border-radius:5px; background:var(--paper-line); overflow:hidden; } .st-sum .st-bar2 i{ display:block; height:100%; background:var(--green); } .st-sum .st-bar2 i.warn{ background:var(--brass); } .st-sum .st-bar2 i.over{ background:var(--red); }
+  #stLabel{ font-size:12px; text-align:center; line-height:1.3; }
+  .st-cmp{ font-size:11px; color:var(--ink-soft); margin-top:2px; } .st-cmp.up{ color:var(--red); } .st-cmp.down{ color:var(--green); }
+  .st-busy{ font-family:'JetBrains Mono',monospace; font-size:11.5px; color:var(--ink-soft); margin-top:6px; }
+  .set-group{ background:var(--card); border-radius:14px; padding:12px 14px; margin-bottom:12px; box-shadow:var(--shadow); }
+  .set-group > .sg-h{ font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:4px; }
+  .set-group .sal-block{ border-top:1px dashed var(--paper-line); margin-top:0; padding:10px 0; }
+  .sal-block.fold > .sal-title{ cursor:pointer; display:flex; justify-content:space-between; margin:0; color:var(--ink); }
+  .sal-block.fold > .sal-title::after{ content:'›'; color:var(--ink-soft); transition:transform .15s; }
+  .sal-block.fold.open > .sal-title::after{ transform:rotate(90deg); }
+  .sal-block.fold:not(.open) > *:not(.sal-title){ display:none !important; }
+  .sal-block.fold.open > .sal-title{ margin-bottom:8px; }
 </style>
 </head>
 <body>
@@ -593,10 +623,12 @@
 <section class="stats-section" data-tab="stats">
   <div class="st-seg"><button type="button" id="stMonth" class="on" data-i18n="statsMonth">Month</button><button type="button" id="stYear" data-i18n="statsYear">Year</button></div>
   <div class="st-nav" id="stNav"><button type="button" id="stPrev">‹</button><span id="stLabel" class="mono"></span><button type="button" id="stNext">›</button></div>
+  <div class="st-card st-sum" id="stSum"></div>
   <div class="st-card" id="stDonut"></div>
   <div class="st-card"><div class="st-h" data-i18n="statsTop">Top categories</div><div id="stTop"></div></div>
   <div class="st-card" id="stDailyCard"><div class="st-h" id="stDailyTitle">Daily spending</div><div id="stDaily"></div></div>
 </section>
+<div class="plan-sum" id="planSummary" data-tab="plan"></div>
 <div class="sections-stack">
 <section class="goals-section coll coll-section closed" data-coll="goals" data-tab="plan">
   <button class="coll-head" type="button"><span class="coll-t" data-i18n="savingsGoals">Savings goals</span><span class="coll-meta" id="goalsMeta"></span><span class="coll-arrow">▸</span></button>
@@ -946,7 +978,7 @@ const translations = {
      invRatePlaceholder: "Annual return % (optional, e.g. 17.03)", invNowEst: "Now (est.)", invEstNote: (r)=>`Estimated at ${r}% / year`, invEstFromReal: (d)=>`from your real value on ${d}`, invEstNoReal: "no real value entered yet",
     calcBtn: "🧮 Returns calculator", calcAmount: "Amount", calcRate: "Annual rate %", calcGains: "Expected gains per month", calcTotalLabel: "Sum of 12 months gains", calcDay: "/day", calcWithdraw: (p,a)=>`Withdrawing monthly gains earns ${p}%, or ${a} EGP a year.`,
      invValuePlaceholder: "Current value", invGoalMissing: "Linked goal was deleted", invInvestedPlaceholder: "Amount invested (if no goal)", invNoGoalLabel: "No linked goal", invNeedInvested: "add the amount you invested to see profit", invAtThen: (a)=>`invested ${a}`, noInvestYet: "No investments tracked yet.", toastEnterValue: "Enter the current value", toastInvestUpdated: "Value updated", toastInvestSaved: "Investment saved", toastNeedGoal: "Create a savings goal first, then link it", toastPickGoal: "Pick the goal that holds your deposits", deleteInvestTitle: "Delete this investment?", deleteInvestBody: (n)=>`"${n}" and its value history will be removed. Your goal and deposits stay.`,
-     noGoalOpt: "— No goal —", linkedDeposit: "from an expense", compareTitle: "Vs last month", compareNoPrev: "No spending last month to compare with.", compareSame: "No real change vs last month.", compareMore: "more than last month", compareLess: "less than last month", undoBtn: "Undo", toastRepeated: (d,a)=>`Added again: ${d} · ${a}`, toastUndone: "Removed", goalDeadlineLabel: "Deadline (optional)", updateGoal: "Update goal", toastGoalUpdated: "Goal updated", goalDueIn: (d,n)=>`Due ${d} · ${n} days left`, goalDueToday: (d)=>`Due today (${d})`, goalLate: (d,n)=>`Was due ${d} · ${n} days late`, goalPerMonth: (a)=>`≈ EGP ${a} / month needed`, goalDone: "Goal reached ✓", carriedOver: "Carried over", allCategories: "All categories", filteredTotal: "Total", depositHistory: "Deposits", hideHistory: "Hide", noDepositsYet: "No deposits yet.", deleteDepositTitle: "Delete this deposit?", deleteDepositBody: "This will reduce the saved amount.", toastDepositDeleted: "Deposit deleted", toastEnterDate: "Pick a date", addBtn: "+ Add", delete: "Delete",
+     noGoalOpt: "— No goal —", linkedDeposit: "from an expense", compareTitle: "Vs last month", compareNoPrev: "No spending last month to compare with.", compareSame: "No real change vs last month.", compareMore: "more than last month", compareLess: "less than last month", undoBtn: "Undo", toastRepeated: (d,a)=>`Added again: ${d} · ${a}`, toastUndone: "Removed", goalDeadlineLabel: "Deadline (optional)", updateGoal: "Update goal", toastGoalUpdated: "Goal updated", goalDueIn: (d,n)=>`Due ${d} · ${n} days left`, goalDueToday: (d)=>`Due today (${d})`, goalLate: (d,n)=>`Was due ${d} · ${n} days late`, goalPerMonth: (a)=>`≈ EGP ${a} / month needed`, goalDone: "Goal reached ✓", planSaved: "Saved toward goals", planOf: (a)=>`of ${a} EGP`, planInvSep: (n,pl)=>`Investments tracked separately (not added here): ${n} now · ${pl} profit`, goalOnTrack: "On track", goalBehind: "Behind pace", goalPaceNote: "Estimate from your last 3 months of deposits", addMoney: "+ Add money", stSpent: "Spent this period", stBelow: (n)=>`${n}% below last period`, stAbove: (n)=>`${n}% above last period`, stBudgetLine: (b,l)=>`of ${b} budget · ${l} left`, stAvgDay: (a)=>`avg ${a}/day`, stPace: (a)=>`pace guide: ${a}/day for the rest of the period (not a promise)`, stBusiest: (d,a)=>`Busiest day: ${d} · EGP ${a}`, vsLast: "vs last period", setMoney: "Money", setPersonalize: "Personalize", setSecurity: "Security & alerts", setBackup: "Backup", carriedOver: "Carried over", allCategories: "All categories", filteredTotal: "Total", depositHistory: "Deposits", hideHistory: "Hide", noDepositsYet: "No deposits yet.", deleteDepositTitle: "Delete this deposit?", deleteDepositBody: "This will reduce the saved amount.", toastDepositDeleted: "Deposit deleted", toastEnterDate: "Pick a date", addBtn: "+ Add", delete: "Delete",
     recurringExpenses: "Recurring expenses",
     noRecurringYet: 'None yet — check "repeat every pay period" when adding an expense.',
     pause: "Pause", resume: "Resume", everyPayPeriod: "every pay period", pausedLabel: "(paused)",
@@ -1027,7 +1059,7 @@ const translations = {
      invRatePlaceholder: "العائد السنوي % (اختياري، مثلًا 17.03)", invNowEst: "قيمته الآن (تقدير)", invEstNote: (r)=>`تقدير بمعدل ${r}% في السنة`, invEstFromReal: (d)=>`من قيمتك الحقيقية يوم ${d}`, invEstNoReal: "لسه ما سجّلتيش قيمة حقيقية",
     calcBtn: "🧮 حاسبة العائد", calcAmount: "المبلغ", calcRate: "العائد السنوي %", calcGains: "الأرباح المتوقعة كل شهر", calcTotalLabel: "مجموع أرباح 12 شهر", calcDay: "/يوم", calcWithdraw: (p,a)=>`لو سحبتي الأرباح كل شهر العائد ${p}%، يعني ${a} جنيه في السنة.`,
      invValuePlaceholder: "القيمة الحالية", invGoalMissing: "الهدف المربوط اتمسح", invInvestedPlaceholder: "المبلغ اللي حطيتيه (لو بدون هدف)", invNoGoalLabel: "بدون هدف مربوط", invNeedInvested: "سجّلي المبلغ اللي حطيتيه عشان يظهر الربح", invAtThen: (a)=>`كان محطوط ${a}`, noInvestYet: "لسه مفيش استثمارات متتبّعة.", toastEnterValue: "اكتبي القيمة الحالية", toastInvestUpdated: "تم تحديث القيمة", toastInvestSaved: "تم حفظ الاستثمار", toastNeedGoal: "اعملي هدف ادخار الأول وبعدين اربطيه", toastPickGoal: "اختاري الهدف اللي فيه إيداعاتك", deleteInvestTitle: "حذف الاستثمار ده؟", deleteInvestBody: (n)=>`سيتم حذف "${n}" وسجل قيمته. الهدف والإيداعات هيفضلوا زي ما هم.`,
-     noGoalOpt: "— بدون هدف —", linkedDeposit: "من مصروف", compareTitle: "مقارنة بالشهر السابق", compareNoPrev: "مفيش مصاريف في الشهر السابق للمقارنة.", compareSame: "مفيش تغيير يُذكر عن الشهر السابق.", compareMore: "أكتر من الشهر السابق", compareLess: "أقل من الشهر السابق", undoBtn: "تراجع", toastRepeated: (d,a)=>`اتضاف تاني: ${d} · ${a}`, toastUndone: "تم الحذف", goalDeadlineLabel: "تاريخ الانتهاء (اختياري)", updateGoal: "تحديث الهدف", toastGoalUpdated: "تم تحديث الهدف", goalDueIn: (d,n)=>`ينتهي ${d} · باقي ${n} يوم`, goalDueToday: (d)=>`ينتهي النهارده (${d})`, goalLate: (d,n)=>`كان ينتهي ${d} · متأخر ${n} يوم`, goalPerMonth: (a)=>`≈ ${a} جنيه / شهر مطلوب`, goalDone: "تم تحقيق الهدف ✓", carriedOver: "المرحَّل من الشهر السابق", allCategories: "كل الفئات", filteredTotal: "الإجمالي", depositHistory: "الإيداعات", hideHistory: "إخفاء", noDepositsYet: "لا توجد إيداعات بعد.", deleteDepositTitle: "حذف هذا الإيداع؟", deleteDepositBody: "سيتم خصم المبلغ من المدخر.", toastDepositDeleted: "تم حذف الإيداع", toastEnterDate: "اختر التاريخ", addBtn: "+ إضافة", delete: "حذف",
+     noGoalOpt: "— بدون هدف —", linkedDeposit: "من مصروف", compareTitle: "مقارنة بالشهر السابق", compareNoPrev: "مفيش مصاريف في الشهر السابق للمقارنة.", compareSame: "مفيش تغيير يُذكر عن الشهر السابق.", compareMore: "أكتر من الشهر السابق", compareLess: "أقل من الشهر السابق", undoBtn: "تراجع", toastRepeated: (d,a)=>`اتضاف تاني: ${d} · ${a}`, toastUndone: "تم الحذف", goalDeadlineLabel: "تاريخ الانتهاء (اختياري)", updateGoal: "تحديث الهدف", toastGoalUpdated: "تم تحديث الهدف", goalDueIn: (d,n)=>`ينتهي ${d} · باقي ${n} يوم`, goalDueToday: (d)=>`ينتهي النهارده (${d})`, goalLate: (d,n)=>`كان ينتهي ${d} · متأخر ${n} يوم`, goalPerMonth: (a)=>`≈ ${a} جنيه / شهر مطلوب`, goalDone: "تم تحقيق الهدف ✓", planSaved: "المدّخر للأهداف", planOf: (a)=>`من ${a} جنيه`, planInvSep: (n,pl)=>`الاستثمارات منفصلة (غير مضافة هنا): ${n} حاليًا · ربح ${pl}`, goalOnTrack: "ماشية صح", goalBehind: "متأخرة عن المعدل", goalPaceNote: "تقدير من إيداعات آخر 3 شهور", addMoney: "+ إضافة مبلغ", stSpent: "المصروف في الفترة", stBelow: (n)=>`أقل ${n}% من الفترة السابقة`, stAbove: (n)=>`أكتر ${n}% من الفترة السابقة`, stBudgetLine: (b,l)=>`من ميزانية ${b} · باقي ${l}`, stAvgDay: (a)=>`متوسط ${a}/يوم`, stPace: (a)=>`مؤشر: ${a}/يوم لباقي الفترة (مش وعد)`, stBusiest: (d,a)=>`أكتر يوم صرف: ${d} · ${a} جنيه`, vsLast: "مقارنة بالفترة السابقة", setMoney: "الفلوس", setPersonalize: "التخصيص", setSecurity: "الأمان والتنبيهات", setBackup: "النسخ الاحتياطي", carriedOver: "المرحَّل من الشهر السابق", allCategories: "كل الفئات", filteredTotal: "الإجمالي", depositHistory: "الإيداعات", hideHistory: "إخفاء", noDepositsYet: "لا توجد إيداعات بعد.", deleteDepositTitle: "حذف هذا الإيداع؟", deleteDepositBody: "سيتم خصم المبلغ من المدخر.", toastDepositDeleted: "تم حذف الإيداع", toastEnterDate: "اختر التاريخ", addBtn: "+ إضافة", delete: "حذف",
     recurringExpenses: "المصروفات المتكررة",
     noRecurringYet: 'لا يوجد بعد — فعّل خيار "تكرار كل فترة راتب" عند إضافة مصروف.',
     pause: "إيقاف مؤقت", resume: "استئناف", everyPayPeriod: "كل فترة راتب", pausedLabel: "(متوقف)",
@@ -1418,6 +1450,25 @@ function renderRecurring(){
 /* ---------------- Goals ---------------- */
 function goalSaved(goalId){ return state.contributions.filter(c=>c.goalId===goalId).reduce((s,c)=>s+parseFloat(c.amount),0); }
 const expandedGoals = new Set();
+function goalPaceHtml(g, saved){
+  if(!g.deadline || saved>=g.target) return '';
+  const today = new Date(todayStr()+'T00:00:00'), due = new Date(g.deadline+'T00:00:00');
+  const days = Math.round((due-today)/86400000); if(days<=0) return '';
+  const need = (g.target-saved)/Math.max(1, days/30.4);
+  const cut = new Date(today.getTime()-90*86400000), cutS = localDateStr(cut);
+  const recent = state.contributions.filter(c=>c.goalId===g.id && c.date>=cutS).reduce((a,c)=>a+parseFloat(c.amount),0)/3;
+  const ok = recent>=need;
+  return `<div class="goal-pace"><span class="pill ${ok?'':'warn'}">${t(ok?'goalOnTrack':'goalBehind')}</span> <span>${t('goalPaceNote')}</span></div>`;
+}
+function renderPlanSummary(){
+  const el = document.getElementById('planSummary'); if(!el) return;
+  if(!state.goals.length && !state.investments.length){ el.style.display='none'; return; }
+  el.style.display='';
+  const saved = state.goals.reduce((a,g)=>a+goalSaved(g.id),0), target = state.goals.reduce((a,g)=>a+parseFloat(g.target||0),0);
+  let now=0, pl=0, any=false;
+  state.investments.forEach(v=>{ try{ const st=invStats(v); const useEst=st.est!==null; const val=useEst?st.est:(st.last?st.last.value:null); const base=useEst?st.investedNow:(st.last?st.investedAt:st.investedNow); if(val!==null){ now+=val; any=true; if(base>0) pl+=val-base; } }catch(e){} });
+  el.innerHTML = `<div class="ps-l">${t('planSaved')}</div><div class="ps-v">${fmtShort(saved)} <small>${t('planOf', fmtShort(target))}</small></div>` + (any ? `<div class="ps-s">${t('planInvSep', fmtShort(now), (pl>=0?'+':'−')+fmtShort(Math.abs(pl)))}</div>` : '');
+}
 function goalDueHtml(g, saved){
   if(!g.deadline) return '';
   const remaining = g.target - saved;
@@ -1438,6 +1489,7 @@ function resetGoalForm(){
 }
 function renderGoals(){
   renderInvestments();
+  renderPlanSummary();
   { const m = document.getElementById('goalsMeta'); if(m) m.textContent = state.goals.length ? '· '+state.goals.length : ''; }
   const el = document.getElementById('goalsList');
   if(!state.goals.length){ el.innerHTML = `<div class="empty-note">${t('noGoalsYet')}</div>`; return; }
@@ -1450,15 +1502,19 @@ function renderGoals(){
     <div class="goal-card">
       <div class="goal-top"><div class="goal-name">${escapeHtml(g.name)} <span class="goal-pct mono${saved>=g.target?' done':''}">${g.target>0 ? Math.floor((saved/g.target)*100) : 0}%</span></div><div class="goal-nums mono">${fmt(saved)} / ${fmt(g.target)}</div></div>
       <div class="goal-track2"><div class="goal-fill2" style="width:${pct}%"></div></div>
-      ${goalDueHtml(g, saved)}
-      <div class="goal-actions">
-        <input type="number" inputmode="decimal" placeholder="${t('addAmountPlaceholder')}" id="contrib-${g.id}">
-        <input type="date" class="dep-date" value="${todayStr()}" id="contribdate-${g.id}">
-        <button data-id="${g.id}" class="contrib-btn">${t('addBtn')}</button>
+      ${goalDueHtml(g, saved)}${goalPaceHtml(g, saved)}
+      <div class="goal-bar">
+        <button type="button" class="gm-add" data-id="${g.id}">${t('addMoney')}</button>
+        <button class="dep-toggle" data-id="${g.id}">${open ? '▾' : '▸'} ${t('depositHistory')} (${deps.length})</button>
+        <span class="sp"></span>
         <button data-id="${g.id}" class="goal-edit">${t('edit')}</button>
         <button data-id="${g.id}" class="goal-del">${t('delete')}</button>
       </div>
-      <button class="dep-toggle" data-id="${g.id}">${open ? '▾' : '▸'} ${t('depositHistory')} (${deps.length})</button>
+      <div class="goal-actions gm-form" id="gmform-${g.id}">
+        <input type="number" inputmode="decimal" placeholder="${t('addAmountPlaceholder')}" id="contrib-${g.id}">
+        <input type="date" class="dep-date" value="${todayStr()}" id="contribdate-${g.id}">
+        <button data-id="${g.id}" class="contrib-btn">${t('addBtn')}</button>
+      </div>
       ${open ? `<div class="dep-list">${deps.length ? deps.map(c=>`
         <div class="dep-row">
           <span class="dep-date-txt mono">${formatDate(c.date)}</span>
@@ -1467,6 +1523,7 @@ function renderGoals(){
         </div>`).join('') : `<div class="empty-note">${t('noDepositsYet')}</div>`}</div>` : ''}
     </div>`;
   }).join('');
+  el.querySelectorAll('.gm-add').forEach(b=>b.addEventListener('click', ()=>{ const f=document.getElementById('gmform-'+b.dataset.id); f.classList.toggle('open'); if(f.classList.contains('open')) document.getElementById('contrib-'+b.dataset.id).focus(); }));
   el.querySelectorAll('.contrib-btn').forEach(b=>b.addEventListener('click', async ()=>{
     const input = document.getElementById('contrib-'+b.dataset.id);
     const dateInput = document.getElementById('contribdate-'+b.dataset.id);
@@ -3527,11 +3584,30 @@ function renderStats(){
   let cats;
   if(yr){ const d = buildYearData(state.year); cats = d.empty ? [] : d.cats.map(([c,a])=>({c,amt:a})); }
   else { const by = {}; expensesForPeriod(p.year,p.monthIdx).forEach(e=>{ by[e.category]=(by[e.category]||0)+parseFloat(e.amount); }); cats = Object.entries(by).sort((a,b)=>b[1]-a[1]).map(([c,amt])=>({c,amt})); }
-  g('stLabel').textContent = yr ? fyLabel(state.year) : monthName(p.monthIdx)+' '+p.year;
+  g('stLabel').textContent = yr ? fyLabel(state.year) : monthName(p.monthIdx)+' '+p.year+' · '+periodLabel(p.year,p.monthIdx);
   const total = cats.reduce((a,x)=>a+x.amt,0);
+  { const sm = g('stSum'); let spent, budget, prevSpent=null, avg, pace='', label=t('stSpent');
+    if(yr){ const yt = yearPeriodsTotals(state.year); spent=yt.spent; budget=yt.budget; avg=null; }
+    else {
+      spent = periodExpenseTotal(p.year,p.monthIdx); budget = periodBudget(p.year,p.monthIdx);
+      const pm = p.monthIdx-1<0 ? {year:p.year-1,monthIdx:11} : {year:p.year,monthIdx:p.monthIdx-1};
+      prevSpent = periodExpenseTotal(pm.year,pm.monthIdx);
+      const {start,end} = periodBounds(p.year,p.monthIdx), now0 = new Date(), tdy = new Date(now0.getFullYear(),now0.getMonth(),now0.getDate());
+      const totalDays = Math.round((end-start)/86400000);
+      const isCur = tdy>=start && tdy<end;
+      const elapsed = isCur ? Math.max(1, Math.round((tdy-start)/86400000)+1) : totalDays;
+      avg = spent/elapsed;
+      if(isCur){ const daysLeft = Math.max(1, Math.round((end-tdy)/86400000)); if(budget-spent>0) pace = t('stPace', fmtShort((budget-spent)/daysLeft)); }
+    }
+    const left = budget-spent, pct = budget>0 ? Math.min(100, spent/budget*100) : 0, cls = left<0?'over':(budget>0 && spent/budget>=0.85?'warn':'');
+    let cmp=''; if(prevSpent>0 && !yr){ const d = Math.round((spent-prevSpent)/prevSpent*100); if(d!==0) cmp = `<span class="pill ${d>0?'bad':''}">${t(d<0?'stBelow':'stAbove', Math.abs(d))}</span>`; }
+    sm.innerHTML = `<div class="sts-l">${label}</div><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><div class="sts-v">${fmtShort(spent)} EGP</div>${cmp}</div><div class="st-bar2"><i class="${cls}" style="width:${pct.toFixed(1)}%"></i></div><div class="sts-s">${t('stBudgetLine', fmtShort(budget), left<0 ? '−'+fmtShort(-left) : fmtShort(left))}${avg!==null ? ' · '+t('stAvgDay', fmtShort(avg)) : ''}</div>${pace?`<div class="sts-s">${pace}</div>`:''}`;
+  }
   if(!cats.length || !(total>0)){ g('stDonut').innerHTML = `<div class="empty-note">${escapeHtml(t('statsEmpty'))}</div>`; g('stTop').innerHTML=''; g('stDaily').innerHTML=''; return; }
   g('stDonut').innerHTML = pieHtml(cats.map(x=>({label:categoryLabel(x.c), amt:x.amt})), fmt(total));
-  g('stTop').innerHTML = cats.map(x=>`<div class="st-row"><span class="st-ic">${categoryEmoji(x.c)||'•'}</span><div class="st-main"><div class="st-line"><span>${escapeHtml(categoryName(x.c))}<small>${(x.amt/total*100).toFixed(1)}%</small></span><b class="mono">${fmt(x.amt)}</b></div><div class="st-bar"><i style="width:${(x.amt/cats[0].amt*100).toFixed(1)}%"></i></div></div></div>`).join('');
+  const prevBy = {}; if(!yr){ const pm = p.monthIdx-1<0 ? {year:p.year-1,monthIdx:11} : {year:p.year,monthIdx:p.monthIdx-1}; expensesForPeriod(pm.year,pm.monthIdx).forEach(e=>{ prevBy[e.category]=(prevBy[e.category]||0)+parseFloat(e.amount); }); }
+  const cmpHtml = c=>{ const pv=prevBy[c]; if(yr || !(pv>0)) return ''; const cu=cats.find(x=>x.c===c).amt, d=Math.round((cu-pv)/pv*100); if(d===0) return ''; return `<div class="st-cmp ${d>0?'up':'down'}">${d>0?'▲':'▼'} ${Math.abs(d)}% ${t('vsLast')}</div>`; };
+  g('stTop').innerHTML = cats.map(x=>`<div class="st-row"><span class="st-ic">${categoryEmoji(x.c)||'•'}</span><div class="st-main"><div class="st-line"><span>${escapeHtml(categoryName(x.c))}<small>${(x.amt/total*100).toFixed(1)}%</small></span><b class="mono">${fmt(x.amt)}</b></div><div class="st-bar"><i style="width:${(x.amt/cats[0].amt*100).toFixed(1)}%"></i></div>${cmpHtml(x.c)}</div></div>`).join('');
   /* stacked bars coloured by category: one bar per day (month view) or per month (year view) */
   const fmtDay = k => new Date(k+'T00:00:00').toLocaleDateString(state.lang==='ar' ? 'ar-EG' : 'en-GB', {weekday:'short', day:'numeric', month:'short'});
   const items = [];
@@ -3560,7 +3636,7 @@ function renderStats(){
     return `<span style="height:${h}%">${segs}</span>`;
   }).join('');
   const legend = order.slice(0,6).map(c=>`<span><i style="background:${catColor(c)}"></i>${escapeHtml(categoryLabel(c))}</span>`).join('');
-  g('stDaily').innerHTML = `<div class="st-tip hint" id="stTip">${escapeHtml(t('statsTipHint'))}</div><div class="st-bars" id="stBars">${barsHtml}</div><div class="st-axis"><span>${escapeHtml(items[0].axis)}</span><span>max ${fmt(mx)}</span><span>${escapeHtml(items[items.length-1].axis)}</span></div><div class="st-legend">${legend}</div>`;
+  g('stDaily').innerHTML = `<div class="st-tip hint" id="stTip">${escapeHtml(t('statsTipHint'))}</div><div class="st-bars" id="stBars">${barsHtml}</div><div class="st-axis"><span>${escapeHtml(items[0].axis)}</span><span>max ${fmt(mx)}</span><span>${escapeHtml(items[items.length-1].axis)}</span></div><div class="st-legend">${legend}</div>${(()=>{ if(yr) return ''; let b=null; items.forEach(it=>{ if(it.total>0 && (!b || it.total>b.total)) b=it; }); return b ? `<div class="st-busy">${escapeHtml(t('stBusiest', b.label, fmtShort(b.total)))}</div>` : ''; })()}`;
   const bars = g('stBars'), tip = g('stTip'), spans = Array.from(bars.children);
   function pick(ev){
     const r = bars.getBoundingClientRect(); if(!r.width) return;
@@ -3585,6 +3661,21 @@ function renderStats(){
 })();
 
 /* ================= v25: center + button, plan sub-buttons ================= */
+(function(){
+  const box = document.querySelector('.settings'); if(!box) return;
+  const q = sel=>box.querySelector(sel);
+  const rowOf = el=>el ? el.closest('.set-row') : null;
+  const mk = key=>{ const d=document.createElement('div'); d.className='set-group'; d.innerHTML='<div class="sg-h" data-i18n="'+key+'"></div>'; d.firstChild.textContent = t(key); return d; };
+  const gMoney=mk('setMoney'), gPers=mk('setPersonalize'), gSec=mk('setSecurity'), gBak=mk('setBackup');
+  const add=(g,el)=>{ if(el) g.appendChild(el); };
+  add(gMoney, rowOf(q('#salaryInput'))); add(gMoney, q('#salaryChangesList').closest('.sal-block')); add(gMoney, rowOf(q('#payDayInput')));
+  add(gPers, rowOf(q('#openCatManager'))); add(gPers, q('#bonusSourcesInput').closest('.sal-block')); add(gPers, q('#quickItemsInput').closest('.sal-block')); add(gPers, q('#qtList').closest('.set-row')); add(gPers, rowOf(q('#themeSel')));
+  add(gSec, rowOf(q('#pinBtn'))); add(gSec, q('#bioRow')); add(gSec, rowOf(q('#notifToggle'))); add(gSec, q('#notifNote')); add(gSec, q('#installRow'));
+  add(gBak, q('#driveBlock'));
+  [gMoney,gPers,gSec,gBak].forEach(g=>box.appendChild(g));
+  box.querySelectorAll('.sal-block').forEach(b=>{ const tt=b.querySelector(':scope > .sal-title'); if(!tt) return; b.classList.add('fold'); tt.addEventListener('click', ()=>b.classList.toggle('open')); });
+  const dk=document.getElementById('driveBlock'); if(dk){ dk.classList.remove('open'); }
+})();
 (function(){
   document.getElementById('navAdd').addEventListener('click', ()=>document.getElementById('addBarCollapsed').click());
   const secs = Array.from(document.querySelectorAll('section[data-tab="plan"]')).filter(x=>!['subs','recur'].includes(x.dataset.coll));
