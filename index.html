@@ -121,7 +121,7 @@
   .report-doc .r-sw{ display:inline-block; width:10px; height:10px; border-radius:3px; margin-inline-end:6px; }
   .report-doc .chip{ font-size:10px; background:#eef2ff; color:#3730a3; border-radius:20px; padding:1px 8px; white-space:nowrap; }
   .report-doc thead{ display:table-header-group; }
-  .report-doc tfoot{ display:table-footer-group; }
+  .report-doc h3.r-pagebreak{ break-before:page; }
   .report-doc th:first-child, .report-doc td:first-child{ white-space:nowrap; }
   .report-doc tr{ break-inside:avoid; }
   .report-doc h3{ break-after:avoid; }
@@ -2902,9 +2902,9 @@ function reportHtml(d){
   <div class="r-line">${vsHtml}</div>
   <h3>${escapeHtml(t('byCategory'))}</h3>
   ${d.cats.length ? reportPieHtml(d.cats) : `<div>${escapeHtml(t('rNone'))}</div>`}
-  <h3>${escapeHtml(t('expenses'))}</h3>
-  ${d.entries.length ? `<table><thead><tr><th>${escapeHtml(t('colDate'))}</th><th>${escapeHtml(t('colDesc'))}</th><th>${escapeHtml(t('colCategory'))}</th><th class="num">${escapeHtml(t('rAmtCur', t('curEgp')))}</th></tr></thead><tbody>${d.entries.map(e=>`<tr><td>${escapeHtml(formatDate(e.date))}</td><td>${escapeHtml(e.desc||'')}</td><td><span class="chip">${escapeHtml(categoryLabel(e.category))}</span></td><td class="num">${fmt(parseFloat(e.amount))}</td></tr>`).join('')}</tbody><tfoot><tr class="total"><td colspan="3">${escapeHtml(t('rTotalExpenses'))}</td><td class="num">${fmt(d.spent)}</td></tr></tfoot></table>` : `<div>${escapeHtml(t('rNone'))}</div>`}
-  ${d.incomes.length ? `<h3>${escapeHtml(t('rBonuses'))}</h3><table><thead><tr><th>${escapeHtml(t('colDate'))}</th><th>${escapeHtml(t('colSource'))}</th><th>${escapeHtml(t('colDesc'))}</th><th class="num">${escapeHtml(t('rAmtCur', t('curEgp')))}</th></tr></thead><tbody>${d.incomes.map(e=>`<tr><td>${escapeHtml(formatDate(e.date))}</td><td>${escapeHtml(e.source||'')}</td><td>${escapeHtml(e.desc||'')}</td><td class="num">${fmt(parseFloat(e.amount))}</td></tr>`).join('')}</tbody><tfoot><tr class="total"><td colspan="3">${escapeHtml(t('rTotalBonuses'))}</td><td class="num">${fmt(d.bonus)}</td></tr></tfoot></table>` : ''}`;
+  <h3 class="r-pagebreak">${escapeHtml(t('expenses'))}</h3>
+  ${d.entries.length ? `<table><thead><tr><th>${escapeHtml(t('colDate'))}</th><th>${escapeHtml(t('colDesc'))}</th><th>${escapeHtml(t('colCategory'))}</th><th class="num">${escapeHtml(t('rAmtCur', t('curEgp')))}</th></tr></thead><tbody>${d.entries.map(e=>`<tr><td>${escapeHtml(formatDate(e.date))}</td><td>${escapeHtml(e.desc||'')}</td><td><span class="chip">${escapeHtml(categoryLabel(e.category))}</span></td><td class="num">${fmt(parseFloat(e.amount))}</td></tr>`).join('')}<tr class="total"><td colspan="3">${escapeHtml(t('rTotalExpenses'))}</td><td class="num">${fmt(d.spent)}</td></tr></tbody></table>` : `<div>${escapeHtml(t('rNone'))}</div>`}
+  ${d.incomes.length ? `<h3>${escapeHtml(t('rBonuses'))}</h3><table><thead><tr><th>${escapeHtml(t('colDate'))}</th><th>${escapeHtml(t('colSource'))}</th><th>${escapeHtml(t('colDesc'))}</th><th class="num">${escapeHtml(t('rAmtCur', t('curEgp')))}</th></tr></thead><tbody>${d.incomes.map(e=>`<tr><td>${escapeHtml(formatDate(e.date))}</td><td>${escapeHtml(e.source||'')}</td><td>${escapeHtml(e.desc||'')}</td><td class="num">${fmt(parseFloat(e.amount))}</td></tr>`).join('')}<tr class="total"><td colspan="3">${escapeHtml(t('rTotalBonuses'))}</td><td class="num">${fmt(d.bonus)}</td></tr></tbody></table>` : ''}`;
 }
 function openReport(year, monthIdx){
   reportCtx = buildReportData(year, monthIdx);
