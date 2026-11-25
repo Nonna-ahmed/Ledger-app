@@ -356,6 +356,19 @@
   .receipt-preview-wrap.show{ display:flex; }
   .receipt-preview-wrap img{ width:52px; height:52px; object-fit:cover; border-radius:6px; }
   .receipt-preview-wrap button{ font-family:'JetBrains Mono',monospace; font-size:11.5px; background:none; border:1px solid var(--red-soft); color:var(--red-soft); border-radius:6px; padding:6px 9px; cursor:pointer; }
+  .add-form .form-title{ display:none; }
+  .add-form .type-toggle{ margin-bottom:7px; } .add-form .type-btn{ padding:7px; }
+  .add-form #quickChips, .add-form #suggestRow{ flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none; margin-bottom:7px; } .add-form #quickChips::-webkit-scrollbar, .add-form #suggestRow::-webkit-scrollbar, .chip-scroll::-webkit-scrollbar{ display:none; }
+  .add-form #quickChips:empty, .add-form #suggestRow:empty{ display:none !important; }
+  .quick-chip{ flex:none; }
+  .amt-row{ margin-bottom:7px !important; } .amt-big{ flex:1; font-size:26px !important; font-weight:700; padding:6px 12px !important; direction:ltr; } .date-sm{ width:132px !important; flex:none; font-size:13px !important; }
+  .chip-scroll{ display:flex; gap:6px; overflow-x:auto; scrollbar-width:none; margin-bottom:7px; }
+  .cs-chip{ flex:none; font-family:'JetBrains Mono',monospace; font-size:12.5px; background:transparent; color:#C9CFDB; border:1px solid #3B4B66; border-radius:16px; padding:6px 12px; cursor:pointer; white-space:nowrap; }
+  .cs-chip.sel{ background:var(--brass); color:var(--ink); border-color:var(--brass); font-weight:700; } .cs-chip.sel.income{ background:var(--green); color:#fff; border-color:var(--green); }
+  .sel-hold{ display:none; }
+  .desc-row{ margin-bottom:7px !important; } .add-more{ flex:none; width:42px; border:1px dashed #6A7A93; background:transparent; color:var(--brass-soft); border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0; } .add-more.on{ background:#26364F; }
+  .more-panel{ display:none; border-top:1px solid #3B4B66; padding-top:8px; margin-bottom:4px; } .more-panel.open{ display:block; }
+  .add-form .actions{ margin-top:4px; } #qtSaveBtn{ display:none; } .more-panel.open ~ .actions #qtSaveBtn{ display:block; } .add-form .btn-save{ padding:13px 14px !important; font-size:14px !important; }
   .add-form .actions{ display:flex; gap:8px; margin-top:2px; }
   .add-form button.actbtn{ font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:700; border:none; border-radius:7px; padding:10px 14px; cursor:pointer; }
   .btn-save{ background: var(--brass); color:var(--ink); flex:1; }
@@ -821,31 +834,34 @@
       <button class="type-btn" id="typeIncome" type="button" data-i18n="bonusReward">Bonus / reward</button>
     </div>
     <div class="quick-chips" id="quickChips"></div>
-    <div class="row">
-      <input type="date" id="fDate">
-      <select id="fCategory"></select>
-      <select id="fSource" style="display:none"></select>
+    <div class="row amt-row">
+      <input type="text" id="fAmount" class="amt-big" inputmode="decimal" autocomplete="off" data-i18n-placeholder="amountPlaceholder" placeholder="Amount EGP">
+      <input type="date" id="fDate" class="date-sm">
     </div>
+    <div class="chip-scroll" id="catChips"></div>
+    <div class="sel-hold"><select id="fCategory"></select><select id="fSource" style="display:none"></select></div>
     <div class="row goal-link-row" id="fGoalRow" style="display:none">
       <label for="fGoal" data-i18n="addToGoal">Add to goal</label>
       <select id="fGoal"></select>
     </div>
-    <div class="row">
+    <div class="row desc-row">
       <input type="text" id="fDesc" autocomplete="off" data-i18n-placeholder="descriptionPlaceholder" placeholder="Description (e.g. O2 monitor)">
-      <input type="text" id="fAmount" inputmode="decimal" autocomplete="off" data-i18n-placeholder="amountPlaceholder" placeholder="Amount EGP" style="max-width:130px;">
-    </div>
-    <div class="amt-keys" id="amtKeys">
-      <button type="button" data-k="+">+</button><button type="button" data-k="-">−</button><button type="button" data-k="*">×</button><button type="button" data-k="/">÷</button><button type="button" data-k="(">(</button><button type="button" data-k=")">)</button><button type="button" class="eq" data-k="=">=</button>
-      <span class="amt-preview" id="amtPreview"></span>
+      <button type="button" id="addMoreBtn" class="add-more" aria-label="More" aria-expanded="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
     </div>
     <div class="quick-chips" id="suggestRow"></div>
     <datalist id="descList"></datalist>
-    <div class="repeat-row" id="repeatRow">
-      <input type="checkbox" id="fRepeat">
-      <label for="fRepeat" data-i18n="repeatEveryPayPeriod">Repeat every pay period</label>
-    </div>
-    <div class="receipt-row" id="receiptRow">
-      <input type="file" id="fReceipt" accept="image/*">
+    <div class="more-panel" id="morePanel">
+      <div class="amt-keys" id="amtKeys">
+        <button type="button" data-k="+">+</button><button type="button" data-k="-">−</button><button type="button" data-k="*">×</button><button type="button" data-k="/">÷</button><button type="button" data-k="(">(</button><button type="button" data-k=")">)</button><button type="button" class="eq" data-k="=">=</button>
+        <span class="amt-preview" id="amtPreview"></span>
+      </div>
+      <div class="repeat-row" id="repeatRow">
+        <input type="checkbox" id="fRepeat">
+        <label for="fRepeat" data-i18n="repeatEveryPayPeriod">Repeat every pay period</label>
+      </div>
+      <div class="receipt-row" id="receiptRow">
+        <input type="file" id="fReceipt" accept="image/*">
+      </div>
     </div>
     <div class="receipt-preview-wrap" id="receiptPreviewWrap">
       <img id="receiptPreviewImg" src="" alt="Receipt preview">
@@ -4031,6 +4047,23 @@ document.getElementById('driveForget').addEventListener('click', async ()=>{
 document.getElementById('driveRedirect').addEventListener('click', ()=>{ try{ navigator.clipboard.writeText(driveRedirectUri()); showToast(t('driveCopied')); }catch(e){} });
 
 loadState().then(()=>{ try{ resumeDrive(); }catch(e){ console.error(e); } });
+
+(function(){
+  const g=id=>document.getElementById(id), box=g('catChips'), cat=g('fCategory'), src=g('fSource'), form=g('addForm');
+  function active(){ return src.style.display==='none' ? cat : src; }
+  function sync(){
+    const sel=active(), inc = sel===src; box.innerHTML='';
+    Array.from(sel.options).forEach(o=>{ if(o.value==='' && !inc) return; if(o.value==='') return;
+      const b=document.createElement('button'); b.type='button'; b.className='cs-chip'+(o.value===sel.value?' sel':'')+(inc?' income':''); b.textContent=o.textContent; b.dataset.v=o.value;
+      b.addEventListener('click', ()=>{ sel.value = (inc && sel.value===o.value) ? '' : o.value; sel.dispatchEvent(new Event('change',{bubbles:true})); sync(); }); box.appendChild(b); });
+    const on=box.querySelector('.sel'); if(on && on.scrollIntoView) { try{ box.scrollLeft = on.offsetLeft - 20; }catch(e){} }
+  }
+  [cat,src].forEach(x=>{ new MutationObserver(sync).observe(x,{childList:true,attributes:true,attributeFilter:['style']}); x.addEventListener('change',sync); });
+  new MutationObserver(sync).observe(form,{attributes:true,attributeFilter:['class']});
+  g('typeExpense').addEventListener('click',()=>setTimeout(sync,0)); g('typeIncome').addEventListener('click',()=>setTimeout(sync,0));
+  g('addMoreBtn').addEventListener('click',()=>{ const p=g('morePanel'); const o=p.classList.toggle('open'); g('addMoreBtn').classList.toggle('on',o); g('addMoreBtn').setAttribute('aria-expanded',o); });
+  sync();
+})();
 </script>
 </body>
 </html>
