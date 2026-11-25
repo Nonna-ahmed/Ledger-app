@@ -284,6 +284,9 @@
   .goal-card{ background:var(--card); border-radius:10px; padding:12px 14px; margin-bottom:9px; box-shadow: var(--shadow); }
   .goal-top{ display:flex; justify-content:space-between; align-items:baseline; }
   .goal-name{ font-weight:600; font-size:14.5px; }
+  .acc-h{ cursor:pointer; -webkit-tap-highlight-color:transparent; }
+  .acc-ar{ font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--brass); margin-inline-end:4px; }
+  .acc-body{ margin-top:6px; } .acc-body.shut{ display:none; }
   .goal-pct{ font-size:12px; font-weight:700; color:var(--brass); margin-inline-start:6px; }
   .goal-pct.done{ color:var(--green); }
   .goal-nums{ font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--ink-soft); }
@@ -435,12 +438,14 @@
   .lock{ position:fixed; inset:0; z-index:100; background:var(--ink); color:var(--paper); display:none; align-items:center; justify-content:center; padding:20px; }
   .lock.show{ display:flex; }
   .lock-box{ width:100%; max-width:300px; text-align:center; }
-  .lock-title{ font-size:16px; font-weight:700; margin-bottom:16px; }
-  .lock-dots{ display:flex; justify-content:center; gap:14px; margin-bottom:10px; }
+  .lock-ico{ width:64px; height:64px; margin:0 auto 14px; border-radius:50%; border:1.5px solid var(--brass); display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,.06); }
+  .lock-brand{ font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:var(--brass-soft); margin-bottom:6px; }
+  .lock-title{ font-size:20px; font-weight:700; margin-bottom:18px; }
+  .lock-dots{ display:flex; justify-content:center; gap:16px; margin-bottom:10px; }
   .lock-dots span{ width:13px; height:13px; border-radius:50%; border:2px solid var(--brass); } .lock-dots span.on{ background:var(--brass); }
-  .lock-msg{ min-height:20px; font-size:12.5px; color:var(--red-soft); margin-bottom:8px; }
-  .lock-pad{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; direction:ltr; }
-  .lock-pad button{ height:56px; border-radius:50%; border:1px solid #4A5A73; background:transparent; color:var(--paper); font-family:'JetBrains Mono',monospace; font-size:20px; cursor:pointer; }
+  .lock-msg{ min-height:20px; font-size:12.5px; color:var(--red-soft); margin-bottom:14px; }
+  .lock-pad{ display:grid; grid-template-columns:repeat(3,72px); justify-content:center; gap:14px 22px; direction:ltr; }
+  .lock-pad button{ width:72px; height:72px; padding:0; border-radius:50%; border:1px solid #4A5A73; background:rgba(255,255,255,.07); color:var(--paper); font-family:'JetBrains Mono',monospace; font-size:24px; cursor:pointer; display:flex; align-items:center; justify-content:center; -webkit-tap-highlight-color:transparent; }
   .lock-pad button:active{ background:var(--brass); color:var(--ink); }
   .lock-link{ background:none; border:none; color:var(--brass-soft); font-family:inherit; font-size:13px; margin-top:14px; cursor:pointer; padding:8px; display:block; width:100%; }
   .pie-leg div{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
@@ -467,6 +472,12 @@
   .drive-btns{ display:flex; gap:8px; margin:8px 0 6px; } .drive-btns .btn-outline{ flex:1; }
   .drive-row{ display:flex; justify-content:space-between; align-items:center; gap:8px; padding:11px 4px; border-bottom:1px solid var(--paper-line); cursor:pointer; font-size:13px; } .drive-row small{ color:var(--ink-soft); }
   .st-legend{ display:flex; flex-wrap:wrap; gap:4px 12px; margin-top:8px; font-size:11px; color:var(--ink-soft); }
+  .yx-card{ background:var(--card); border-radius:10px; padding:12px 14px; margin-top:10px; box-shadow:var(--shadow); }
+  .yx-h{ font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-soft); margin:2px 0 8px; }
+  .yx-row{ display:flex; align-items:center; gap:8px; margin-bottom:7px; font-size:11.5px; }
+  .yx-m{ width:30px; color:var(--ink-soft); } .yx-v{ min-width:84px; text-align:end; direction:ltr; }
+  .yx-track{ flex:1; height:9px; background:#E8E2D4; border-radius:5px; overflow:hidden; } .yx-track div{ height:100%; border-radius:5px; }
+  .yx-chg{ display:flex; justify-content:space-between; font-size:12.5px; padding:4px 0; border-top:1px solid #EEE8DA; }
   .st-axis{ display:flex; justify-content:space-between; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink-soft); margin-top:5px; direction:ltr; }
   .bnav .fab-wrap{ flex:0 0 76px; padding:0; min-height:52px; position:relative; }
   .bnav .fab-wrap span{ position:absolute; left:50%; top:-24px; transform:translateX(-50%); width:56px; height:56px; border-radius:50%; background:var(--brass); color:var(--ink); font-size:32px; font-weight:400; line-height:56px; text-align:center; box-shadow:0 4px 14px rgba(0,0,0,.28); border:4px solid var(--card); box-sizing:border-box; line-height:48px; }
@@ -786,6 +797,8 @@
   <button type="button" data-tab-go="settings"><span class="ni">⚙️</span><span data-i18n="navSettings">Settings</span></button>
 </nav>
 <div class="lock" id="lockScreen"><div class="lock-box">
+  <div class="lock-ico"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C9A876" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div>
+  <div class="lock-brand">The Ledger</div>
   <div class="lock-title" id="lockTitle"></div><div class="lock-dots" id="lockDots"></div><div class="lock-msg" id="lockMsg"></div>
   <div class="lock-pad" id="lockPad"></div>
   <button class="lock-link" id="lockBio" type="button" style="display:none"></button>
@@ -1450,6 +1463,8 @@ function renderRecurring(){
 /* ---------------- Goals ---------------- */
 function goalSaved(goalId){ return state.contributions.filter(c=>c.goalId===goalId).reduce((s,c)=>s+parseFloat(c.amount),0); }
 const expandedGoals = new Set();
+const rowOpen = new Set(), rowShut = new Set();
+function isRowOpen(id,n){ return rowOpen.has(id) || (n===1 && !rowShut.has(id)); }
 function goalPaceHtml(g, saved){
   if(!g.deadline || saved>=g.target) return '';
   const today = new Date(todayStr()+'T00:00:00'), due = new Date(g.deadline+'T00:00:00');
@@ -1500,8 +1515,9 @@ function renderGoals(){
     const open = expandedGoals.has(g.id);
     return `
     <div class="goal-card">
-      <div class="goal-top"><div class="goal-name">${escapeHtml(g.name)} <span class="goal-pct mono${saved>=g.target?' done':''}">${g.target>0 ? Math.floor((saved/g.target)*100) : 0}%</span></div><div class="goal-nums mono">${fmt(saved)} / ${fmt(g.target)}</div></div>
+      <div class="goal-top acc-h" data-acc="${g.id}" role="button" tabindex="0" aria-expanded="${isRowOpen(g.id,state.goals.length)}"><div class="goal-name"><span class="acc-ar">${isRowOpen(g.id,state.goals.length)?'▼':'▶'}</span> ${escapeHtml(g.name)} <span class="goal-pct mono${saved>=g.target?' done':''}">${g.target>0 ? Math.floor((saved/g.target)*100) : 0}%</span></div><div class="goal-nums mono">${fmt(saved)} / ${fmt(g.target)}</div></div>
       <div class="goal-track2"><div class="goal-fill2" style="width:${pct}%"></div></div>
+      <div class="acc-body${isRowOpen(g.id,state.goals.length)?'':' shut'}">
       ${goalDueHtml(g, saved)}${goalPaceHtml(g, saved)}
       <div class="goal-bar">
         <button type="button" class="gm-add" data-id="${g.id}">${t('addMoney')}</button>
@@ -1521,8 +1537,10 @@ function renderGoals(){
           <span class="dep-amt mono">+${fmt(c.amount)}</span>
           ${c.expenseId ? `<span class="dep-link" title="${t('linkedDeposit')}">🔗 ${t('linkedDeposit')}</span>` : `<button class="dep-del" data-id="${c.id}" title="${t('delete')}">✕</button>`}
         </div>`).join('') : `<div class="empty-note">${t('noDepositsYet')}</div>`}</div>` : ''}
+      </div>
     </div>`;
   }).join('');
+  el.querySelectorAll('.acc-h').forEach(h=>{ const go=()=>{ const id=h.dataset.acc, n=state.goals.length; if(isRowOpen(id,n)){ rowOpen.delete(id); rowShut.add(id); } else { rowOpen.add(id); rowShut.delete(id); } renderGoals(); }; h.addEventListener('click',go); h.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); go(); } }); });
   el.querySelectorAll('.gm-add').forEach(b=>b.addEventListener('click', ()=>{ const f=document.getElementById('gmform-'+b.dataset.id); f.classList.toggle('open'); if(f.classList.contains('open')) document.getElementById('contrib-'+b.dataset.id).focus(); }));
   el.querySelectorAll('.contrib-btn').forEach(b=>b.addEventListener('click', async ()=>{
     const input = document.getElementById('contrib-'+b.dataset.id);
@@ -2891,8 +2909,8 @@ function renderInvestments(){
   updateInvManual();
   if(!state.investments.length){ list.innerHTML = `<div class="empty-note">${t('noInvestYet')}</div>`; return; }
   const invSel = (()=>{ const stored = (LedgerLocal.get('invSelected')||{}).value; return state.investments.some(x=>x.id===stored) ? stored : state.investments[0].id; })();
-  const shownInv = state.investments.length>1 ? state.investments.filter(x=>x.id===invSel) : state.investments;
-  const pickerHtml = state.investments.length>1 ? `<select id="invPicker" class="inv-picker">${state.investments.map(x=>`<option value="${x.id}"${x.id===invSel?' selected':''}>${escapeHtml(x.name)}</option>`).join('')}</select>` : '';
+  const shownInv = state.investments;
+  const pickerHtml = false ? `<select id="invPicker" class="inv-picker">${state.investments.map(x=>`<option value="${x.id}"${x.id===invSel?' selected':''}>${escapeHtml(x.name)}</option>`).join('')}</select>` : '';
   list.innerHTML = pickerHtml + shownInv.map(v=>{
     const st = invStats(v); const goal = state.goals.find(g=>g.id===v.goalId);
     const open = expandedInv.has(v.id);
@@ -2909,8 +2927,10 @@ function renderInvestments(){
     if(useEst) note = t('invEstNote', parseFloat(v.rate)) + ' · ' + (st.last ? t('invEstFromReal', formatDate(st.last.date)) : t('invEstNoReal')) + (st.perDay>0 ? ' · ≈ +'+st.perDay.toFixed(2)+t('calcDay') : '');
     else note = st.last ? t('invUpdated', formatDate(st.last.date)) + (st.since>0.5 ? ' · '+t('invSince', fmtShort(st.since)) : '') : t('invNoValue');
     if(hasVal && !hasPL) note += ' · '+t('invNeedInvested');
+    const rOpen = isRowOpen(v.id,state.investments.length);
     return `<div class="inv-card">
-      <div class="goal-top"><div class="goal-name">${escapeHtml(v.name)} ${hasPL ? `<span class="goal-pct mono" style="color:var(--${pl>=0?'green':'red'})">${fmtPct(pct)}</span>` : ''}</div><div class="goal-nums mono">${v.goalId ? (goal ? escapeHtml(goal.name) : t('invGoalMissing')) : t('invNoGoalLabel')}</div></div>
+      <div class="goal-top acc-h" data-acc="${v.id}" role="button" tabindex="0" aria-expanded="${rOpen}"><div class="goal-name"><span class="acc-ar">${rOpen?'▼':'▶'}</span> ${escapeHtml(v.name)} ${hasPL ? `<span class="goal-pct mono" style="color:var(--${pl>=0?'green':'red'})">${fmtPct(pct)}</span>` : ''}</div><div class="goal-nums mono">${v.goalId ? (goal ? escapeHtml(goal.name) : t('invGoalMissing')) : t('invNoGoalLabel')}</div></div>
+      <div class="acc-body${rOpen?'':' shut'}">
       <div class="inv-grid">
         <div><span>${t('invInvested')}</span><b>${fmtShort(shownInvested)}</b></div>
         <div><span>${useEst ? t('invNowEst') : t('invNow')}</span><b>${shownNow!==null ? fmtShort(shownNow) : '—'}</b></div>
@@ -2926,8 +2946,10 @@ function renderInvestments(){
       </div>
       <button class="dep-toggle inv-toggle" data-id="${v.id}">${open?'▾':'▸'} ${t('invHistory')} (${vals.length})</button>
       ${open ? `<div class="dep-list">${vals.length ? vals.map(x=>{ const inv = invSavedFor(v, x.date); const p = inv>0 ? (x.value-inv)/inv*100 : null; return `<div class="inv-hist-row"><span class="mono">${formatDate(x.date)}</span><span class="mono v">${fmtShort(x.value)}</span><span class="mono" style="color:var(--ink-soft)">${t('invAtThen', fmtShort(inv))} · ${fmtPct(p)}</span><button class="dep-del inv-hist-del" data-v="${v.id}" data-id="${x.id}" title="${t('delete')}">✕</button></div>`; }).join('') : `<div class="empty-note">${t('invNoValue')}</div>`}</div>` : ''}
+      </div>
     </div>`;
   }).join('');
+  list.querySelectorAll('.acc-h').forEach(h=>{ const go=()=>{ const id=h.dataset.acc, n=state.investments.length; if(isRowOpen(id,n)){ rowOpen.delete(id); rowShut.add(id); } else { rowOpen.add(id); rowShut.delete(id); } renderInvestments(); }; h.addEventListener('click',go); h.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); go(); } }); });
   { const pk = document.getElementById('invPicker'); if(pk) pk.addEventListener('change', ()=>{ LedgerLocal.set('invSelected', pk.value); renderInvestments(); }); }
   list.querySelectorAll('.inv-upd').forEach(b=>b.addEventListener('click', async ()=>{
     const v = state.investments.find(x=>x.id===b.dataset.id); if(!v) return;
@@ -3533,7 +3555,7 @@ function renderBadges(){
     if(mode==='remove'){ LedgerLocal.delete('pinHash'); LedgerLocal.delete('pinSalt'); LedgerLocal.delete('bioId'); refresh(); showToast(t('lockRemoved')); }
     hide();
   }
-  el('lockPad').innerHTML = [1,2,3,4,5,6,7,8,9,'',0,'⌫'].map(k=>k===''?'<span></span>':`<button type="button" data-k="${k}">${k}</button>`).join('');
+  el('lockPad').innerHTML = [1,2,3,4,5,6,7,8,9,'',0,'⌫'].map(k=>k===''?'<span></span>':`<button type="button" data-k="${k}"${k==='⌫'?' aria-label="Delete"':''}>${k==='⌫'?'<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 5H9l-6 7 6 7h12z"/><path d="M17 9l-5 6M12 9l5 6"/></svg>':k}</button>`).join('');
   el('lockPad').addEventListener('click', e=>{
     const k = e.target.closest('button'); if(!k) return;
     if(k.dataset.k==='⌫') buf = buf.slice(0,-1);
@@ -3637,6 +3659,24 @@ function renderStats(){
   }).join('');
   const legend = order.slice(0,6).map(c=>`<span><i style="background:${catColor(c)}"></i>${escapeHtml(categoryLabel(c))}</span>`).join('');
   g('stDaily').innerHTML = `<div class="st-tip hint" id="stTip">${escapeHtml(t('statsTipHint'))}</div><div class="st-bars" id="stBars">${barsHtml}</div><div class="st-axis"><span>${escapeHtml(items[0].axis)}</span><span>max ${fmt(mx)}</span><span>${escapeHtml(items[items.length-1].axis)}</span></div><div class="st-legend">${legend}</div>${(()=>{ if(yr) return ''; let b=null; items.forEach(it=>{ if(it.total>0 && (!b || it.total>b.total)) b=it; }); return b ? `<div class="st-busy">${escapeHtml(t('stBusiest', b.label, fmtShort(b.total)))}</div>` : ''; })()}`;
+  if(yr){
+    const ar = state.lang==='ar', rows = [];
+    for(let i=0;i<12;i++){ const q = fyPeriod(state.year,i), sp = periodExpenseTotal(q.year,q.monthIdx), bu = periodBudget(q.year,q.monthIdx); if(sp>0) rows.push({q, sp, bu}); }
+    let host = document.getElementById('stYearExtra'); if(!host){ host = document.createElement('div'); host.id='stYearExtra'; g('stDailyCard').insertAdjacentElement('afterend', host); }
+    if(rows.length){
+      const rowHtml = rows.map(r=>{ const f = r.bu>0 ? r.sp/r.bu : 0, c = r.bu>0 && r.sp>r.bu ? 'var(--red)' : (f>=0.85 ? 'var(--brass)' : 'var(--green)'); return `<div class="yx-row"><span class="mono yx-m">${escapeHtml(monthName(r.q.monthIdx).slice(0,3))}</span><div class="yx-track"><div style="width:${Math.min(100,f*100).toFixed(1)}%;background:${c}"></div></div><span class="mono yx-v">${fmtShort(r.sp)} / ${fmtShort(r.bu)}</span></div>`; }).join('');
+      const cur = rows[rows.length-1], prev = rows.length>1 ? rows[rows.length-2] : null;
+      let chg = '';
+      if(prev){
+        const cb = {}, pb = {};
+        expensesForPeriod(cur.q.year,cur.q.monthIdx).forEach(e=>{ cb[e.category]=(cb[e.category]||0)+parseFloat(e.amount); });
+        expensesForPeriod(prev.q.year,prev.q.monthIdx).forEach(e=>{ pb[e.category]=(pb[e.category]||0)+parseFloat(e.amount); });
+        const diffs = Array.from(new Set([...Object.keys(cb),...Object.keys(pb)])).map(c=>({c, d:(cb[c]||0)-(pb[c]||0)})).filter(x=>Math.abs(x.d)>=1).sort((a,b)=>Math.abs(b.d)-Math.abs(a.d)).slice(0,4);
+        if(diffs.length) chg = `<div class="yx-h mono">${ar?'الأكثر تغيرًا مقارنة بالفترة السابقة':'Changed most vs last period'} · ${escapeHtml(monthName(cur.q.monthIdx))} / ${escapeHtml(monthName(prev.q.monthIdx))}</div>` + diffs.map(x=>`<div class="yx-chg"><span>${categoryEmoji(x.c)||'•'} ${escapeHtml(categoryName(x.c))}</span><b class="mono" style="color:var(--${x.d>0?'red':'green'})">${x.d>0?'+':'−'}${fmtShort(Math.abs(x.d))}</b></div>`).join('');
+      }
+      host.innerHTML = `<div class="yx-card"><div class="yx-h mono">${ar?'كل فترة مقابل ميزانيتها':'Each period vs its own budget'}</div>${rowHtml}${chg}</div>`;
+    } else host.innerHTML = '';
+  } else { const h = document.getElementById('stYearExtra'); if(h) h.innerHTML=''; }
   const bars = g('stBars'), tip = g('stTip'), spans = Array.from(bars.children);
   function pick(ev){
     const r = bars.getBoundingClientRect(); if(!r.width) return;
