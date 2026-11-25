@@ -104,6 +104,35 @@
   .report-doc td.num, .report-doc th.num{ text-align:end; font-variant-numeric:tabular-nums; white-space:nowrap; direction:ltr; }
   .report-doc tr.total td{ font-weight:700; border-top:2px solid #1B2A44; }
   .report-doc .neg{ color:#9B3B3B; } .report-doc .pos{ color:#3F6B4F; }
+  .report-doc .r-period{ font-size:15px; font-weight:700; color:#2563eb; margin:2px 0; }
+  .report-doc .r-gen{ font-size:11px; color:#777; border-bottom:2px solid #2563eb; padding-bottom:10px; margin-bottom:6px; }
+  .report-doc .r-cards{ display:flex; gap:8px; margin:12px 0 8px; }
+  .report-doc .r-card{ flex:1; border-radius:10px; padding:10px 12px; min-width:0; }
+  .report-doc .rc-l{ font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.4px; opacity:.75; }
+  .report-doc .rc-v{ font-size:16px; font-weight:700; margin-top:3px; font-variant-numeric:tabular-nums; direction:ltr; text-align:start; white-space:nowrap; }
+  .report-doc .rc-c{ font-size:10px; font-weight:500; opacity:.7; }
+  .report-doc .rc-avail{ background:#eff6ff; color:#1d4ed8; }
+  .report-doc .rc-spent{ background:#fef2f2; color:#b91c1c; }
+  .report-doc .rc-rem{ background:#f0fdf4; color:#15803d; }
+  .report-doc .r-line{ font-size:12px; color:#555; margin:2px 0; }
+  .report-doc .r-pie{ display:flex; align-items:center; gap:14px; margin:8px 0 4px; flex-wrap:wrap; }
+  .report-doc .r-legend{ flex:1; min-width:150px; border-collapse:collapse; font-size:12px; width:auto; }
+  .report-doc .r-legend td{ padding:4px 6px; border-bottom:1px solid #eee; }
+  .report-doc .r-sw{ display:inline-block; width:10px; height:10px; border-radius:3px; margin-inline-end:6px; }
+  .report-doc .chip{ font-size:10px; background:#eef2ff; color:#3730a3; border-radius:20px; padding:1px 8px; white-space:nowrap; }
+  .report-doc thead{ display:table-header-group; }
+  .report-doc tfoot{ display:table-footer-group; }
+  .report-doc th:first-child, .report-doc td:first-child{ white-space:nowrap; }
+  .report-doc tr{ break-inside:avoid; }
+  .report-doc h3{ break-after:avoid; }
+  @media (max-width:480px){
+    .report-doc{ padding:14px 10px 30px; }
+    .report-doc table{ font-size:11.5px; }
+    .report-doc th, .report-doc td{ padding:4px 3px; }
+    .report-doc .chip{ font-size:9px; padding:1px 6px; }
+    .report-doc .rc-v{ font-size:14px; }
+    .report-doc .r-card{ padding:8px 8px; }
+  }
   @media print{
     body > *:not(.report-overlay){ display:none !important; }
     .report-overlay{ display:none !important; }
@@ -1045,7 +1074,7 @@ const translations = {
     goalNamePlaceholder: "Goal name (e.g. Emergency fund)", targetAmountPlaceholder: "Target amount EGP",
     saveGoal: "Save goal", newGoal: "+ New goal", noGoalsYet: "No goals yet.",
     addAmountPlaceholder: "Amount", quickItemsLabel: "Quick items (separate with commas)", addToGoal: "Add to goal", voiceListening: 'Listening… say e.g. "Groceries 120"', voiceAdded: (d,a,c)=>`Added: ${d} · ${a} · ${c}`, voiceNoAmount: "Didn't catch the amount — say it in digits", voiceDenied: "Microphone permission is blocked", voiceFailed: "Couldn't hear that, try again",
-    reportBtn: "📄 Report", reportPdf: "Save as PDF", reportExcel: "Excel / share", reportTitle: "Monthly report", rSalary: "Salary", rBonus: "Bonuses", rAvailable: "Total available", rRemaining: "Remaining", rVsPrev: "Spent vs last period", colDate: "Date", colDesc: "Description", colCategory: "Category", colAmount: "Amount", rBonuses: "Bonuses", rNone: "None", shSummary: "Summary", shCategories: "Categories", shExpenses: "Expenses", shBonuses: "Bonuses", toastPdfHint: 'Choose "Save as PDF" in the print screen', toastExcelReady: "Excel file ready",
+    reportBtn: "📄 Report", reportPdf: "Save as PDF", reportExcel: "Excel / share", reportTitle: "Monthly report", rSalary: "Salary", rBonus: "Bonuses", rAvailable: "Total available", rRemaining: "Remaining", rVsPrev: "Spent vs last period", colDate: "Date", colDesc: "Description", colCategory: "Category", colAmount: "Amount", rBonuses: "Bonuses", rNone: "None", shSummary: "Summary", shCategories: "Categories", shExpenses: "Expenses", shBonuses: "Bonuses", toastPdfHint: 'Choose "Save as PDF" in the print screen', toastExcelReady: "Excel file ready", rReportPeriod: "Pay-period report", rGenerated: (d)=>`Generated ${d}`, rAvailableShort: "Available", curEgp: "EGP", rIncomeLine: (s,b,c)=>`Salary ${s} + Bonuses ${b} + Carried over ${c}`, rVsPrevUp: (a,p)=>`Spent vs previous period: up ${a} (${p}%)`, rVsPrevDown: (a,p)=>`Spent vs previous period: down ${a} (${p}%)`, rVsPrevSame: "Spent vs previous period: no change", rVsPrevNone: "No spending in the previous period to compare with", rTotalExpenses: "Total expenses", rTotalBonuses: "Total bonuses", rAmtCur: (c)=>`Amount (${c})`, rCenterSub: (c)=>`${c} spent`,
     investments: "Investments", newInvest: "+ Track an investment", invNamePlaceholder: "Name (e.g. Thndr)", invLinkedGoal: "Linked goal", saveInvest: "Save", updateInvest: "Update value", invNoGoal: "— no goal (optional) —", invInvested: "Invested", invNow: "Now", invProfit: "Profit / loss", invNoValue: "Add the current value to see your profit", invUpdated: (d)=>`Value updated ${d}`, invSince: (a)=>`+${a} deposited since`, invHistory: "History", bonusSourcesLabel: "Bonus sources (separate with commas)", bonusSourcePlaceholder: "— source —", bonusNoSource: "No source", colSource: "Source", shSources: "Sources", ysIncomeSplit: (s,b)=>`Salary ${s} + bonuses ${b}`, ysBonusTitle: "Bonuses", ysBonusNone: "No bonuses logged this year yet.", ysBonusTotal: "Total bonuses", ysBonusCount: "Number of bonuses", ysBonusAvg: "Average per bonus", ysBonusHighest: "Highest bonus", ysBonusFrom: "Where it came from", ysBonusTop: (n,p)=>`most from ${n} (${p}%)`, ysBonusMonths: "Months with bonuses", colMonth: "Month", colIncome: "Income", shMonths: "Months", catManage: "Categories", catManageBtn: "Manage", catManageNote: "Rename, change the emoji, or hide any category. Hidden ones disappear from the lists but old expenses keep them.", catNamePlaceholder: "New category name", catShow: "Show", catHide: "Hide", catDeleteTitle: "Delete this category?", catDeleteBody: (n,c)=>`"${n}" will be removed. ${c} expense(s) in it will move to Other.`, toastEnterCatName: "Enter a category name", toastCatAdded: "Category added",
     badges: "Achievements", badgeUnlocked: (n)=>`New achievement: ${n}`,
     bd_first: "First expense", bd_first_d: "Log your first expense", bd_streak7: "7-day streak", bd_streak7_d: "Log expenses 7 days in a row", bd_streak30: "30-day streak", bd_streak30_d: "Log expenses 30 days in a row", bd_noSweets: "A week without sweets", bd_noSweets_d: "7 days with no sweets while still logging", bd_under1: "Under budget", bd_under1_d: "Finish a month spending less than your income", bd_under3: "Three good months", bd_under3_d: "Finish 3 months under budget", bd_save20: "20% saver", bd_save20_d: "Keep 20% of a month's income unspent", bd_goalHalf: "Halfway there", bd_goalHalf_d: "Reach 50% of a goal", bd_goalDone: "Goal reached", bd_goalDone_d: "Reach 100% of a goal", bd_saved1k: "Saved 1,000", bd_saved1k_d: "1,000 EGP deposited to goals", bd_saved5k: "Saved 5,000", bd_saved5k_d: "5,000 EGP deposited to goals", bd_saved10k: "Saved 10,000", bd_saved10k_d: "10,000 EGP deposited to goals", bd_charity: "Giving", bd_charity_d: "Log a charity expense", bd_investor: "Investor", bd_investor_d: "Start tracking an investment", bd_backup: "Safe and sound", bd_backup_d: "Export or import a backup",
@@ -1126,7 +1155,7 @@ const translations = {
     goalNamePlaceholder: "اسم الهدف (مثال: صندوق الطوارئ)", targetAmountPlaceholder: "المبلغ المستهدف بالجنيه",
     saveGoal: "حفظ الهدف", newGoal: "+ هدف جديد", noGoalsYet: "لا توجد أهداف بعد.",
     addAmountPlaceholder: "المبلغ", quickItemsLabel: "الأزرار السريعة (افصلي بينها بفاصلة)", addToGoal: "إضافة لهدف", voiceListening: 'بسمعك… قولي مثلًا «بقالة 120»', voiceAdded: (d,a,c)=>`تم التسجيل: ${d} · ${a} · ${c}`, voiceNoAmount: "ما سمعتش المبلغ — قوليه بالأرقام", voiceDenied: "إذن الميكروفون مقفول", voiceFailed: "ما سمعتش كويس، جرّبي تاني",
-    reportBtn: "📄 تقرير", reportPdf: "حفظ PDF", reportExcel: "Excel / مشاركة", reportTitle: "التقرير الشهري", rSalary: "المرتب", rBonus: "المكافآت", rAvailable: "إجمالي المتاح", rRemaining: "المتبقي", rVsPrev: "الصرف مقارنة بالفترة السابقة", colDate: "التاريخ", colDesc: "الوصف", colCategory: "الفئة", colAmount: "المبلغ", rBonuses: "المكافآت", rNone: "لا يوجد", shSummary: "الملخص", shCategories: "الفئات", shExpenses: "المصاريف", shBonuses: "المكافآت", toastPdfHint: 'اختاري «حفظ كـ PDF» في شاشة الطباعة', toastExcelReady: "ملف Excel جاهز",
+    reportBtn: "📄 تقرير", reportPdf: "حفظ PDF", reportExcel: "Excel / مشاركة", reportTitle: "التقرير الشهري", rSalary: "المرتب", rBonus: "المكافآت", rAvailable: "إجمالي المتاح", rRemaining: "المتبقي", rVsPrev: "الصرف مقارنة بالفترة السابقة", colDate: "التاريخ", colDesc: "الوصف", colCategory: "الفئة", colAmount: "المبلغ", rBonuses: "المكافآت", rNone: "لا يوجد", shSummary: "الملخص", shCategories: "الفئات", shExpenses: "المصاريف", shBonuses: "المكافآت", toastPdfHint: 'اختاري «حفظ كـ PDF» في شاشة الطباعة', toastExcelReady: "ملف Excel جاهز", rReportPeriod: "تقرير فترة المرتب", rGenerated: (d)=>`اتعمل في ${d}`, rAvailableShort: "المتاح", curEgp: "جنيه", rIncomeLine: (s,b,c)=>`مرتب ${s} + مكافآت ${b} + مرحَّل ${c}`, rVsPrevUp: (a,p)=>`الصرف مقارنة بالفترة السابقة: زيادة ${a} (${p}%)`, rVsPrevDown: (a,p)=>`الصرف مقارنة بالفترة السابقة: أقل ${a} (${p}%)`, rVsPrevSame: "الصرف مقارنة بالفترة السابقة: مفيش تغيير", rVsPrevNone: "مفيش صرف في الفترة السابقة للمقارنة", rTotalExpenses: "إجمالي المصاريف", rTotalBonuses: "إجمالي المكافآت", rAmtCur: (c)=>`المبلغ (${c})`, rCenterSub: (c)=>`${c} مصروف`,
     investments: "الاستثمارات", newInvest: "+ تتبّع استثمار", invNamePlaceholder: "الاسم (مثلًا Thndr)", invLinkedGoal: "الهدف المربوط", saveInvest: "حفظ", updateInvest: "تحديث القيمة", invNoGoal: "— بدون هدف (اختياري) —", invInvested: "اللي حطيتيه", invNow: "قيمته دلوقتي", invProfit: "الربح / الخسارة", invNoValue: "سجّلي القيمة الحالية عشان يظهر الربح", invUpdated: (d)=>`آخر تحديث للقيمة ${d}`, invSince: (a)=>`+${a} اتضاف بعدها`, invHistory: "السجل", bonusSourcesLabel: "مصادر المكافآت (افصلي بينها بفاصلة)", bonusSourcePlaceholder: "— المصدر —", bonusNoSource: "بدون مصدر", colSource: "المصدر", shSources: "المصادر", ysIncomeSplit: (s,b)=>`مرتب ${s} + مكافآت ${b}`, ysBonusTitle: "المكافآت", ysBonusNone: "مفيش مكافآت متسجّلة في السنة دي لسه.", ysBonusTotal: "إجمالي المكافآت", ysBonusCount: "عدد المكافآت", ysBonusAvg: "متوسط المكافأة", ysBonusHighest: "أعلى مكافأة", ysBonusFrom: "جاية منين", ysBonusTop: (n,p)=>`أكتر مصدر ${n} (${p}%)`, ysBonusMonths: "شهور فيها مكافآت", colMonth: "الشهر", colIncome: "الدخل", shMonths: "الشهور", catManage: "الفئات", catManageBtn: "إدارة", catManageNote: "غيّري الاسم أو الإيموجي أو اخفي أي فئة. اللي بتتخفي بتختفي من القوايم بس والمصاريف القديمة بتفضل ليها.", catNamePlaceholder: "اسم الفئة الجديدة", catShow: "إظهار", catHide: "إخفاء", catDeleteTitle: "حذف الفئة دي؟", catDeleteBody: (n,c)=>`هتتمسح "${n}". ${c} مصروف فيها هيروحوا لـ أخرى.`, toastEnterCatName: "اكتبي اسم الفئة", toastCatAdded: "تمت إضافة الفئة",
     badges: "الإنجازات", badgeUnlocked: (n)=>`إنجاز جديد: ${n}`,
     bd_first: "أول مصروف", bd_first_d: "سجّلي أول مصروف", bd_streak7: "أسبوع متواصل", bd_streak7_d: "سجّلي مصاريفك 7 أيام ورا بعض", bd_streak30: "30 يوم متواصل", bd_streak30_d: "سجّلي مصاريفك 30 يوم ورا بعض", bd_noSweets: "أسبوع بدون حلويات", bd_noSweets_d: "7 أيام من غير حلويات وإنتي بتسجّلي", bd_under1: "تحت الميزانية", bd_under1_d: "خلّصي شهر وصرفك أقل من دخلك", bd_under3: "تلات شهور حلوين", bd_under3_d: "خلّصي 3 شهور تحت الميزانية", bd_save20: "مدّخرة 20%", bd_save20_d: "فضّلتي 20% من دخل شهر من غير صرف", bd_goalHalf: "نص الطريق", bd_goalHalf_d: "وصلتي 50% من هدف", bd_goalDone: "هدف اتحقق", bd_goalDone_d: "وصلتي 100% من هدف", bd_saved1k: "حوّشتي 1,000", bd_saved1k_d: "1,000 جنيه إيداعات في الأهداف", bd_saved5k: "حوّشتي 5,000", bd_saved5k_d: "5,000 جنيه إيداعات في الأهداف", bd_saved10k: "حوّشتي 10,000", bd_saved10k_d: "10,000 جنيه إيداعات في الأهداف", bd_charity: "عطاء", bd_charity_d: "سجّلي مصروف صدقة", bd_investor: "مستثمرة", bd_investor_d: "ابدأي تتبّع استثمار", bd_backup: "بياناتك في أمان", bd_backup_d: "صدّري أو استوردي نسخة احتياطية",
@@ -2840,27 +2869,42 @@ function pieHtml(items, center){
   const leg = top.map((x,i)=>`<div style="display:flex;align-items:center;gap:6px;margin:3px 0"><span style="width:10px;height:10px;border-radius:2px;background:${PIE_COLORS[i]};flex-shrink:0"></span><span style="flex:1">${escapeHtml(x.label)}</span><span class="num">${(x.amt/total*100).toFixed(0)}%</span></div>`).join('');
   return `<div style="display:flex;align-items:center;gap:14px;margin:8px 0 12px;flex-wrap:wrap"><svg viewBox="0 0 120 120" width="130" height="130" style="flex-shrink:0">${arcs}${center?`<text x="60" y="64" text-anchor="middle" font-size="12" font-weight="700" fill="currentColor">${center}</text>`:''}</svg><div class="pie-leg" style="flex:1;min-width:140px;font-size:12px">${leg}</div></div>`;
 }
+const REPORT_PIE_COLORS=['#2563eb','#f59e0b','#10b981','#8b5cf6','#ec4899','#64748b','#94a3b8'];
+function reportPieHtml(cats){
+  const total = cats.reduce((a,c)=>a+c.amt,0);
+  if(!cats.length || !(total>0)) return '';
+  const items = cats.slice(0,6).map(c=>({label:c.label, amt:c.amt}));
+  const rest = cats.slice(6).reduce((a,c)=>a+c.amt,0);
+  if(rest>0) items.push({label:t('otherCats'), amt:rest});
+  const R=15.915; let acc=0;
+  const arcs = items.map((x,i)=>{ const pct=x.amt/total*100; const s=`<circle cx="21" cy="21" r="${R}" fill="none" stroke="${REPORT_PIE_COLORS[i]}" stroke-width="4.2" stroke-dasharray="${pct.toFixed(2)} ${(100-pct).toFixed(2)}" stroke-dashoffset="${(25-acc).toFixed(2)}"/>`; acc+=pct; return s; }).join('');
+  const rows = items.map((x,i)=>`<tr><td><span class="r-sw" style="background:${REPORT_PIE_COLORS[i]}"></span>${escapeHtml(x.label)}</td><td class="num"><b>${(x.amt/total*100).toFixed(1)}%</b></td><td class="num">${fmt(x.amt)}</td></tr>`).join('');
+  return `<div class="r-pie"><svg viewBox="0 0 42 42" width="150" height="150" style="flex-shrink:0"><circle cx="21" cy="21" r="${R}" fill="none" stroke="#e5e7eb" stroke-width="4.2"/>${arcs}<text x="21" y="20" text-anchor="middle" font-size="4.4" font-weight="700" fill="#111827">${fmt(total)}</text><text x="21" y="25.6" text-anchor="middle" font-size="3" fill="#6b7280">${escapeHtml(t('rCenterSub', t('curEgp')))}</text></svg><table class="r-legend"><tbody>${rows}</tbody></table></div>`;
+}
 function reportHtml(d){
-  const row = (label, val, cls)=>`<tr${cls==='total'?' class="total"':''}><td>${label}</td><td class="num">${val}</td></tr>`;
   const diff = d.prevSpent>0 ? d.spent-d.prevSpent : null;
-  const diffTxt = diff===null ? '—' : `<span class="${diff>0?'neg':'pos'}">${diff>0?'+':'−'}${fmt(Math.abs(diff))} (${diff>0?'+':'−'}${Math.abs(diff/d.prevSpent*100).toFixed(0)}%)</span>`;
-  return `<h1>${escapeHtml(t('reportTitle'))} — ${escapeHtml(d.title)}</h1>
-  <div class="r-sub">${escapeHtml(d.range)}</div>
-  <table>
-    ${row(escapeHtml(t('rSalary')), fmt(d.salary))}
-    ${row(escapeHtml(t('rBonus')), fmt(d.bonus))}
-    ${row(escapeHtml(t('carriedOver')), fmt(d.carry))}
-    ${row(escapeHtml(t('rAvailable')), fmt(d.available), 'total')}
-    ${row(escapeHtml(t('spent')), fmt(d.spent))}
-    ${row(escapeHtml(t('rRemaining')), `<span class="${d.remaining<0?'neg':'pos'}">${fmt(d.remaining)}</span>`, 'total')}
-    ${row(escapeHtml(t('rVsPrev')), diffTxt)}
-  </table>
+  const vsTxt = diff===null ? t('rVsPrevNone')
+    : diff>0 ? t('rVsPrevUp', fmt(Math.abs(diff)), Math.abs(diff/d.prevSpent*100).toFixed(1))
+    : diff<0 ? t('rVsPrevDown', fmt(Math.abs(diff)), Math.abs(diff/d.prevSpent*100).toFixed(1))
+    : t('rVsPrevSame');
+  const vsHtml = diff!==null && diff!==0 ? `<span class="${diff>0?'neg':'pos'}">${escapeHtml(vsTxt)}</span>` : escapeHtml(vsTxt);
+  const endYear = periodBounds(d.year, d.monthIdx).end.getFullYear();
+  const card = (cls,label,val)=>`<div class="r-card ${cls}"><div class="rc-l">${escapeHtml(label)}</div><div class="rc-v">${fmt(val)} <span class="rc-c">${escapeHtml(t('curEgp'))}</span></div></div>`;
+  return `<h1>${escapeHtml(t('rReportPeriod'))}</h1>
+  <div class="r-period">${escapeHtml(d.range)} ${endYear}</div>
+  <div class="r-gen">${escapeHtml(t('rGenerated', formatDate(todayStr())))}</div>
+  <div class="r-cards">
+    ${card('rc-avail', t('rAvailableShort'), d.available)}
+    ${card('rc-spent', t('spent'), d.spent)}
+    ${card('rc-rem', t('rRemaining'), d.remaining)}
+  </div>
+  <div class="r-line">${escapeHtml(t('rIncomeLine', fmt(d.salary), fmt(d.bonus), fmt(d.carry)))}</div>
+  <div class="r-line">${vsHtml}</div>
   <h3>${escapeHtml(t('byCategory'))}</h3>
-  ${pieHtml(d.cats.map(c=>({label:c.label,amt:c.amt})))}
-  ${d.cats.length ? `<table><tr><th>${escapeHtml(t('colCategory'))}</th><th class="num">%</th><th class="num">${escapeHtml(t('colAmount'))}</th></tr>${d.cats.map(c=>`<tr><td>${escapeHtml(c.label)}</td><td class="num">${c.pct.toFixed(0)}%</td><td class="num">${fmt(c.amt)}</td></tr>`).join('')}</table>` : `<div>${escapeHtml(t('rNone'))}</div>`}
+  ${d.cats.length ? reportPieHtml(d.cats) : `<div>${escapeHtml(t('rNone'))}</div>`}
   <h3>${escapeHtml(t('expenses'))}</h3>
-  ${d.entries.length ? `<table><tr><th>${escapeHtml(t('colDate'))}</th><th>${escapeHtml(t('colDesc'))}</th><th>${escapeHtml(t('colCategory'))}</th><th class="num">${escapeHtml(t('colAmount'))}</th></tr>${d.entries.map(e=>`<tr><td>${escapeHtml(formatDate(e.date))}</td><td>${escapeHtml(e.desc||'')}</td><td>${escapeHtml(categoryLabel(e.category))}</td><td class="num">${fmt(parseFloat(e.amount))}</td></tr>`).join('')}</table>` : `<div>${escapeHtml(t('rNone'))}</div>`}
-  ${d.incomes.length ? `<h3>${escapeHtml(t('rBonuses'))}</h3><table><tr><th>${escapeHtml(t('colDate'))}</th><th>${escapeHtml(t('colSource'))}</th><th>${escapeHtml(t('colDesc'))}</th><th class="num">${escapeHtml(t('colAmount'))}</th></tr>${d.incomes.map(e=>`<tr><td>${escapeHtml(formatDate(e.date))}</td><td>${escapeHtml(e.source||'')}</td><td>${escapeHtml(e.desc||'')}</td><td class="num">${fmt(parseFloat(e.amount))}</td></tr>`).join('')}</table>` : ''}`;
+  ${d.entries.length ? `<table><thead><tr><th>${escapeHtml(t('colDate'))}</th><th>${escapeHtml(t('colDesc'))}</th><th>${escapeHtml(t('colCategory'))}</th><th class="num">${escapeHtml(t('rAmtCur', t('curEgp')))}</th></tr></thead><tbody>${d.entries.map(e=>`<tr><td>${escapeHtml(formatDate(e.date))}</td><td>${escapeHtml(e.desc||'')}</td><td><span class="chip">${escapeHtml(categoryLabel(e.category))}</span></td><td class="num">${fmt(parseFloat(e.amount))}</td></tr>`).join('')}</tbody><tfoot><tr class="total"><td colspan="3">${escapeHtml(t('rTotalExpenses'))}</td><td class="num">${fmt(d.spent)}</td></tr></tfoot></table>` : `<div>${escapeHtml(t('rNone'))}</div>`}
+  ${d.incomes.length ? `<h3>${escapeHtml(t('rBonuses'))}</h3><table><thead><tr><th>${escapeHtml(t('colDate'))}</th><th>${escapeHtml(t('colSource'))}</th><th>${escapeHtml(t('colDesc'))}</th><th class="num">${escapeHtml(t('rAmtCur', t('curEgp')))}</th></tr></thead><tbody>${d.incomes.map(e=>`<tr><td>${escapeHtml(formatDate(e.date))}</td><td>${escapeHtml(e.source||'')}</td><td>${escapeHtml(e.desc||'')}</td><td class="num">${fmt(parseFloat(e.amount))}</td></tr>`).join('')}</tbody><tfoot><tr class="total"><td colspan="3">${escapeHtml(t('rTotalBonuses'))}</td><td class="num">${fmt(d.bonus)}</td></tr></tfoot></table>` : ''}`;
 }
 function openReport(year, monthIdx){
   reportCtx = buildReportData(year, monthIdx);
