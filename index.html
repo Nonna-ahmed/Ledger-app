@@ -970,10 +970,14 @@
       <button class="coll-head" type="button"><span class="coll-t" data-i18n="ruleTitle">50 / 30 / 20 rule</span><span class="coll-arrow">▸</span></button>
       <div class="coll-body"><div class="cmp-wrap" id="sheetRule"></div></div>
     </div>
-    <div class="subhead" id="sheetExpHead" data-i18n="expenses">Expenses</div>
+    <div class="coll closed sheet-coll" data-coll="sheetExpenses" id="sheetExpColl">
+      <button class="coll-head" type="button" id="sheetExpHead"><span class="coll-t" data-i18n="expenses">Expenses</span><span class="coll-meta" id="sheetExpMeta"></span><span class="coll-arrow">▸</span></button>
+      <div class="coll-body">
     <div class="filter-row"><select id="sheetCatFilter" class="cat-filter"></select><span id="sheetFilterTotal" class="filter-total mono"></span></div>
     <div class="filter-pillrow" id="sheetFilterPill" hidden></div>
     <div id="sheetEntries"></div>
+      </div>
+    </div>
     <div class="subhead" id="sheetIncomeHead" style="display:none;" data-i18n="bonusesRewards">Bonuses / rewards</div>
     <div id="sheetIncomes"></div>
   </div>
@@ -2607,7 +2611,7 @@ function openPeriodSheet(monthIdx, silent){
     b.addEventListener('click', ()=>{
       sheetCatFilter = (sheetCatFilter===b.dataset.cat) ? 'all' : b.dataset.cat;
       openPeriodSheet(currentSheetMonthIdx, true);
-      if(sheetCatFilter!=='all') document.getElementById('sheetExpHead').scrollIntoView({behavior:'smooth', block:'start'});
+      if(sheetCatFilter!=='all'){ const ec=document.getElementById('sheetExpColl'); ec.classList.remove('closed'); document.getElementById('sheetExpHead').setAttribute('aria-expanded','true'); document.getElementById('sheetExpHead').scrollIntoView({block:'start'}); }
     });
   });
 
@@ -2622,6 +2626,7 @@ function openPeriodSheet(monthIdx, silent){
   filterEl.onchange = ()=>{ sheetCatFilter = filterEl.value; openPeriodSheet(currentSheetMonthIdx, true); };
   const shown = sheetCatFilter==='all' ? entries : entries.filter(e=>e.category===sheetCatFilter);
   document.getElementById('sheetFilterTotal').textContent = sheetCatFilter==='all' ? '' : t('filteredTotal')+': EGP '+fmt(shown.reduce((a,e)=>a+parseFloat(e.amount),0));
+  document.getElementById('sheetExpMeta').textContent = '· '+shown.length+(sheetCatFilter==='all'?'':' · '+categoryLabel(sheetCatFilter));
   const pillRow = document.getElementById('sheetFilterPill');
   if(sheetCatFilter==='all'){ pillRow.hidden = true; pillRow.innerHTML=''; }
   else {
