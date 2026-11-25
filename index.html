@@ -33,7 +33,7 @@
   header.top{ padding: calc(env(safe-area-inset-top, 0px) + 14px) 20px 10px; display:flex; justify-content:space-between; align-items:flex-start; gap:10px; }
   .eyebrow{ font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--brass); margin: 0 0 4px; }
   h1{ font-size: 28px; font-weight: 700; margin: 0; letter-spacing: -0.01em; }
-  .year-nav{ display:flex; align-items:center; gap: 10px; margin-top: 6px; }
+  .year-nav{ display:flex; align-items:center; gap: 10px; margin-top: 6px; flex-wrap:wrap; row-gap:4px; }
   .year-nav button{ background:none; border:none; color: var(--ink-soft); font-family:'JetBrains Mono',monospace; font-size:16px; cursor:pointer; padding:4px 8px; }
   .year-nav span{ font-family:'JetBrains Mono',monospace; font-size:15px; color:var(--ink-soft);}
   .top-right{ display:flex; flex-direction:column; align-items:flex-end; gap:8px; }
@@ -239,6 +239,29 @@
   .month-bar-track{ width: 130px; height: 5px; background: var(--paper-line); border-radius:3px; margin-top:4px; overflow:hidden;}
   .month-bar-fill{ height:100%; background: var(--brass); border-radius:3px; transition: width .35s ease; }
   .month-bar-fill.over{ background: var(--red); }
+  .month-bar-fill.ok{ background: var(--green); }
+  .month-bar-fill.warn{ background: var(--brass); }
+  .month-pct.ok{ color: var(--green); }
+  .month-pct.warn{ color: var(--brass); }
+  .month-pct.over{ color: var(--red); }
+  .month-of{ font-weight:400; font-size:11px; color: var(--ink-soft); }
+  .period-hero{ margin: 10px 20px 6px; background:#1B2A44; color:#EDEAE4; border-radius:12px; padding:15px 18px 13px; box-shadow: var(--shadow); cursor:pointer; }
+  .period-hero:active{ transform: scale(0.99); }
+  .ph-label{ font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:#C9A876; margin-bottom:2px; }
+  .ph-dates{ font-size:12px; color:#C9CFDB; margin-bottom:10px; }
+  .ph-main{ display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; }
+  .ph-amt{ font-size:34px; font-weight:700; line-height:1; }
+  .period-hero.over .ph-amt{ color:#C97B7B; }
+  .ph-cap{ font-size:14px; color:#C9CFDB; }
+  .ph-spent{ font-family:'JetBrains Mono',monospace; font-size:11.5px; color:#C9CFDB; margin-top:6px; text-align:end; }
+  .ph-bar{ height:8px; border-radius:4px; background:rgba(237,234,228,0.18); margin-top:8px; overflow:hidden; direction:ltr; }
+  .ph-fill{ height:100%; border-radius:4px; background:#8FBC9B; transition:width .35s ease; }
+  .ph-fill.warn{ background:#C9A876; } .ph-fill.over{ background:#C97B7B; }
+  .ph-pct{ font-family:'JetBrains Mono',monospace; font-size:10.5px; color:#C9CFDB; margin-top:6px; }
+  .hdr-btns{ display:flex; align-items:center; gap:8px; }
+  @media (max-width:340px){ header.top{ padding-left:14px; padding-right:14px; } .hdr-btns{ gap:6px; } .top-right{ gap:6px !important; } }
+  .hdr-mic{ background:var(--ink); border-color:var(--ink); color:var(--paper); }
+  .legend-dash{ display:inline-block; width:14px; height:0; border-top:2px dashed var(--ink-soft); margin-inline-end:4px; vertical-align:middle; }
   .month-right{ text-align:end; }
   .month-amt{ font-family:'JetBrains Mono',monospace; font-weight:700; font-size:15px; }
   .month-pct{ font-family:'JetBrains Mono',monospace; font-size:11px; color: var(--ink-soft); margin-top:2px; }
@@ -523,13 +546,16 @@
       <button class="lang-btn" id="langEnBtn">EN</button>
       <button class="lang-btn" id="langArBtn">AR</button>
     </div>
-    <div class="more-wrap">
+    <div class="hdr-btns">
+      <button class="mic-btn hdr-mic" id="micBtn" type="button" hidden aria-label="Voice"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><line x1="12" y1="17" x2="12" y2="21"/></svg></button>
+      <div class="more-wrap">
       <button class="more-btn" id="moreBtn" type="button" aria-label="More" aria-haspopup="true">⋯</button>
       <div class="more-menu" id="moreMenu">
         <button class="export-btn" id="exportJson" data-i18n="exportJson">Export JSON</button>
         <button class="export-btn" id="exportCsv" data-i18n="exportCsv">Export CSV</button>
         <button class="export-btn" id="importJson" data-i18n="importJson">Import JSON</button>
         <input type="file" id="importFile" accept=".json,application/json" style="display:none">
+      </div>
       </div>
     </div>
   </div>
@@ -539,6 +565,7 @@
 <div class="banner info-banner" id="iosBanner"><span class="mark">📲</span><span data-i18n="iosInstall">To install: tap the Share icon, then "Add to Home Screen".</span><button class="dismiss" id="iosBannerDismiss">✕</button></div>
 
 <div class="summary-strip" id="summaryStrip" data-tab="home"></div>
+<div class="period-hero" id="periodHero" data-tab="home"></div>
 <div class="cat-cards" id="catCards" data-tab="home"></div>
 <div class="qt-row" id="qtRow" data-tab="home"></div>
 
@@ -547,7 +574,7 @@
   <svg id="trendSvg" width="100%" height="90" viewBox="0 0 320 90" preserveAspectRatio="none"></svg>
   <div class="trend-legend">
     <span><span class="legend-dot" style="background:var(--brass)"></span><span data-i18n="spent">Spent</span></span>
-    <span><span class="legend-dot" style="background:var(--ink-soft)"></span><span data-i18n="budget">Budget</span></span>
+    <span><span class="legend-dash"></span><span data-i18n="budgetVaries">Budget (varies per period)</span></span>
   </div>
 </div>
 
@@ -733,7 +760,7 @@
   <button class="lock-link" id="lockCancel" type="button" style="display:none" data-i18n="cancel">Cancel</button>
 </div></div>
 <div class="add-bar" id="addBar">
-  <div class="add-bar-collapsed" id="addBarCollapsed"><div class="slot" data-i18n="addExpenseOrBonus">Add an expense or bonus…</div><button class="repeat-last" id="repeatLastBtn" type="button" hidden></button><button class="mic-btn" id="micBtn" type="button" hidden aria-label="Voice">🎤</button><div class="plus">+</div></div>
+  <div class="add-bar-collapsed" id="addBarCollapsed"><div class="slot" data-i18n="addExpenseOrBonus">Add an expense or bonus…</div><button class="repeat-last" id="repeatLastBtn" type="button" hidden></button><div class="plus">+</div></div>
   <div class="add-form" id="addForm">
     <div class="form-title" id="formTitle" data-i18n="newEntry">New entry</div>
     <div class="type-toggle">
@@ -898,6 +925,7 @@ const translations = {
     installApp: "Install this app", install: "Install",
     iosInstall: 'To install: tap the Share icon, then "Add to Home Screen".',
     spendPerPeriod: "Spend per pay period —", spent: "Spent", budget: "Budget",
+    thisPayPeriod: "This pay period", egpLeftToSpend: "EGP left to spend", egpOverBudget: "EGP over budget", spentOf: (s,b)=>`spent ${s} of ${b}`, ofBudgetUsed: (p)=>`${p}% of this period's budget used`, leftAmt: (a)=>`EGP ${a} left`, overAmt: (a)=>`EGP ${a} over budget`, pctUsed: (p)=>`${p}% used`, budgetVaries: "Budget (varies per period)", ofBudgetWord: "of", monthNamesShort: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
     payPeriods: "Pay periods", loading: "Loading ledger…",
     yearTotalSpent: "Year total spent",
     annualBudget: "Annual budget", salaryPlusBonuses: "salary + bonuses",
@@ -978,6 +1006,7 @@ const translations = {
     installApp: "تثبيت التطبيق", install: "تثبيت",
     iosInstall: 'للتثبيت: اضغط على أيقونة المشاركة، ثم "إضافة إلى الشاشة الرئيسية".',
     spendPerPeriod: "الإنفاق لكل فترة راتب —", spent: "المصروف", budget: "الميزانية",
+    thisPayPeriod: "فترة الراتب الحالية", egpLeftToSpend: "جنيه فاضل للصرف", egpOverBudget: "جنيه زيادة عن الميزانية", spentOf: (s,b)=>`صرفتي ${s} من ${b}`, ofBudgetUsed: (p)=>`استخدمتي ${p}% من ميزانية الفترة دي`, leftAmt: (a)=>`فاضل ${a} جنيه`, overAmt: (a)=>`${a} جنيه زيادة عن الميزانية`, pctUsed: (p)=>`اتصرف ${p}%`, budgetVaries: "الميزانية (بتتغير كل فترة)", ofBudgetWord: "من", monthNamesShort: ["ينا","فبر","مار","أبر","ماي","يون","يول","أغس","سبت","أكت","نوف","ديس"],
     payPeriods: "فترات الراتب", loading: "جاري تحميل الدفتر…",
     yearTotalSpent: "إجمالي الإنفاق السنوي",
     annualBudget: "الميزانية السنوية", salaryPlusBonuses: "الراتب + المكافآت",
@@ -1513,7 +1542,7 @@ function renderTrend(){
   const W=320, H=150, padX=16, top=26, bot=52;
   svg.setAttribute('viewBox','0 0 '+W+' '+H); svg.setAttribute('height', String(H));
   const spentArr=[], budgetArr=[], months=[];
-  for(let i=0;i<12;i++){ const p=fyPeriod(state.year,i); spentArr.push(periodExpenseTotal(p.year,p.monthIdx)); budgetArr.push(periodBaseBudget(p.year,p.monthIdx)); months.push(p.monthIdx+1); }
+  for(let i=0;i<12;i++){ const p=fyPeriod(state.year,i); spentArr.push(periodExpenseTotal(p.year,p.monthIdx)); budgetArr.push(periodBaseBudget(p.year,p.monthIdx)); months.push((translations[state.lang]||translations.en).monthNamesShort[p.monthIdx]); }
   const maxV = Math.max(1, ...spentArr, ...budgetArr);
   const stepX = (W-2*padX)/11;
   const X = i=>padX+i*stepX, Y = v=>H-bot-(v/maxV)*(H-top-bot);
@@ -1960,6 +1989,22 @@ function render(){
     document.getElementById('alertText').textContent = t('closeToLimitBanner', fmtShort(curBudget-curSpent), Math.round(curSpent/curBudget*100));
   } else { banner.classList.remove('show'); }
 
+  { const hero = document.getElementById('periodHero');
+    const pLeft = curBudget - curSpent;
+    const over = pLeft < 0;
+    const pPct = curBudget>0 ? Math.round(curSpent/curBudget*100) : (curSpent>0?100:0);
+    const warn = !over && curBudget>0 && (curSpent/curBudget) >= 0.85;
+    hero.className = 'period-hero' + (over?' over':'');
+    hero.innerHTML = `
+      <div class="ph-label">${t('thisPayPeriod')} · ${monthName(cur.monthIdx)}</div>
+      <div class="ph-dates">${periodLabel(cur.year,cur.monthIdx)}</div>
+      <div class="ph-main"><span class="ph-amt mono">${fmtShort(Math.abs(pLeft))}</span><span class="ph-cap">${over?t('egpOverBudget'):t('egpLeftToSpend')}</span></div>
+      <div class="ph-spent">${t('spentOf', fmtShort(curSpent), fmtShort(curBudget))}</div>
+      ${curBudget>0 ? `<div class="ph-bar"><div class="ph-fill ${over?'over':(warn?'warn':'')}" style="width:${Math.min(pPct,100)}%"></div></div>
+      <div class="ph-pct">${t('ofBudgetUsed', pPct)}</div>` : ''}`;
+    hero.onclick = ()=> openPeriodSheet(cur.monthIdx);
+  }
+
   const {spent:yTotal, budget:yBudget} = yearPeriodsTotals(state.year);
   const yRemain = yBudget - yTotal;
   document.getElementById('yearTotal').textContent = 'EGP ' + fmt(yTotal);
@@ -2001,17 +2046,18 @@ function render(){
     const pct = budget>0 ? (total/budget)*100 : 0;
     const isFuture = (py>nowCur.year) || (py===nowCur.year && idx>nowCur.monthIdx);
     const isOver = total>budget;
+    const warnM = !isOver && budget>0 && pct>=85;
     const card = document.createElement('div');
     card.className = 'month-card' + (isOver?' over':'') + (isFuture?' future':'');
     card.innerHTML = `
       <div class="month-left">
         <div class="month-name">${monthName(idx)}</div>
         <div class="month-range">${periodLabel(py, idx)}</div>
-        <div class="month-bar-track"><div class="month-bar-fill ${isOver?'over':''}" style="width:${Math.min(pct,100)}%"></div></div>
+        <div class="month-bar-track"><div class="month-bar-fill ${isOver?'over':(warnM?'warn':'ok')}" style="width:${Math.min(pct,100)}%"></div></div>
       </div>
       <div class="month-right">
-        <div class="month-amt">EGP ${fmt(total)}</div>
-        <div class="month-pct">${pct.toFixed(0)}% ${t('budget').toLowerCase()}</div>
+        <div class="month-amt">${fmt(total)} <span class="month-of">${t('ofBudgetWord')} ${fmt(budget)}</span></div>
+        <div class="month-pct ${isOver?'over':(warnM?'warn':'ok')}">${isOver ? t('overAmt', fmtShort(total-budget)) : (warnM ? t('pctUsed', Math.round(pct)) : t('leftAmt', fmtShort(budget-total)))}</div>
         ${bonus>0 ? `<div class="month-bonus">+${fmtShort(bonus)}</div>` : ''}
         ${carry>0 ? `<div class="month-bonus">↪ ${fmtShort(carry)}</div>` : ''}
       </div>`;
