@@ -373,6 +373,7 @@
   .add-form button.actbtn{ font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:700; border:none; border-radius:7px; padding:10px 14px; cursor:pointer; }
   .btn-save{ background: var(--brass); color:var(--ink); flex:1; }
   .btn-save.income{ background: var(--green); color: #fff; }
+  .add-form #typeIncome.active{ background: var(--green); border-color: var(--green); color:#fff; }
   .btn-cancel{ background: transparent; color: #C9CFDB; border:1px solid #3B4B66 !important; }
 
   .sheet-overlay{ position: fixed; inset:0; background: rgba(27,42,68,0.5); display:none; z-index:40; align-items:flex-end; }
@@ -2251,11 +2252,7 @@ function refreshQuickAdd(){
     });
     return;
   }
-  state.bonusSources.forEach(name=>{
-    const b=document.createElement('button'); b.type='button'; b.className='quick-chip'; b.textContent='👤 '+name;
-    b.addEventListener('click',()=>refreshSourceSelect(name));
-    chips.appendChild(b);
-  });
+  /* source names live in the chip row below the amount; this row keeps saved Bonus shortcuts only */
   const last = src.slice().sort((a,b)=> b.date.localeCompare(a.date))[0];
   const picks = []; if(last) picks.push({e:last, repeat:true});
   ranked.forEach(st=>{ if(picks.length<5 && !picks.some(p=>p.e.desc.trim().toLowerCase()===st.latest.desc.trim().toLowerCase())) picks.push({e:st.latest, repeat:false}); });
@@ -4059,7 +4056,11 @@ loadState().then(()=>{ try{ resumeDrive(); }catch(e){ console.error(e); } });
     const on=box.querySelector('.sel'); if(on && on.scrollIntoView) { try{ box.scrollLeft = on.offsetLeft - 20; }catch(e){} }
   }
   [cat,src].forEach(x=>{ new MutationObserver(sync).observe(x,{childList:true,attributes:true,attributeFilter:['style']}); x.addEventListener('change',sync); });
-  new MutationObserver(sync).observe(form,{attributes:true,attributeFilter:['class']});
+  function closeMore(){ const p=g('morePanel'), b=g('addMoreBtn'); p.classList.remove('open'); b.classList.remove('on'); b.setAttribute('aria-expanded','false'); }
+  let wasOpen=form.classList.contains('open');
+  new MutationObserver(()=>{ const o=form.classList.contains('open'); if(o&&!wasOpen) closeMore(); wasOpen=o; sync(); }).observe(form,{attributes:true,attributeFilter:['class']});
+  g('fSave').addEventListener('click',()=>setTimeout(closeMore,50));
+  g('typeExpense').addEventListener('click',closeMore); g('typeIncome').addEventListener('click',closeMore);
   g('typeExpense').addEventListener('click',()=>setTimeout(sync,0)); g('typeIncome').addEventListener('click',()=>setTimeout(sync,0));
   g('addMoreBtn').addEventListener('click',()=>{ const p=g('morePanel'); const o=p.classList.toggle('open'); g('addMoreBtn').classList.toggle('on',o); g('addMoreBtn').setAttribute('aria-expanded',o); });
   sync();
