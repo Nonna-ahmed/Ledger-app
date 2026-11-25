@@ -978,8 +978,10 @@
     <div id="sheetEntries"></div>
       </div>
     </div>
-    <div class="subhead" id="sheetIncomeHead" style="display:none;" data-i18n="bonusesRewards">Bonuses / rewards</div>
-    <div id="sheetIncomes"></div>
+    <div class="coll closed sheet-coll" data-coll="sheetBonuses" id="sheetIncomeHead" style="display:none;">
+      <button class="coll-head" type="button"><span class="coll-t" data-i18n="bonusesRewards">Bonuses / rewards</span><span class="coll-meta" id="sheetIncMeta"></span><span class="coll-arrow">▸</span></button>
+      <div class="coll-body"><div id="sheetIncomes"></div></div>
+    </div>
   </div>
 </div>
 
@@ -2658,18 +2660,22 @@ function openPeriodSheet(monthIdx, silent){
   const incomeHead=document.getElementById('sheetIncomeHead'), incomesEl=document.getElementById('sheetIncomes');
   if(incomeEntries.length){
     incomeHead.style.display='';
+    document.getElementById('sheetIncMeta').textContent = '· '+incomeEntries.length+' · +'+fmt(incomeEntries.reduce((a,e)=>a+parseFloat(e.amount),0));
     incomesEl.innerHTML = incomeEntries.map(e=>`
-      <div class="entry" data-entry-id="${e.id}">
+      <div class="entry has-actions" data-entry-id="${e.id}">
         <div class="entry-left"><div class="entry-text"><div class="entry-desc">${escapeHtml(e.desc)}</div><div class="entry-meta">${formatDate(e.date)}${e.source ? ' · 👤 '+escapeHtml(e.source) : ''}</div></div></div>
         <div class="entry-right">
           <div class="entry-amt income">+EGP ${fmt(e.amount)}</div>
+          <button class="entry-dots" type="button" aria-label="${t('moreActions')}" aria-expanded="false">⋯</button>
+        </div>
+        <div class="entry-actions">
           <button class="entry-edit" data-kind="income" data-id="${e.id}">${t('edit')}</button>
           <button class="entry-del" data-kind="income" data-id="${e.id}">${t('delete')}</button>
         </div>
       </div>`).join('');
   } else { incomeHead.style.display='none'; incomesEl.innerHTML=''; }
 
-  document.querySelectorAll('#sheetEntries .entry-dots').forEach(b=>{
+  document.querySelectorAll('#sheetEntries .entry-dots, #sheetIncomes .entry-dots').forEach(b=>{
     b.addEventListener('click', ()=>{ const row=b.closest('.entry'); const o=row.classList.toggle('open-actions'); b.setAttribute('aria-expanded', String(o)); });
   });
   document.querySelectorAll('#sheetEntries .day-head').forEach(h=>{
