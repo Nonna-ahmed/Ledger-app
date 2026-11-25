@@ -192,6 +192,13 @@
   .inv-actions input{ font-family:'JetBrains Mono',monospace; font-size:13px; background:transparent; border:1px solid var(--paper-line); border-radius:6px; padding:7px 8px; min-width:0; color:var(--ink); }
   .inv-actions input[type=number]{ width:96px; } .inv-actions input[type=date]{ width:132px; }
   .inv-actions button{ font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:700; border-radius:6px; padding:7px 10px; cursor:pointer; border:1px solid var(--paper-line); background:transparent; color:var(--ink-soft); }
+  .inv-actions .sp{ flex:1; } .inv-actions .dep-toggle{ border:none; padding:7px 4px; }
+  .inv-updform{ display:none; gap:6px; margin-top:8px; align-items:center; } .inv-updform.open{ display:flex; }
+  .inv-updform input{ font-family:'JetBrains Mono',monospace; font-size:13px; background:transparent; border:1px solid var(--paper-line); border-radius:6px; padding:8px; min-width:0; color:var(--ink); }
+  .inv-updform input[type=number]{ flex:1; } .inv-updform input[type=date]{ width:128px; }
+  .inv-updform .inv-upd{ font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:700; border-radius:6px; padding:8px 12px; cursor:pointer; background:var(--brass); color:var(--ink); border:1px solid var(--brass); }
+  .calc-toggle{ text-align:start; display:flex; justify-content:space-between; align-items:center; font-family:'JetBrains Mono',monospace; text-transform:uppercase; letter-spacing:.06em; font-size:12px; background:var(--card); border-color:transparent; box-shadow:var(--shadow); }
+  .calc-toggle::after{ content:'▶'; font-size:10px; color:var(--brass); } .calc-toggle.on::after{ content:'▼'; }
   .inv-actions button.inv-upd{ background:var(--brass); color:var(--ink); border-color:var(--brass); }
   .inv-actions button.inv-del{ color:var(--red); border-color:#D8C2B4; }
   .inv-hist-row{ display:flex; align-items:center; gap:8px; padding:6px 0; border-bottom:1px solid var(--paper-line); font-size:11.5px; flex-wrap:wrap; }
@@ -477,6 +484,7 @@
   .yx-row{ display:flex; align-items:center; gap:8px; margin-bottom:7px; font-size:11.5px; }
   .yx-m{ width:30px; color:var(--ink-soft); } .yx-v{ min-width:84px; text-align:end; direction:ltr; }
   .yx-track{ flex:1; height:9px; background:#E8E2D4; border-radius:5px; overflow:hidden; } .yx-track div{ height:100%; border-radius:5px; }
+  .yx-live{ font-size:10.5px; color:var(--ink-soft); margin:-3px 0 6px 38px; } .yx-note{ font-size:11px; color:var(--ink-soft); margin-top:4px; }
   .yx-chg{ display:flex; justify-content:space-between; font-size:12.5px; padding:4px 0; border-top:1px solid #EEE8DA; }
   .st-axis{ display:flex; justify-content:space-between; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink-soft); margin-top:5px; direction:ltr; }
   .bnav .fab-wrap{ flex:0 0 76px; padding:0; min-height:52px; position:relative; }
@@ -668,7 +676,7 @@
     <div class="row"><button class="btn-outline full" id="saveInvest" data-i18n="saveInvest">Save</button></div>
   </div>
   <button class="btn-outline full" id="toggleAddInvest" data-i18n="newInvest">+ Track an investment</button>
-  <button class="btn-outline full calc-toggle" id="toggleCalc" type="button" data-i18n="calcBtn">🧮 Returns calculator</button>
+  <button class="btn-outline full calc-toggle" id="toggleCalc" type="button" data-i18n="calcBtn">Returns calculator</button>
   <div class="calc-card" id="calcCard">
     <div class="row calc-row"><label for="calcAmount" data-i18n="calcAmount">Amount</label><input type="number" id="calcAmount" inputmode="decimal" value="10000"></div>
     <input type="range" id="calcSlider" min="1000" max="500000" step="1000" value="10000">
@@ -981,7 +989,7 @@ const translations = {
     saveGoal: "Save goal", newGoal: "+ New goal", noGoalsYet: "No goals yet.",
     addAmountPlaceholder: "Amount", quickItemsLabel: "Quick items (separate with commas)", addToGoal: "Add to goal", voiceListening: 'Listening… say e.g. "Groceries 120"', voiceAdded: (d,a,c)=>`Added: ${d} · ${a} · ${c}`, voiceNoAmount: "Didn't catch the amount — say it in digits", voiceDenied: "Microphone permission is blocked", voiceFailed: "Couldn't hear that, try again",
     reportBtn: "📄 Report", reportPdf: "Save as PDF", reportExcel: "Excel / share", reportTitle: "Monthly report", rSalary: "Salary", rBonus: "Bonuses", rAvailable: "Total available", rRemaining: "Remaining", rVsPrev: "Spent vs last period", colDate: "Date", colDesc: "Description", colCategory: "Category", colAmount: "Amount", rBonuses: "Bonuses", rNone: "None", shSummary: "Summary", shCategories: "Categories", shExpenses: "Expenses", shBonuses: "Bonuses", toastPdfHint: 'Choose "Save as PDF" in the print screen', toastExcelReady: "Excel file ready",
-    investments: "Investments", newInvest: "+ Track an investment", invNamePlaceholder: "Name (e.g. Thndr)", invLinkedGoal: "Linked goal", saveInvest: "Save", updateInvest: "Update", invNoGoal: "— no goal (optional) —", invInvested: "Invested", invNow: "Now", invProfit: "Profit / loss", invNoValue: "Add the current value to see your profit", invUpdated: (d)=>`Value updated ${d}`, invSince: (a)=>`+${a} deposited since`, invHistory: "History", bonusSourcesLabel: "Bonus sources (separate with commas)", bonusSourcePlaceholder: "— source —", bonusNoSource: "No source", colSource: "Source", shSources: "Sources", ysIncomeSplit: (s,b)=>`Salary ${s} + bonuses ${b}`, ysBonusTitle: "Bonuses", ysBonusNone: "No bonuses logged this year yet.", ysBonusTotal: "Total bonuses", ysBonusCount: "Number of bonuses", ysBonusAvg: "Average per bonus", ysBonusHighest: "Highest bonus", ysBonusFrom: "Where it came from", ysBonusTop: (n,p)=>`most from ${n} (${p}%)`, ysBonusMonths: "Months with bonuses", colMonth: "Month", colIncome: "Income", shMonths: "Months", catManage: "Categories", catManageBtn: "Manage", catManageNote: "Rename, change the emoji, or hide any category. Hidden ones disappear from the lists but old expenses keep them.", catNamePlaceholder: "New category name", catShow: "Show", catHide: "Hide", catDeleteTitle: "Delete this category?", catDeleteBody: (n,c)=>`"${n}" will be removed. ${c} expense(s) in it will move to Other.`, toastEnterCatName: "Enter a category name", toastCatAdded: "Category added",
+    investments: "Investments", newInvest: "+ Track an investment", invNamePlaceholder: "Name (e.g. Thndr)", invLinkedGoal: "Linked goal", saveInvest: "Save", updateInvest: "Update value", invNoGoal: "— no goal (optional) —", invInvested: "Invested", invNow: "Now", invProfit: "Profit / loss", invNoValue: "Add the current value to see your profit", invUpdated: (d)=>`Value updated ${d}`, invSince: (a)=>`+${a} deposited since`, invHistory: "History", bonusSourcesLabel: "Bonus sources (separate with commas)", bonusSourcePlaceholder: "— source —", bonusNoSource: "No source", colSource: "Source", shSources: "Sources", ysIncomeSplit: (s,b)=>`Salary ${s} + bonuses ${b}`, ysBonusTitle: "Bonuses", ysBonusNone: "No bonuses logged this year yet.", ysBonusTotal: "Total bonuses", ysBonusCount: "Number of bonuses", ysBonusAvg: "Average per bonus", ysBonusHighest: "Highest bonus", ysBonusFrom: "Where it came from", ysBonusTop: (n,p)=>`most from ${n} (${p}%)`, ysBonusMonths: "Months with bonuses", colMonth: "Month", colIncome: "Income", shMonths: "Months", catManage: "Categories", catManageBtn: "Manage", catManageNote: "Rename, change the emoji, or hide any category. Hidden ones disappear from the lists but old expenses keep them.", catNamePlaceholder: "New category name", catShow: "Show", catHide: "Hide", catDeleteTitle: "Delete this category?", catDeleteBody: (n,c)=>`"${n}" will be removed. ${c} expense(s) in it will move to Other.`, toastEnterCatName: "Enter a category name", toastCatAdded: "Category added",
     badges: "Achievements", badgeUnlocked: (n)=>`New achievement: ${n}`,
     bd_first: "First expense", bd_first_d: "Log your first expense", bd_streak7: "7-day streak", bd_streak7_d: "Log expenses 7 days in a row", bd_streak30: "30-day streak", bd_streak30_d: "Log expenses 30 days in a row", bd_noSweets: "A week without sweets", bd_noSweets_d: "7 days with no sweets while still logging", bd_under1: "Under budget", bd_under1_d: "Finish a month spending less than your income", bd_under3: "Three good months", bd_under3_d: "Finish 3 months under budget", bd_save20: "20% saver", bd_save20_d: "Keep 20% of a month's income unspent", bd_goalHalf: "Halfway there", bd_goalHalf_d: "Reach 50% of a goal", bd_goalDone: "Goal reached", bd_goalDone_d: "Reach 100% of a goal", bd_saved1k: "Saved 1,000", bd_saved1k_d: "1,000 EGP deposited to goals", bd_saved5k: "Saved 5,000", bd_saved5k_d: "5,000 EGP deposited to goals", bd_saved10k: "Saved 10,000", bd_saved10k_d: "10,000 EGP deposited to goals", bd_charity: "Giving", bd_charity_d: "Log a charity expense", bd_investor: "Investor", bd_investor_d: "Start tracking an investment", bd_backup: "Safe and sound", bd_backup_d: "Export or import a backup",
      ysBtn: "📊 Year summary", ysTitle: (l)=>`Year summary ${l}`, ysNone: "No spending in this year yet.", ysElapsed: (n)=>`Based on ${n} months so far`, ysSpent: "Total spent", ysIncome: "Salary + bonuses", ysSaved: "Left after spending", ysDeficit: "Overspent by", ysAvg: "Average per month", ysDeposits: "Deposited to goals", ysPriciest: "Most expensive month", ysCheapest: "Lightest month", ysBiggest: "Biggest single expense", ysTop5: "Where your money went",
@@ -989,7 +997,7 @@ const translations = {
     insights: "Insights", ruleTitle: "50 / 30 / 20 rule", rule_needs: "Needs", rule_wants: "Wants", rule_savings: "Savings", ruleTarget: (a)=>`target ≈ ${a}`, ruleEdit: "Edit classification", ruleNoIncome: "No income for this period.",
     simBtn: "🔧 What if I cut back?", simCat: "Category", simPct: "Cut by %", simGoal: "Goal", simNoGoal: "— no goal —", simAvg: (c,a)=>`You spend about ${a} a month on ${c}.`, simSave: (m,y)=>`Cutting it saves ${m} a month — ${y} a year.`, simFaster: (m0,m1,d,e)=>`You'd reach the goal in ${m1} months instead of ${m0} (${d} sooner), around ${e}.`, simReach: (m1,e)=>`At that pace you'd reach the goal in about ${m1} months, around ${e}.`, simBefore: "That's before your deadline ✓", simAfter: "That's still after your deadline.", simDone: "This goal is already reached.", simNoData: "No spending in this category yet.",
      invRatePlaceholder: "Annual return % (optional, e.g. 17.03)", invNowEst: "Now (est.)", invEstNote: (r)=>`Estimated at ${r}% / year`, invEstFromReal: (d)=>`from your real value on ${d}`, invEstNoReal: "no real value entered yet",
-    calcBtn: "🧮 Returns calculator", calcAmount: "Amount", calcRate: "Annual rate %", calcGains: "Expected gains per month", calcTotalLabel: "Sum of 12 months gains", calcDay: "/day", calcWithdraw: (p,a)=>`Withdrawing monthly gains earns ${p}%, or ${a} EGP a year.`,
+    calcBtn: "Returns calculator", calcAmount: "Amount", calcRate: "Annual rate %", calcGains: "Expected gains per month", calcTotalLabel: "Sum of 12 months gains", calcDay: "/day", calcWithdraw: (p,a)=>`Withdrawing monthly gains earns ${p}%, or ${a} EGP a year.`,
      invValuePlaceholder: "Current value", invGoalMissing: "Linked goal was deleted", invInvestedPlaceholder: "Amount invested (if no goal)", invNoGoalLabel: "No linked goal", invNeedInvested: "add the amount you invested to see profit", invAtThen: (a)=>`invested ${a}`, noInvestYet: "No investments tracked yet.", toastEnterValue: "Enter the current value", toastInvestUpdated: "Value updated", toastInvestSaved: "Investment saved", toastNeedGoal: "Create a savings goal first, then link it", toastPickGoal: "Pick the goal that holds your deposits", deleteInvestTitle: "Delete this investment?", deleteInvestBody: (n)=>`"${n}" and its value history will be removed. Your goal and deposits stay.`,
      noGoalOpt: "— No goal —", linkedDeposit: "from an expense", compareTitle: "Vs last month", compareNoPrev: "No spending last month to compare with.", compareSame: "No real change vs last month.", compareMore: "more than last month", compareLess: "less than last month", undoBtn: "Undo", toastRepeated: (d,a)=>`Added again: ${d} · ${a}`, toastUndone: "Removed", goalDeadlineLabel: "Deadline (optional)", updateGoal: "Update goal", toastGoalUpdated: "Goal updated", goalDueIn: (d,n)=>`Due ${d} · ${n} days left`, goalDueToday: (d)=>`Due today (${d})`, goalLate: (d,n)=>`Was due ${d} · ${n} days late`, goalPerMonth: (a)=>`≈ EGP ${a} / month needed`, goalDone: "Goal reached ✓", planSaved: "Saved toward goals", planOf: (a)=>`of ${a} EGP`, planInvSep: (n,pl)=>`Investments tracked separately (not added here): ${n} now · ${pl} profit`, goalOnTrack: "On track", goalBehind: "Behind pace", goalPaceNote: "Estimate from your last 3 months of deposits", addMoney: "+ Add money", stSpent: "Spent this period", stBelow: (n)=>`${n}% below last period`, stAbove: (n)=>`${n}% above last period`, stBudgetLine: (b,l)=>`of ${b} budget · ${l} left`, stAvgDay: (a)=>`avg ${a}/day`, stPace: (a)=>`pace guide: ${a}/day for the rest of the period (not a promise)`, stBusiest: (d,a)=>`Busiest day: ${d} · EGP ${a}`, vsLast: "vs last period", setMoney: "Money", setPersonalize: "Personalize", setSecurity: "Security & alerts", setBackup: "Backup", carriedOver: "Carried over", allCategories: "All categories", filteredTotal: "Total", depositHistory: "Deposits", hideHistory: "Hide", noDepositsYet: "No deposits yet.", deleteDepositTitle: "Delete this deposit?", deleteDepositBody: "This will reduce the saved amount.", toastDepositDeleted: "Deposit deleted", toastEnterDate: "Pick a date", addBtn: "+ Add", delete: "Delete",
     recurringExpenses: "Recurring expenses",
@@ -1062,7 +1070,7 @@ const translations = {
     saveGoal: "حفظ الهدف", newGoal: "+ هدف جديد", noGoalsYet: "لا توجد أهداف بعد.",
     addAmountPlaceholder: "المبلغ", quickItemsLabel: "الأزرار السريعة (افصلي بينها بفاصلة)", addToGoal: "إضافة لهدف", voiceListening: 'بسمعك… قولي مثلًا «بقالة 120»', voiceAdded: (d,a,c)=>`تم التسجيل: ${d} · ${a} · ${c}`, voiceNoAmount: "ما سمعتش المبلغ — قوليه بالأرقام", voiceDenied: "إذن الميكروفون مقفول", voiceFailed: "ما سمعتش كويس، جرّبي تاني",
     reportBtn: "📄 تقرير", reportPdf: "حفظ PDF", reportExcel: "Excel / مشاركة", reportTitle: "التقرير الشهري", rSalary: "المرتب", rBonus: "المكافآت", rAvailable: "إجمالي المتاح", rRemaining: "المتبقي", rVsPrev: "الصرف مقارنة بالفترة السابقة", colDate: "التاريخ", colDesc: "الوصف", colCategory: "الفئة", colAmount: "المبلغ", rBonuses: "المكافآت", rNone: "لا يوجد", shSummary: "الملخص", shCategories: "الفئات", shExpenses: "المصاريف", shBonuses: "المكافآت", toastPdfHint: 'اختاري «حفظ كـ PDF» في شاشة الطباعة', toastExcelReady: "ملف Excel جاهز",
-    investments: "الاستثمارات", newInvest: "+ تتبّع استثمار", invNamePlaceholder: "الاسم (مثلًا Thndr)", invLinkedGoal: "الهدف المربوط", saveInvest: "حفظ", updateInvest: "تحديث", invNoGoal: "— بدون هدف (اختياري) —", invInvested: "اللي حطيتيه", invNow: "قيمته دلوقتي", invProfit: "الربح / الخسارة", invNoValue: "سجّلي القيمة الحالية عشان يظهر الربح", invUpdated: (d)=>`آخر تحديث للقيمة ${d}`, invSince: (a)=>`+${a} اتضاف بعدها`, invHistory: "السجل", bonusSourcesLabel: "مصادر المكافآت (افصلي بينها بفاصلة)", bonusSourcePlaceholder: "— المصدر —", bonusNoSource: "بدون مصدر", colSource: "المصدر", shSources: "المصادر", ysIncomeSplit: (s,b)=>`مرتب ${s} + مكافآت ${b}`, ysBonusTitle: "المكافآت", ysBonusNone: "مفيش مكافآت متسجّلة في السنة دي لسه.", ysBonusTotal: "إجمالي المكافآت", ysBonusCount: "عدد المكافآت", ysBonusAvg: "متوسط المكافأة", ysBonusHighest: "أعلى مكافأة", ysBonusFrom: "جاية منين", ysBonusTop: (n,p)=>`أكتر مصدر ${n} (${p}%)`, ysBonusMonths: "شهور فيها مكافآت", colMonth: "الشهر", colIncome: "الدخل", shMonths: "الشهور", catManage: "الفئات", catManageBtn: "إدارة", catManageNote: "غيّري الاسم أو الإيموجي أو اخفي أي فئة. اللي بتتخفي بتختفي من القوايم بس والمصاريف القديمة بتفضل ليها.", catNamePlaceholder: "اسم الفئة الجديدة", catShow: "إظهار", catHide: "إخفاء", catDeleteTitle: "حذف الفئة دي؟", catDeleteBody: (n,c)=>`هتتمسح "${n}". ${c} مصروف فيها هيروحوا لـ أخرى.`, toastEnterCatName: "اكتبي اسم الفئة", toastCatAdded: "تمت إضافة الفئة",
+    investments: "الاستثمارات", newInvest: "+ تتبّع استثمار", invNamePlaceholder: "الاسم (مثلًا Thndr)", invLinkedGoal: "الهدف المربوط", saveInvest: "حفظ", updateInvest: "تحديث القيمة", invNoGoal: "— بدون هدف (اختياري) —", invInvested: "اللي حطيتيه", invNow: "قيمته دلوقتي", invProfit: "الربح / الخسارة", invNoValue: "سجّلي القيمة الحالية عشان يظهر الربح", invUpdated: (d)=>`آخر تحديث للقيمة ${d}`, invSince: (a)=>`+${a} اتضاف بعدها`, invHistory: "السجل", bonusSourcesLabel: "مصادر المكافآت (افصلي بينها بفاصلة)", bonusSourcePlaceholder: "— المصدر —", bonusNoSource: "بدون مصدر", colSource: "المصدر", shSources: "المصادر", ysIncomeSplit: (s,b)=>`مرتب ${s} + مكافآت ${b}`, ysBonusTitle: "المكافآت", ysBonusNone: "مفيش مكافآت متسجّلة في السنة دي لسه.", ysBonusTotal: "إجمالي المكافآت", ysBonusCount: "عدد المكافآت", ysBonusAvg: "متوسط المكافأة", ysBonusHighest: "أعلى مكافأة", ysBonusFrom: "جاية منين", ysBonusTop: (n,p)=>`أكتر مصدر ${n} (${p}%)`, ysBonusMonths: "شهور فيها مكافآت", colMonth: "الشهر", colIncome: "الدخل", shMonths: "الشهور", catManage: "الفئات", catManageBtn: "إدارة", catManageNote: "غيّري الاسم أو الإيموجي أو اخفي أي فئة. اللي بتتخفي بتختفي من القوايم بس والمصاريف القديمة بتفضل ليها.", catNamePlaceholder: "اسم الفئة الجديدة", catShow: "إظهار", catHide: "إخفاء", catDeleteTitle: "حذف الفئة دي؟", catDeleteBody: (n,c)=>`هتتمسح "${n}". ${c} مصروف فيها هيروحوا لـ أخرى.`, toastEnterCatName: "اكتبي اسم الفئة", toastCatAdded: "تمت إضافة الفئة",
     badges: "الإنجازات", badgeUnlocked: (n)=>`إنجاز جديد: ${n}`,
     bd_first: "أول مصروف", bd_first_d: "سجّلي أول مصروف", bd_streak7: "أسبوع متواصل", bd_streak7_d: "سجّلي مصاريفك 7 أيام ورا بعض", bd_streak30: "30 يوم متواصل", bd_streak30_d: "سجّلي مصاريفك 30 يوم ورا بعض", bd_noSweets: "أسبوع بدون حلويات", bd_noSweets_d: "7 أيام من غير حلويات وإنتي بتسجّلي", bd_under1: "تحت الميزانية", bd_under1_d: "خلّصي شهر وصرفك أقل من دخلك", bd_under3: "تلات شهور حلوين", bd_under3_d: "خلّصي 3 شهور تحت الميزانية", bd_save20: "مدّخرة 20%", bd_save20_d: "فضّلتي 20% من دخل شهر من غير صرف", bd_goalHalf: "نص الطريق", bd_goalHalf_d: "وصلتي 50% من هدف", bd_goalDone: "هدف اتحقق", bd_goalDone_d: "وصلتي 100% من هدف", bd_saved1k: "حوّشتي 1,000", bd_saved1k_d: "1,000 جنيه إيداعات في الأهداف", bd_saved5k: "حوّشتي 5,000", bd_saved5k_d: "5,000 جنيه إيداعات في الأهداف", bd_saved10k: "حوّشتي 10,000", bd_saved10k_d: "10,000 جنيه إيداعات في الأهداف", bd_charity: "عطاء", bd_charity_d: "سجّلي مصروف صدقة", bd_investor: "مستثمرة", bd_investor_d: "ابدأي تتبّع استثمار", bd_backup: "بياناتك في أمان", bd_backup_d: "صدّري أو استوردي نسخة احتياطية",
      ysBtn: "📊 ملخص السنة", ysTitle: (l)=>`ملخص السنة ${l}`, ysNone: "مفيش مصاريف في السنة دي لسه.", ysElapsed: (n)=>`على أساس ${n} شهر لحد دلوقتي`, ysSpent: "إجمالي الصرف", ysIncome: "المرتب + المكافآت", ysSaved: "اللي فضل بعد الصرف", ysDeficit: "صرفتي زيادة بـ", ysAvg: "المتوسط في الشهر", ysDeposits: "إيداعات الأهداف", ysPriciest: "أغلى شهر", ysCheapest: "أخف شهر", ysBiggest: "أكبر مصروف", ysTop5: "فلوسك راحت فين",
@@ -1070,7 +1078,7 @@ const translations = {
     insights: "تحليلات", ruleTitle: "قاعدة 50 / 30 / 20", rule_needs: "احتياجات", rule_wants: "رغبات", rule_savings: "ادخار", ruleTarget: (a)=>`المستهدف ≈ ${a}`, ruleEdit: "تعديل التصنيف", ruleNoIncome: "مفيش دخل للفترة دي.",
     simBtn: "🔧 لو قللت؟", simCat: "الفئة", simPct: "التقليل %", simGoal: "الهدف", simNoGoal: "— بدون هدف —", simAvg: (c,a)=>`بتصرفي حوالي ${a} في الشهر على ${c}.`, simSave: (m,y)=>`لو قللتيها هتوفّري ${m} في الشهر، يعني ${y} في السنة.`, simFaster: (m0,m1,d,e)=>`هتوصلي للهدف في ${m1} شهر بدل ${m0} (أسرع بـ ${d})، تقريبًا ${e}.`, simReach: (m1,e)=>`بالسرعة دي هتوصلي للهدف في حوالي ${m1} شهر، تقريبًا ${e}.`, simBefore: "ده قبل ميعاد الهدف ✓", simAfter: "ده لسه بعد ميعاد الهدف.", simDone: "الهدف ده اتحقق بالفعل.", simNoData: "مفيش مصاريف على الفئة دي لسه.",
      invRatePlaceholder: "العائد السنوي % (اختياري، مثلًا 17.03)", invNowEst: "قيمته الآن (تقدير)", invEstNote: (r)=>`تقدير بمعدل ${r}% في السنة`, invEstFromReal: (d)=>`من قيمتك الحقيقية يوم ${d}`, invEstNoReal: "لسه ما سجّلتيش قيمة حقيقية",
-    calcBtn: "🧮 حاسبة العائد", calcAmount: "المبلغ", calcRate: "العائد السنوي %", calcGains: "الأرباح المتوقعة كل شهر", calcTotalLabel: "مجموع أرباح 12 شهر", calcDay: "/يوم", calcWithdraw: (p,a)=>`لو سحبتي الأرباح كل شهر العائد ${p}%، يعني ${a} جنيه في السنة.`,
+    calcBtn: "حاسبة العائد", calcAmount: "المبلغ", calcRate: "العائد السنوي %", calcGains: "الأرباح المتوقعة كل شهر", calcTotalLabel: "مجموع أرباح 12 شهر", calcDay: "/يوم", calcWithdraw: (p,a)=>`لو سحبتي الأرباح كل شهر العائد ${p}%، يعني ${a} جنيه في السنة.`,
      invValuePlaceholder: "القيمة الحالية", invGoalMissing: "الهدف المربوط اتمسح", invInvestedPlaceholder: "المبلغ اللي حطيتيه (لو بدون هدف)", invNoGoalLabel: "بدون هدف مربوط", invNeedInvested: "سجّلي المبلغ اللي حطيتيه عشان يظهر الربح", invAtThen: (a)=>`كان محطوط ${a}`, noInvestYet: "لسه مفيش استثمارات متتبّعة.", toastEnterValue: "اكتبي القيمة الحالية", toastInvestUpdated: "تم تحديث القيمة", toastInvestSaved: "تم حفظ الاستثمار", toastNeedGoal: "اعملي هدف ادخار الأول وبعدين اربطيه", toastPickGoal: "اختاري الهدف اللي فيه إيداعاتك", deleteInvestTitle: "حذف الاستثمار ده؟", deleteInvestBody: (n)=>`سيتم حذف "${n}" وسجل قيمته. الهدف والإيداعات هيفضلوا زي ما هم.`,
      noGoalOpt: "— بدون هدف —", linkedDeposit: "من مصروف", compareTitle: "مقارنة بالشهر السابق", compareNoPrev: "مفيش مصاريف في الشهر السابق للمقارنة.", compareSame: "مفيش تغيير يُذكر عن الشهر السابق.", compareMore: "أكتر من الشهر السابق", compareLess: "أقل من الشهر السابق", undoBtn: "تراجع", toastRepeated: (d,a)=>`اتضاف تاني: ${d} · ${a}`, toastUndone: "تم الحذف", goalDeadlineLabel: "تاريخ الانتهاء (اختياري)", updateGoal: "تحديث الهدف", toastGoalUpdated: "تم تحديث الهدف", goalDueIn: (d,n)=>`ينتهي ${d} · باقي ${n} يوم`, goalDueToday: (d)=>`ينتهي النهارده (${d})`, goalLate: (d,n)=>`كان ينتهي ${d} · متأخر ${n} يوم`, goalPerMonth: (a)=>`≈ ${a} جنيه / شهر مطلوب`, goalDone: "تم تحقيق الهدف ✓", planSaved: "المدّخر للأهداف", planOf: (a)=>`من ${a} جنيه`, planInvSep: (n,pl)=>`الاستثمارات منفصلة (غير مضافة هنا): ${n} حاليًا · ربح ${pl}`, goalOnTrack: "ماشية صح", goalBehind: "متأخرة عن المعدل", goalPaceNote: "تقدير من إيداعات آخر 3 شهور", addMoney: "+ إضافة مبلغ", stSpent: "المصروف في الفترة", stBelow: (n)=>`أقل ${n}% من الفترة السابقة`, stAbove: (n)=>`أكتر ${n}% من الفترة السابقة`, stBudgetLine: (b,l)=>`من ميزانية ${b} · باقي ${l}`, stAvgDay: (a)=>`متوسط ${a}/يوم`, stPace: (a)=>`مؤشر: ${a}/يوم لباقي الفترة (مش وعد)`, stBusiest: (d,a)=>`أكتر يوم صرف: ${d} · ${a} جنيه`, vsLast: "مقارنة بالفترة السابقة", setMoney: "الفلوس", setPersonalize: "التخصيص", setSecurity: "الأمان والتنبيهات", setBackup: "النسخ الاحتياطي", carriedOver: "المرحَّل من الشهر السابق", allCategories: "كل الفئات", filteredTotal: "الإجمالي", depositHistory: "الإيداعات", hideHistory: "إخفاء", noDepositsYet: "لا توجد إيداعات بعد.", deleteDepositTitle: "حذف هذا الإيداع؟", deleteDepositBody: "سيتم خصم المبلغ من المدخر.", toastDepositDeleted: "تم حذف الإيداع", toastEnterDate: "اختر التاريخ", addBtn: "+ إضافة", delete: "حذف",
     recurringExpenses: "المصروفات المتكررة",
@@ -1403,6 +1411,12 @@ function fyPeriod(fy, i){ const k = FY_START + i; return { year: fy + (k>=12 ? 1
 function fyOf(year, monthIdx){ return monthIdx>=FY_START ? year : year-1; }
 function fyYearFor(monthIdx){ return monthIdx>=FY_START ? state.year : state.year+1; }
 function fyLabel(fy){ return fy+'/'+String(fy+1).slice(2); }
+function completedPeriods(fy){
+  const f = firstDataPeriod(); if(!f) return [];
+  const now = new Date(), tdy = new Date(now.getFullYear(),now.getMonth(),now.getDate()), out=[];
+  for(let i=0;i<12;i++){ const q=fyPeriod(fy,i); if(q.year*12+q.monthIdx < f.year*12+f.monthIdx) continue; if(periodBounds(q.year,q.monthIdx).end<=tdy) out.push(q); }
+  return out;
+}
 function yearPeriodsTotals(fy){ let spent=0,budget=0; for(let i=0;i<12;i++){ const p=fyPeriod(fy,i); spent+=periodExpenseTotal(p.year,p.monthIdx); budget+=periodBaseBudget(p.year,p.monthIdx); } return {spent,budget}; }
 function periodKey(year, monthIdx){ return year+'-'+monthIdx; }
 
@@ -1479,6 +1493,13 @@ function renderPlanSummary(){
   const el = document.getElementById('planSummary'); if(!el) return;
   if(!state.goals.length && !state.investments.length){ el.style.display='none'; return; }
   el.style.display='';
+  if(window.__sub==='invest'){
+    let now=0, inv=0, any=false;
+    state.investments.forEach(v=>{ try{ const st=invStats(v); const useEst=st.est!==null; const val=useEst?st.est:(st.last?st.last.value:null); const base=useEst?st.investedNow:(st.last?st.investedAt:st.investedNow); if(val!==null && base>0){ now+=val; inv+=base; any=true; } }catch(e){} });
+    const pl=now-inv, ar=state.lang==='ar';
+    el.innerHTML = `<div class="ps-l">${ar?'كل الاستثمارات (منفصلة عن الأهداف)':'All investments (separate from goals)'}</div>` + (any ? `<div class="ps-v">${fmtShort(now)} <small>${ar?'جنيه الآن':'EGP now'}</small></div><div class="ps-s">${ar?'المستثمر':'Invested'} ${fmtShort(inv)} · ${pl>=0?'+':'−'}${fmtShort(Math.abs(pl))} ${ar?'ربح':'profit'} (${fmtPct(inv>0?pl/inv*100:0)})</div>` : `<div class="ps-s">${ar?'أضف قيمة حالية لعرض الإجمالي.':'Add a current value to see the total.'}</div>`);
+    return;
+  }
   const saved = state.goals.reduce((a,g)=>a+goalSaved(g.id),0), target = state.goals.reduce((a,g)=>a+parseFloat(g.target||0),0);
   let now=0, pl=0, any=false;
   state.investments.forEach(v=>{ try{ const st=invStats(v); const useEst=st.est!==null; const val=useEst?st.est:(st.last?st.last.value:null); const base=useEst?st.investedNow:(st.last?st.investedAt:st.investedNow); if(val!==null){ now+=val; any=true; if(base>0) pl+=val-base; } }catch(e){} });
@@ -2938,13 +2959,17 @@ function renderInvestments(){
       </div>
       <div class="inv-note">${note}</div>
       <div class="inv-actions">
-        <input type="number" inputmode="decimal" placeholder="${t('invValuePlaceholder')}" id="invval-${v.id}">
-        <input type="date" value="${todayStr()}" id="invdate-${v.id}">
-        <button class="inv-upd" data-id="${v.id}">${t('updateInvest')}</button>
+        <button class="inv-updtoggle" data-id="${v.id}">${t('updateInvest')}</button>
+        <button class="dep-toggle inv-toggle" data-id="${v.id}">${open?'▾':'▸'} ${t('invHistory')} (${vals.length})</button>
+        <span class="sp"></span>
         <button class="inv-edit" data-id="${v.id}">${t('edit')}</button>
         <button class="inv-del" data-id="${v.id}">${t('delete')}</button>
       </div>
-      <button class="dep-toggle inv-toggle" data-id="${v.id}">${open?'▾':'▸'} ${t('invHistory')} (${vals.length})</button>
+      <div class="inv-updform" id="invform-${v.id}">
+        <input type="number" inputmode="decimal" placeholder="${t('invValuePlaceholder')}" id="invval-${v.id}">
+        <input type="date" value="${todayStr()}" id="invdate-${v.id}">
+        <button class="inv-upd" data-id="${v.id}">${t('saveInvest')}</button>
+      </div>
       ${open ? `<div class="dep-list">${vals.length ? vals.map(x=>{ const inv = invSavedFor(v, x.date); const p = inv>0 ? (x.value-inv)/inv*100 : null; return `<div class="inv-hist-row"><span class="mono">${formatDate(x.date)}</span><span class="mono v">${fmtShort(x.value)}</span><span class="mono" style="color:var(--ink-soft)">${t('invAtThen', fmtShort(inv))} · ${fmtPct(p)}</span><button class="dep-del inv-hist-del" data-v="${v.id}" data-id="${x.id}" title="${t('delete')}">✕</button></div>`; }).join('') : `<div class="empty-note">${t('invNoValue')}</div>`}</div>` : ''}
       </div>
     </div>`;
@@ -2961,6 +2986,7 @@ function renderInvestments(){
     if(same) same.value = val; else v.valuations.push({id:genId(), date, value:val});
     await saveInvestments(); renderInvestments(); showToast(t('toastInvestUpdated'));
   }));
+  list.querySelectorAll('.inv-updtoggle').forEach(b=>b.addEventListener('click', ()=>{ const f=document.getElementById('invform-'+b.dataset.id); f.classList.toggle('open'); if(f.classList.contains('open')) document.getElementById('invval-'+b.dataset.id).focus(); }));
   list.querySelectorAll('.inv-edit').forEach(b=>b.addEventListener('click', ()=>{
     const v = state.investments.find(x=>x.id===b.dataset.id); if(!v) return;
     editingInvId = v.id;
@@ -3032,6 +3058,7 @@ function renderCalc(){
 }
 document.getElementById('toggleCalc').addEventListener('click', ()=>{
   const card = document.getElementById('calcCard');
+  document.getElementById('toggleCalc').classList.toggle('on', !card.classList.contains('open'));
   if(card.classList.contains('open')){ card.classList.remove('open'); return; }
   const withRate = state.investments.find(v=>parseFloat(v.rate)>0);
   if(withRate) document.getElementById('calcRate').value = withRate.rate;
@@ -3609,7 +3636,8 @@ function renderStats(){
   g('stLabel').textContent = yr ? fyLabel(state.year) : monthName(p.monthIdx)+' '+p.year+' · '+periodLabel(p.year,p.monthIdx);
   const total = cats.reduce((a,x)=>a+x.amt,0);
   { const sm = g('stSum'); let spent, budget, prevSpent=null, avg, pace='', label=t('stSpent');
-    if(yr){ const yt = yearPeriodsTotals(state.year); spent=yt.spent; budget=yt.budget; avg=null; }
+    if(yr){ const cp = completedPeriods(state.year); spent=cp.reduce((a,x)=>a+periodExpenseTotal(x.year,x.monthIdx),0); budget=cp.reduce((a,x)=>a+periodBaseBudget(x.year,x.monthIdx),0); avg=null;
+      label = cp.length ? (state.lang==='ar' ? 'منذ بداية السنة · '+cp.length+' فترات مكتملة' : 'Year to date · '+cp.length+' completed pay period'+(cp.length>1?'s':'')+' ('+monthName(cp[0].monthIdx).slice(0,3)+(cp.length>1?'–'+monthName(cp[cp.length-1].monthIdx).slice(0,3):'')+')') : (state.lang==='ar' ? 'لا فترات مكتملة بعد' : 'No completed pay periods yet'); }
     else {
       spent = periodExpenseTotal(p.year,p.monthIdx); budget = periodBudget(p.year,p.monthIdx);
       const pm = p.monthIdx-1<0 ? {year:p.year-1,monthIdx:11} : {year:p.year,monthIdx:p.monthIdx-1};
@@ -3660,21 +3688,22 @@ function renderStats(){
   const legend = order.slice(0,6).map(c=>`<span><i style="background:${catColor(c)}"></i>${escapeHtml(categoryLabel(c))}</span>`).join('');
   g('stDaily').innerHTML = `<div class="st-tip hint" id="stTip">${escapeHtml(t('statsTipHint'))}</div><div class="st-bars" id="stBars">${barsHtml}</div><div class="st-axis"><span>${escapeHtml(items[0].axis)}</span><span>max ${fmt(mx)}</span><span>${escapeHtml(items[items.length-1].axis)}</span></div><div class="st-legend">${legend}</div>${(()=>{ if(yr) return ''; let b=null; items.forEach(it=>{ if(it.total>0 && (!b || it.total>b.total)) b=it; }); return b ? `<div class="st-busy">${escapeHtml(t('stBusiest', b.label, fmtShort(b.total)))}</div>` : ''; })()}`;
   if(yr){
-    const ar = state.lang==='ar', rows = [];
-    for(let i=0;i<12;i++){ const q = fyPeriod(state.year,i), sp = periodExpenseTotal(q.year,q.monthIdx), bu = periodBudget(q.year,q.monthIdx); if(sp>0) rows.push({q, sp, bu}); }
+    const ar = state.lang==='ar', cp = completedPeriods(state.year), cur = currentPeriod();
+    const rowOf = (q,live)=>({q, live, sp:periodExpenseTotal(q.year,q.monthIdx), bu:periodBudget(q.year,q.monthIdx)});
+    const rows = cp.map(q=>rowOf(q,false));
+    if(fyOf(cur.year,cur.monthIdx)===state.year && periodExpenseTotal(cur.year,cur.monthIdx)>0) rows.push(rowOf(cur,true));
     let host = document.getElementById('stYearExtra'); if(!host){ host = document.createElement('div'); host.id='stYearExtra'; g('stDailyCard').insertAdjacentElement('afterend', host); }
     if(rows.length){
-      const rowHtml = rows.map(r=>{ const f = r.bu>0 ? r.sp/r.bu : 0, c = r.bu>0 && r.sp>r.bu ? 'var(--red)' : (f>=0.85 ? 'var(--brass)' : 'var(--green)'); return `<div class="yx-row"><span class="mono yx-m">${escapeHtml(monthName(r.q.monthIdx).slice(0,3))}</span><div class="yx-track"><div style="width:${Math.min(100,f*100).toFixed(1)}%;background:${c}"></div></div><span class="mono yx-v">${fmtShort(r.sp)} / ${fmtShort(r.bu)}</span></div>`; }).join('');
-      const cur = rows[rows.length-1], prev = rows.length>1 ? rows[rows.length-2] : null;
+      const rowHtml = rows.map(r=>{ const f = r.bu>0 ? r.sp/r.bu : 0, c = r.bu>0 && r.sp>r.bu ? 'var(--red)' : (f>=0.85 ? 'var(--brass)' : 'var(--green)'); return `<div class="yx-row"><span class="mono yx-m">${escapeHtml(monthName(r.q.monthIdx).slice(0,3))}</span><div class="yx-track"><div style="width:${Math.min(100,f*100).toFixed(1)}%;background:${c}"></div></div><span class="mono yx-v">${fmtShort(r.sp)} / ${fmtShort(r.bu)}</span></div>${r.live?`<div class="yx-live">${ar?'الفترة الحالية، لم تنته بعد':'In progress, not finished yet'}</div>`:''}`; }).join('');
       let chg = '';
-      if(prev){
-        const cb = {}, pb = {};
-        expensesForPeriod(cur.q.year,cur.q.monthIdx).forEach(e=>{ cb[e.category]=(cb[e.category]||0)+parseFloat(e.amount); });
-        expensesForPeriod(prev.q.year,prev.q.monthIdx).forEach(e=>{ pb[e.category]=(pb[e.category]||0)+parseFloat(e.amount); });
-        const diffs = Array.from(new Set([...Object.keys(cb),...Object.keys(pb)])).map(c=>({c, d:(cb[c]||0)-(pb[c]||0)})).filter(x=>Math.abs(x.d)>=1).sort((a,b)=>Math.abs(b.d)-Math.abs(a.d)).slice(0,4);
-        if(diffs.length) chg = `<div class="yx-h mono">${ar?'الأكثر تغيرًا مقارنة بالفترة السابقة':'Changed most vs last period'} · ${escapeHtml(monthName(cur.q.monthIdx))} / ${escapeHtml(monthName(prev.q.monthIdx))}</div>` + diffs.map(x=>`<div class="yx-chg"><span>${categoryEmoji(x.c)||'•'} ${escapeHtml(categoryName(x.c))}</span><b class="mono" style="color:var(--${x.d>0?'red':'green'})">${x.d>0?'+':'−'}${fmtShort(Math.abs(x.d))}</b></div>`).join('');
+      if(cp.length>1){
+        const c1 = cp[cp.length-1], c0 = cp[cp.length-2], cb = {}, pb = {};
+        expensesForPeriod(c1.year,c1.monthIdx).forEach(e=>{ cb[e.category]=(cb[e.category]||0)+parseFloat(e.amount); });
+        expensesForPeriod(c0.year,c0.monthIdx).forEach(e=>{ pb[e.category]=(pb[e.category]||0)+parseFloat(e.amount); });
+        const diffs = Array.from(new Set([...Object.keys(cb),...Object.keys(pb)])).map(c=>({c, d:(cb[c]||0)-(pb[c]||0), pv:pb[c]||0})).filter(x=>Math.abs(x.d)>=1).sort((a,b)=>Math.abs(b.d)-Math.abs(a.d)).slice(0,4);
+        if(diffs.length) chg = `<div class="yx-h mono" style="margin-top:12px">${ar?'الأكثر تغيرًا':'What changed most'} (${escapeHtml(monthName(c1.monthIdx).slice(0,3))} ${ar?'مقابل':'vs'} ${escapeHtml(monthName(c0.monthIdx).slice(0,3))}, ${ar?'فترتان مكتملتان':'completed periods'})</div>` + diffs.map(x=>`<div class="yx-chg"><span>${categoryEmoji(x.c)||'•'} ${escapeHtml(categoryName(x.c))}</span><b class="mono" style="color:var(--${x.d>0?'red':'green'})">${x.d>0?'▲':'▼'} ${x.pv>0?Math.round(Math.abs(x.d)/x.pv*100)+'%':fmtShort(Math.abs(x.d))}</b></div>`).join('');
       }
-      host.innerHTML = `<div class="yx-card"><div class="yx-h mono">${ar?'كل فترة مقابل ميزانيتها':'Each period vs its own budget'}</div>${rowHtml}${chg}</div>`;
+      host.innerHTML = `<div class="yx-card"><div class="yx-h mono">${ar?'المصروف مقابل ميزانية كل فترة':"Spent vs each period's own budget"}</div>${rowHtml}<div class="yx-note">${ar?'الميزانية = المتاح في الفترة (مع المرحّل). اللون الكهرماني = 85% أو أكثر.':'Budget = what was available that period (including carry-over). Amber = 85% or more used.'}</div>${chg}</div>`;
     } else host.innerHTML = '';
   } else { const h = document.getElementById('stYearExtra'); if(h) h.innerHTML=''; }
   const bars = g('stBars'), tip = g('stTip'), spans = Array.from(bars.children);
@@ -3732,7 +3761,7 @@ function renderStats(){
   function showSub(k){
     secs.forEach(s=>s.classList.toggle('sub-hidden', s.dataset.coll !== k));
     bar.querySelectorAll('button').forEach(b=>b.classList.toggle('on', b.dataset.sub === k));
-    LedgerLocal.set('sub', k);
+    LedgerLocal.set('sub', k); window.__sub = k; if(typeof renderPlanSummary==='function') renderPlanSummary();
   }
   bar.addEventListener('click', e=>{ const b = e.target.closest('button'); if(b) showSub(b.dataset.sub); });
   const sv = LedgerLocal.get('sub'); showSub(sv && secs.some(s=>s.dataset.coll===sv.value) ? sv.value : 'goals');
