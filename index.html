@@ -3651,13 +3651,14 @@ function renderStats(){
     }
     const left = budget-spent, pct = budget>0 ? Math.min(100, spent/budget*100) : 0, cls = left<0?'over':(budget>0 && spent/budget>=0.85?'warn':'');
     let cmp=''; if(prevSpent>0 && !yr){ const d = Math.round((spent-prevSpent)/prevSpent*100); if(d!==0) cmp = `<span class="pill ${d>0?'bad':''}">${t(d<0?'stBelow':'stAbove', Math.abs(d))}</span>`; }
-    sm.innerHTML = `<div class="sts-l">${label}</div><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><div class="sts-v">${fmtShort(spent)} EGP</div>${cmp}</div><div class="st-bar2"><i class="${cls}" style="width:${pct.toFixed(1)}%"></i></div><div class="sts-s">${t('stBudgetLine', fmtShort(budget), left<0 ? '−'+fmtShort(-left) : fmtShort(left))}${avg!==null ? ' · '+t('stAvgDay', fmtShort(avg)) : ''}</div>${pace?`<div class="sts-s">${pace}</div>`:''}`;
+    sm.innerHTML = `<div class="sts-l">${label}</div><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><div class="sts-v">${fmtShort(spent)} EGP</div>${cmp}</div><div class="st-bar2"><i class="${cls}" style="width:${pct.toFixed(1)}%"></i></div><div class="sts-s">${t('stBudgetLine', fmtShort(budget), left<0 ? '−'+fmtShort(-left) : fmtShort(left))}${avg!==null ? ' · '+t('stAvgDay', fmtShort(avg)) : ''}</div>${pace?`<div class="sts-s">${pace}</div>`:''}${yr?`<div class="sts-s">${state.lang==='ar'?'الميزانية = الراتب + الدخل قبل المرحّل. الفترات المكتملة فقط.':'Budget = salary + income, before carry-over. Completed periods only.'}</div>`:''}`;
   }
   if(!cats.length || !(total>0)){ g('stDonut').innerHTML = `<div class="empty-note">${escapeHtml(t('statsEmpty'))}</div>`; g('stTop').innerHTML=''; g('stDaily').innerHTML=''; return; }
-  g('stDonut').innerHTML = pieHtml(cats.map(x=>({label:categoryLabel(x.c), amt:x.amt})), fmt(total));
+  const scopeNote = yr ? `<div class="yx-note" style="margin:0 0 8px">${state.lang==='ar'?'السنة حتى الآن، بما فيها الفترة الجارية':'Whole year so far, including the in-progress period'}</div>` : '';
+  g('stDonut').innerHTML = scopeNote + pieHtml(cats.map(x=>({label:categoryLabel(x.c), amt:x.amt})), fmt(total));
   const prevBy = {}; if(!yr){ const pm = p.monthIdx-1<0 ? {year:p.year-1,monthIdx:11} : {year:p.year,monthIdx:p.monthIdx-1}; expensesForPeriod(pm.year,pm.monthIdx).forEach(e=>{ prevBy[e.category]=(prevBy[e.category]||0)+parseFloat(e.amount); }); }
   const cmpHtml = c=>{ const pv=prevBy[c]; if(yr || !(pv>0)) return ''; const cu=cats.find(x=>x.c===c).amt, d=Math.round((cu-pv)/pv*100); if(d===0) return ''; return `<div class="st-cmp ${d>0?'up':'down'}">${d>0?'▲':'▼'} ${Math.abs(d)}% ${t('vsLast')}</div>`; };
-  g('stTop').innerHTML = cats.map(x=>`<div class="st-row"><span class="st-ic">${categoryEmoji(x.c)||'•'}</span><div class="st-main"><div class="st-line"><span>${escapeHtml(categoryName(x.c))}<small>${(x.amt/total*100).toFixed(1)}%</small></span><b class="mono">${fmt(x.amt)}</b></div><div class="st-bar"><i style="width:${(x.amt/cats[0].amt*100).toFixed(1)}%"></i></div>${cmpHtml(x.c)}</div></div>`).join('');
+  g('stTop').innerHTML = scopeNote + cats.map(x=>`<div class="st-row"><span class="st-ic">${categoryEmoji(x.c)||'•'}</span><div class="st-main"><div class="st-line"><span>${escapeHtml(categoryName(x.c))}<small>${(x.amt/total*100).toFixed(1)}%</small></span><b class="mono">${fmt(x.amt)}</b></div><div class="st-bar"><i style="width:${(x.amt/cats[0].amt*100).toFixed(1)}%"></i></div>${cmpHtml(x.c)}</div></div>`).join('');
   /* stacked bars coloured by category: one bar per day (month view) or per month (year view) */
   const fmtDay = k => new Date(k+'T00:00:00').toLocaleDateString(state.lang==='ar' ? 'ar-EG' : 'en-GB', {weekday:'short', day:'numeric', month:'short'});
   const items = [];
@@ -3679,7 +3680,7 @@ function renderStats(){
   const catTotals = {}; items.forEach(it=>Object.entries(it.parts).forEach(([c,a])=>{ catTotals[c] = (catTotals[c]||0) + a; }));
   const order = Object.keys(catTotals).sort((a,b)=>catTotals[b]-catTotals[a]);
   const mx = Math.max(...items.map(x=>x.total), 1);
-  g('stDailyTitle').textContent = t(yr ? 'statsMonthly' : 'statsDaily');
+  g('stDailyTitle').textContent = t(yr ? 'statsMonthly' : 'statsDaily') + (yr ? (state.lang==='ar' ? ' (مع الفترة الجارية)' : ' (incl. in-progress period)') : '');
   const barsHtml = items.map(it=>{
     const h = it.total>0 ? Math.max(it.total/mx*100, 4) : 2;
     const segs = order.filter(c=>it.parts[c]>0).map(c=>`<i style="height:${(it.parts[c]/it.total*100).toFixed(2)}%;background:${catColor(c)}"></i>`).join('');
