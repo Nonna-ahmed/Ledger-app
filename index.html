@@ -195,6 +195,42 @@
   .ys-card .k{ font-size:11.5px; color:#555; } .ys-card .v{ font-size:16px; font-weight:700; font-variant-numeric:tabular-nums; }
   .ys-grid{ display:grid; grid-template-columns:1fr 1fr; gap:8px; } .ys-grid .ys-card{ margin:0; }
   .ys-bar{ height:8px; background:#1B2A44; border-radius:4px; }
+  /* Year summary (blended design) */
+  #yearOverlay{ background:#f4efe4; }
+  #yearDoc .ys-hero{ background:#1B2A44; color:#fff; border-radius:20px; padding:16px; margin-top:12px; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  #yearDoc .ys-top{ display:flex; align-items:center; gap:14px; }
+  #yearDoc .ys-ring{ flex:0 0 112px; width:112px; height:112px; border-radius:50%; position:relative; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  #yearDoc .ys-ring::after{ content:""; position:absolute; inset:14px; background:#1B2A44; border-radius:50%; }
+  #yearDoc .ys-ring b{ position:absolute; inset:0; z-index:2; display:flex; flex-direction:column; align-items:center; justify-content:center; font-size:20px; }
+  #yearDoc .ys-ring small{ font-size:9px; color:#b8c0d6; font-weight:400; text-align:center; line-height:1.15; padding:0 4px; }
+  #yearDoc .ys-lft{ min-width:0; } #yearDoc .ys-lft small{ display:block; color:#c9b58a; font-size:10.5px; letter-spacing:.6px; text-transform:uppercase; }
+  #yearDoc .ys-big{ font-size:24px; font-weight:700; line-height:1.2; direction:ltr; text-align:start; } #yearDoc .ys-big.pos{ color:#8fd1a4; } #yearDoc .ys-big.neg{ color:#f0a0a0; }
+  #yearDoc .ys-sub{ font-size:11px; color:#b8c0d6; }
+  #yearDoc .ys-rows{ margin-top:12px; border-top:1px solid #3a4663; padding-top:6px; }
+  #yearDoc .ys-r{ display:flex; align-items:baseline; padding:4px 0; font-size:12.5px; }
+  #yearDoc .ys-r .d{ flex:1; border-bottom:1px dotted #5a6580; margin:0 6px; transform:translateY(-3px); }
+  #yearDoc .ys-r .v{ font-weight:700; font-variant-numeric:tabular-nums; direction:ltr; white-space:nowrap; }
+  #yearDoc .ys-tiles{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px; }
+  #yearDoc .ys-t{ background:#fff; border-radius:14px; padding:10px 12px; box-shadow:0 1px 3px rgba(0,0,0,.08); min-width:0; }
+  #yearDoc .ys-t .l{ font-size:10.5px; color:#6b7280; } #yearDoc .ys-t .v{ font-size:17px; font-weight:700; font-variant-numeric:tabular-nums; direction:ltr; text-align:start; white-space:nowrap; } #yearDoc .ys-t .n{ font-size:10.5px; color:#6b7280; }
+  #yearDoc .ys-sec{ font-size:11px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:#A87B3F; margin:20px 0 8px; display:flex; align-items:center; gap:8px; border:0; padding:0; }
+  #yearDoc .ys-sec::after{ content:""; flex:1; border-top:2px solid #1B2A44; opacity:.8; }
+  #yearDoc .ys-card2{ background:#fff; border-radius:16px; padding:12px; box-shadow:0 1px 3px rgba(0,0,0,.08); }
+  #yearDoc .ys-tm{ display:flex; flex-direction:column; gap:3px; height:190px; } #yearDoc .ys-tmrow{ display:flex; gap:3px; min-height:0; } #yearDoc .ys-tmcol{ display:flex; flex-direction:column; gap:3px; min-width:0; }
+  #yearDoc .ys-tm .bx{ border-radius:8px; padding:7px; display:flex; flex-direction:column; justify-content:space-between; overflow:hidden; color:#fff; min-width:0; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  #yearDoc .ys-tm .bx b{ font-size:11px; line-height:1.25; } #yearDoc .ys-tm .bx span{ font-size:11.5px; font-weight:700; }
+  #yearDoc .ys-tm .bx.sm{ flex-direction:row; align-items:center; justify-content:flex-start; gap:4px; padding:2px 6px; font-size:9.5px; }
+  #yearDoc .ys-cr{ display:flex; align-items:baseline; font-size:12.5px; padding:3px 0; gap:0; }
+  #yearDoc .ys-cr .d{ flex:1; border-bottom:1px dotted #c9c2b0; margin:0 6px; transform:translateY(-3px); }
+  #yearDoc .ys-cr b{ font-variant-numeric:tabular-nums; direction:ltr; white-space:nowrap; } #yearDoc .ys-cr em{ font-style:normal; color:#6b7280; width:36px; text-align:end; font-size:11.5px; }
+  #yearDoc .ys-sw{ display:inline-block; width:9px; height:9px; border-radius:2px; margin-inline-end:6px; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  #yearDoc .ys-bn{ display:flex; gap:8px; margin-bottom:10px; } #yearDoc .ys-bn > div{ flex:1; background:#f4efe4; border-radius:10px; padding:6px 8px; min-width:0; }
+  #yearDoc .ys-bn small{ display:block; font-size:10px; color:#6b7280; text-transform:uppercase; letter-spacing:.4px; } #yearDoc .ys-bn b{ font-size:14px; direction:ltr; display:block; text-align:start; white-space:nowrap; }
+  #yearDoc .ys-sb{ display:flex; height:24px; border-radius:12px; overflow:hidden; font-size:10.5px; font-weight:700; color:#1B2A44; margin:4px 0 8px; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  #yearDoc .ys-sb div{ display:flex; align-items:center; justify-content:center; overflow:hidden; white-space:nowrap; }
+  #yearDoc .ys-ml{ display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; } #yearDoc .ys-ml > div{ flex:1 1 22%; min-width:72px; background:#f4efe4; border-radius:10px; padding:6px 4px; text-align:center; }
+  #yearDoc .ys-ml small{ display:block; color:#6b7280; font-size:10px; } #yearDoc .ys-ml b{ font-size:12px; color:#3F6B4F; direction:ltr; display:block; }
+  #yearDoc .ys-note{ font-size:11px; color:#6b7280; }
   .calc-toggle{ margin-top:8px; }
   .calc-card{ display:none; background:var(--card); border-radius:10px; padding:12px 14px; margin-top:9px; box-shadow:var(--shadow); }
   .calc-card.open{ display:block; }
@@ -1078,7 +1114,7 @@ const translations = {
     investments: "Investments", newInvest: "+ Track an investment", invNamePlaceholder: "Name (e.g. Thndr)", invLinkedGoal: "Linked goal", saveInvest: "Save", updateInvest: "Update value", invNoGoal: "— no goal (optional) —", invInvested: "Invested", invNow: "Now", invProfit: "Profit / loss", invNoValue: "Add the current value to see your profit", invUpdated: (d)=>`Value updated ${d}`, invSince: (a)=>`+${a} deposited since`, invHistory: "History", bonusSourcesLabel: "Bonus sources (separate with commas)", bonusSourcePlaceholder: "— source —", bonusNoSource: "No source", colSource: "Source", shSources: "Sources", ysIncomeSplit: (s,b)=>`Salary ${s} + bonuses ${b}`, ysBonusTitle: "Bonuses", ysBonusNone: "No bonuses logged this year yet.", ysBonusTotal: "Total bonuses", ysBonusCount: "Number of bonuses", ysBonusAvg: "Average per bonus", ysBonusHighest: "Highest bonus", ysBonusFrom: "Where it came from", ysBonusTop: (n,p)=>`most from ${n} (${p}%)`, ysBonusMonths: "Months with bonuses", colMonth: "Month", colIncome: "Income", shMonths: "Months", catManage: "Categories", catManageBtn: "Manage", catManageNote: "Rename, change the emoji, or hide any category. Hidden ones disappear from the lists but old expenses keep them.", catNamePlaceholder: "New category name", catShow: "Show", catHide: "Hide", catDeleteTitle: "Delete this category?", catDeleteBody: (n,c)=>`"${n}" will be removed. ${c} expense(s) in it will move to Other.`, toastEnterCatName: "Enter a category name", toastCatAdded: "Category added",
     badges: "Achievements", badgeUnlocked: (n)=>`New achievement: ${n}`,
     bd_first: "First expense", bd_first_d: "Log your first expense", bd_streak7: "7-day streak", bd_streak7_d: "Log expenses 7 days in a row", bd_streak30: "30-day streak", bd_streak30_d: "Log expenses 30 days in a row", bd_noSweets: "A week without sweets", bd_noSweets_d: "7 days with no sweets while still logging", bd_under1: "Under budget", bd_under1_d: "Finish a month spending less than your income", bd_under3: "Three good months", bd_under3_d: "Finish 3 months under budget", bd_save20: "20% saver", bd_save20_d: "Keep 20% of a month's income unspent", bd_goalHalf: "Halfway there", bd_goalHalf_d: "Reach 50% of a goal", bd_goalDone: "Goal reached", bd_goalDone_d: "Reach 100% of a goal", bd_saved1k: "Saved 1,000", bd_saved1k_d: "1,000 EGP deposited to goals", bd_saved5k: "Saved 5,000", bd_saved5k_d: "5,000 EGP deposited to goals", bd_saved10k: "Saved 10,000", bd_saved10k_d: "10,000 EGP deposited to goals", bd_charity: "Giving", bd_charity_d: "Log a charity expense", bd_investor: "Investor", bd_investor_d: "Start tracking an investment", bd_backup: "Safe and sound", bd_backup_d: "Export or import a backup",
-     ysBtn: "📊 Year summary", ysTitle: (l)=>`Year summary ${l}`, ysNone: "No spending in this year yet.", ysElapsed: (n)=>`Based on ${n} months so far`, ysSpent: "Total spent", ysIncome: "Salary + bonuses", ysSaved: "Left after spending", ysDeficit: "Overspent by", ysAvg: "Average per month", ysDeposits: "Deposited to goals", ysPriciest: "Most expensive month", ysCheapest: "Lightest month", ysBiggest: "Biggest single expense", ysTop5: "Where your money went",
+     ysBtn: "📊 Year summary", ysTitle: (l)=>`Year summary ${l}`, ysNone: "No spending in this year yet.", ysElapsed: (n)=>`Based on ${n} months so far`, ysSpent: "Total spent", ysIncome: "Salary + bonuses", ysSaved: "Left after spending", ysDeficit: "Overspent by", ysAvg: "Average per month", ysDeposits: "Deposited to goals", ysPriciest: "Most expensive month", ysCheapest: "Lightest month", ysBiggest: "Biggest single expense", ysTop5: "Where your money went", ysPctSpent: "of income spent", ysSalary: "Salary", ysBonuses: (n)=>`Bonuses (${n})`, ysWent: "Where it went",
     subs: "Subscriptions", newSub: "+ Add a subscription", subNamePlaceholder: "Name (e.g. Netflix)", subDayPlaceholder: "Renewal day (1-31)", subCategory: "Category", subRemind: "Remind me", subRemind0: "On the day", subRemind1: "1 day before", subRemind2: "2 days before", saveSub: "Save", subPaid: "Paid ✓", subToday: "today", subTomorrow: "tomorrow", subIn: (n)=>`in ${n} days`, subRenews: (d)=>`Renews ${d}`, subMonthlyTotal: (a)=>`Monthly total: EGP ${a}`, noSubsYet: "No subscriptions yet.", toastSubSaved: "Subscription saved", toastSubInvalid: "Enter a name, amount and renewal day (1-31)", toastSubPaid: (n)=>`${n} recorded as an expense`, deleteSubTitle: "Delete this subscription?", deleteSubBody: (n)=>`"${n}" will stop reminding you. Past expenses stay.`, notifSubTitle: "Subscription renewing soon", notifSubBody: (n,a,w)=>`${n} · EGP ${a} · ${w}`,
     insights: "Insights", ruleTitle: "50 / 30 / 20 rule", rule_needs: "Needs", rule_wants: "Wants", rule_savings: "Savings", ruleTarget: (a)=>`target ≈ ${a}`, ruleEdit: "Edit classification", ruleNoIncome: "No income for this period.",
     simBtn: "🔧 What if I cut back?", simCat: "Category", simPct: "Cut by %", simGoal: "Goal", simNoGoal: "— no goal —", simAvg: (c,a)=>`You spend about ${a} a month on ${c}.`, simSave: (m,y)=>`Cutting it saves ${m} a month — ${y} a year.`, simFaster: (m0,m1,d,e)=>`You'd reach the goal in ${m1} months instead of ${m0} (${d} sooner), around ${e}.`, simReach: (m1,e)=>`At that pace you'd reach the goal in about ${m1} months, around ${e}.`, simBefore: "That's before your deadline ✓", simAfter: "That's still after your deadline.", simDone: "This goal is already reached.", simNoData: "No spending in this category yet.",
@@ -1159,7 +1195,7 @@ const translations = {
     investments: "الاستثمارات", newInvest: "+ تتبّع استثمار", invNamePlaceholder: "الاسم (مثلًا Thndr)", invLinkedGoal: "الهدف المربوط", saveInvest: "حفظ", updateInvest: "تحديث القيمة", invNoGoal: "— بدون هدف (اختياري) —", invInvested: "اللي حطيتيه", invNow: "قيمته دلوقتي", invProfit: "الربح / الخسارة", invNoValue: "سجّلي القيمة الحالية عشان يظهر الربح", invUpdated: (d)=>`آخر تحديث للقيمة ${d}`, invSince: (a)=>`+${a} اتضاف بعدها`, invHistory: "السجل", bonusSourcesLabel: "مصادر المكافآت (افصلي بينها بفاصلة)", bonusSourcePlaceholder: "— المصدر —", bonusNoSource: "بدون مصدر", colSource: "المصدر", shSources: "المصادر", ysIncomeSplit: (s,b)=>`مرتب ${s} + مكافآت ${b}`, ysBonusTitle: "المكافآت", ysBonusNone: "مفيش مكافآت متسجّلة في السنة دي لسه.", ysBonusTotal: "إجمالي المكافآت", ysBonusCount: "عدد المكافآت", ysBonusAvg: "متوسط المكافأة", ysBonusHighest: "أعلى مكافأة", ysBonusFrom: "جاية منين", ysBonusTop: (n,p)=>`أكتر مصدر ${n} (${p}%)`, ysBonusMonths: "شهور فيها مكافآت", colMonth: "الشهر", colIncome: "الدخل", shMonths: "الشهور", catManage: "الفئات", catManageBtn: "إدارة", catManageNote: "غيّري الاسم أو الإيموجي أو اخفي أي فئة. اللي بتتخفي بتختفي من القوايم بس والمصاريف القديمة بتفضل ليها.", catNamePlaceholder: "اسم الفئة الجديدة", catShow: "إظهار", catHide: "إخفاء", catDeleteTitle: "حذف الفئة دي؟", catDeleteBody: (n,c)=>`هتتمسح "${n}". ${c} مصروف فيها هيروحوا لـ أخرى.`, toastEnterCatName: "اكتبي اسم الفئة", toastCatAdded: "تمت إضافة الفئة",
     badges: "الإنجازات", badgeUnlocked: (n)=>`إنجاز جديد: ${n}`,
     bd_first: "أول مصروف", bd_first_d: "سجّلي أول مصروف", bd_streak7: "أسبوع متواصل", bd_streak7_d: "سجّلي مصاريفك 7 أيام ورا بعض", bd_streak30: "30 يوم متواصل", bd_streak30_d: "سجّلي مصاريفك 30 يوم ورا بعض", bd_noSweets: "أسبوع بدون حلويات", bd_noSweets_d: "7 أيام من غير حلويات وإنتي بتسجّلي", bd_under1: "تحت الميزانية", bd_under1_d: "خلّصي شهر وصرفك أقل من دخلك", bd_under3: "تلات شهور حلوين", bd_under3_d: "خلّصي 3 شهور تحت الميزانية", bd_save20: "مدّخرة 20%", bd_save20_d: "فضّلتي 20% من دخل شهر من غير صرف", bd_goalHalf: "نص الطريق", bd_goalHalf_d: "وصلتي 50% من هدف", bd_goalDone: "هدف اتحقق", bd_goalDone_d: "وصلتي 100% من هدف", bd_saved1k: "حوّشتي 1,000", bd_saved1k_d: "1,000 جنيه إيداعات في الأهداف", bd_saved5k: "حوّشتي 5,000", bd_saved5k_d: "5,000 جنيه إيداعات في الأهداف", bd_saved10k: "حوّشتي 10,000", bd_saved10k_d: "10,000 جنيه إيداعات في الأهداف", bd_charity: "عطاء", bd_charity_d: "سجّلي مصروف صدقة", bd_investor: "مستثمرة", bd_investor_d: "ابدأي تتبّع استثمار", bd_backup: "بياناتك في أمان", bd_backup_d: "صدّري أو استوردي نسخة احتياطية",
-     ysBtn: "📊 ملخص السنة", ysTitle: (l)=>`ملخص السنة ${l}`, ysNone: "مفيش مصاريف في السنة دي لسه.", ysElapsed: (n)=>`على أساس ${n} شهر لحد دلوقتي`, ysSpent: "إجمالي الصرف", ysIncome: "المرتب + المكافآت", ysSaved: "اللي فضل بعد الصرف", ysDeficit: "صرفتي زيادة بـ", ysAvg: "المتوسط في الشهر", ysDeposits: "إيداعات الأهداف", ysPriciest: "أغلى شهر", ysCheapest: "أخف شهر", ysBiggest: "أكبر مصروف", ysTop5: "فلوسك راحت فين",
+     ysBtn: "📊 ملخص السنة", ysTitle: (l)=>`ملخص السنة ${l}`, ysNone: "مفيش مصاريف في السنة دي لسه.", ysElapsed: (n)=>`على أساس ${n} شهر لحد دلوقتي`, ysSpent: "إجمالي الصرف", ysIncome: "المرتب + المكافآت", ysSaved: "اللي فضل بعد الصرف", ysDeficit: "صرفتي زيادة بـ", ysAvg: "المتوسط في الشهر", ysDeposits: "إيداعات الأهداف", ysPriciest: "أغلى شهر", ysCheapest: "أخف شهر", ysBiggest: "أكبر مصروف", ysTop5: "فلوسك راحت فين", ysPctSpent: "من الدخل اتصرف", ysSalary: "المرتب", ysBonuses: (n)=>`المكافآت (${n})`, ysWent: "راحت فين",
     subs: "الاشتراكات", newSub: "+ إضافة اشتراك", subNamePlaceholder: "الاسم (مثلًا Netflix)", subDayPlaceholder: "يوم التجديد (1-31)", subCategory: "الفئة", subRemind: "فكّريني", subRemind0: "في نفس اليوم", subRemind1: "قبلها بيوم", subRemind2: "قبلها بيومين", saveSub: "حفظ", subPaid: "اتدفع ✓", subToday: "النهارده", subTomorrow: "بكرة", subIn: (n)=>`بعد ${n} يوم`, subRenews: (d)=>`بيتجدد ${d}`, subMonthlyTotal: (a)=>`الإجمالي الشهري: ${a} جنيه`, noSubsYet: "لسه مفيش اشتراكات.", toastSubSaved: "تم حفظ الاشتراك", toastSubInvalid: "اكتبي الاسم والمبلغ ويوم التجديد (1-31)", toastSubPaid: (n)=>`تم تسجيل ${n} كمصروف`, deleteSubTitle: "حذف الاشتراك ده؟", deleteSubBody: (n)=>`"${n}" مش هيفكّرك تاني. المصاريف القديمة هتفضل.`, notifSubTitle: "اشتراك قرّب يتجدد", notifSubBody: (n,a,w)=>`${n} · ${a} جنيه · ${w}`,
     insights: "تحليلات", ruleTitle: "قاعدة 50 / 30 / 20", rule_needs: "احتياجات", rule_wants: "رغبات", rule_savings: "ادخار", ruleTarget: (a)=>`المستهدف ≈ ${a}`, ruleEdit: "تعديل التصنيف", ruleNoIncome: "مفيش دخل للفترة دي.",
     simBtn: "🔧 لو قللت؟", simCat: "الفئة", simPct: "التقليل %", simGoal: "الهدف", simNoGoal: "— بدون هدف —", simAvg: (c,a)=>`بتصرفي حوالي ${a} في الشهر على ${c}.`, simSave: (m,y)=>`لو قللتيها هتوفّري ${m} في الشهر، يعني ${y} في السنة.`, simFaster: (m0,m1,d,e)=>`هتوصلي للهدف في ${m1} شهر بدل ${m0} (أسرع بـ ${d})، تقريبًا ${e}.`, simReach: (m1,e)=>`بالسرعة دي هتوصلي للهدف في حوالي ${m1} شهر، تقريبًا ${e}.`, simBefore: "ده قبل ميعاد الهدف ✓", simAfter: "ده لسه بعد ميعاد الهدف.", simDone: "الهدف ده اتحقق بالفعل.", simNoData: "مفيش مصاريف على الفئة دي لسه.",
@@ -3424,37 +3460,54 @@ function buildYearData(fy){
 function yearSummaryHtml(d){
   if(d.empty) return `<h1>${t('ysTitle', fyLabel(d.fy))}</h1><div class="r-sub">${t('ysNone')}</div>`;
   const mLabel = r=>monthName(r.p.monthIdx)+' '+r.p.year;
-  const card = (k,v,extra)=>`<div class="ys-card"><div class="k">${k}</div><div class="v">${v}</div>${extra?`<div class="k">${extra}</div>`:''}</div>`;
   const srcName = x=>x || t('bonusNoSource');
-  let bonusHtml = `<h3>${t('ysBonusTitle')}</h3>`;
+  const tile = (k,v,extra,cls)=>`<div class="ys-t"><div class="l">${k}</div><div class="v ${cls||''}">${v}</div>${extra?`<div class="n">${extra}</div>`:''}</div>`;
+  const pct = d.income>0 ? Math.round(d.spent/d.income*100) : null;
+  const ringPct = pct===null ? 0 : Math.min(100, pct);
+  const ring = pct===null ? '' : `<div class="ys-ring" style="background:conic-gradient(#E0A458 0 ${ringPct}%, #8FD1A4 ${ringPct}% 100%)"><b>${pct}%<small>${t('ysPctSpent')}</small></b></div>`;
+  const hero = `<div class="ys-hero"><div class="ys-top">${ring}<div class="ys-lft"><small>${d.left>=0?t('ysSaved'):t('ysDeficit')}</small><div class="ys-big ${d.left>=0?'pos':'neg'}">EGP ${fmt(Math.abs(d.left))}</div><div class="ys-sub">${t('ysAvg')}: ${fmt(d.spent/d.rows.length)}</div></div></div>
+    <div class="ys-rows">
+      <div class="ys-r"><span>${t('ysSalary')}</span><span class="d"></span><span class="v">${fmt(d.salaryTotal)}</span></div>
+      <div class="ys-r"><span>${t('ysBonuses', d.bonusCount)}</span><span class="d"></span><span class="v">${fmt(d.bonusTotal)}</span></div>
+      <div class="ys-r"><span>${t('ysSpent')}</span><span class="d"></span><span class="v" style="color:#F0A0A0">− ${fmt(d.spent)}</span></div>
+    </div></div>`;
+  const tiles = `<div class="ys-tiles">
+    ${tile(t('ysDeposits'), fmt(d.deposits))}
+    ${tile(t('ysBiggest'), fmt(parseFloat(d.biggest.amount)), escapeHtml((d.biggest.desc||categoryLabel(d.biggest.category))+' · '+formatDate(d.biggest.date)))}
+    ${tile(t('ysPriciest'), fmt(d.priciest.spent), escapeHtml(mLabel(d.priciest)), 'neg')}
+    ${d.activeCount>1 ? tile(t('ysCheapest'), fmt(d.lightest.spent), escapeHtml(mLabel(d.lightest)), 'pos') : ''}
+  </div>`;
+  // categories: top 6 + other
+  const total = d.spent;
+  const items = d.cats.slice(0,6).map(([c,a])=>({label:categoryLabel(c), amt:a}));
+  const rest = d.cats.slice(6).reduce((a,x)=>a+x[1],0); if(rest>0) items.push({label:t('otherCats'), amt:rest});
+  items.forEach((x,i)=>{ x.color=PIE_COLORS[i]; x.p=Math.round(x.amt/total*100); });
+  const share = arr=>arr.reduce((a,x)=>a+x.amt,0);
+  const big = x=>`<div class="bx" style="flex:${x.amt.toFixed(2)};background:${x.color}"><b>${escapeHtml(x.label)}</b><span>${x.p}%</span></div>`;
+  const small = x=>`<div class="bx sm" style="flex:${x.amt.toFixed(2)};background:${x.color}"><span>${escapeHtml(x.label)} ${x.p}%</span></div>`;
+  const r1 = items.slice(0,2), r2 = items.slice(2);
+  const r2big = r2.slice(0,2), r2small = r2.slice(2);
+  let tm = `<div class="ys-tm"><div class="ys-tmrow" style="flex:${share(r1).toFixed(2)}">${r1.map(big).join('')}</div>`;
+  if(r2.length) tm += `<div class="ys-tmrow" style="flex:${share(r2).toFixed(2)}">${r2big.map(big).join('')}${r2small.length?`<div class="ys-tmcol" style="flex:${share(r2small).toFixed(2)}">${r2small.map(small).join('')}</div>`:''}</div>`;
+  tm += `</div>`;
+  const list = items.map(x=>`<div class="ys-cr"><span><span class="ys-sw" style="background:${x.color}"></span>${escapeHtml(x.label)}</span><span class="d"></span><b>${fmt(x.amt)}</b><em>${x.p}%</em></div>`).join('');
+  const catHtml = `<div class="ys-sec">${t('ysWent')}</div><div class="ys-card2">${tm}<div style="margin-top:10px">${list}</div></div>`;
+  let bonusHtml = `<div class="ys-sec">${t('ysBonusTitle')}</div>`;
   if(!d.bonusCount) bonusHtml += `<div>${t('ysBonusNone')}</div>`;
   else {
-    const top = d.bonusSources[0];
-    bonusHtml += `<div class="ys-grid">
-      ${card(t('ysBonusTotal'), '<span class="pos">EGP '+fmt(d.bonusTotal)+'</span>', t('ysBonusCount')+': '+d.bonusCount)}
-      ${card(t('ysBonusAvg'), 'EGP '+fmt(d.bonusAvg))}
-    </div>
-    ${card(t('ysBonusHighest'), 'EGP '+fmt(parseFloat(d.bonusHighest.amount)), escapeHtml((d.bonusHighest.source ? d.bonusHighest.source+' · ' : '')+formatDate(d.bonusHighest.date)))}
-    <div class="r-sub" style="margin:10px 0 4px">${t('ysBonusFrom')} — ${t('ysBonusTop', escapeHtml(srcName(top.name)), (top.total/d.bonusTotal*100).toFixed(0))}</div>
-    ${d.bonusSources.map(x=>`<div style="margin:7px 0"><div style="display:flex;justify-content:space-between"><span>${escapeHtml(srcName(x.name))} <small>(${x.count})</small></span><span class="num">${fmt(x.total)} · ${(x.total/d.bonusTotal*100).toFixed(0)}%</span></div><div class="ys-bar" style="width:${(x.total/top.total*100).toFixed(0)}%"></div></div>`).join('')}
-    <div class="r-sub" style="margin:12px 0 4px">${t('ysBonusMonths')}</div>
-    ${d.bonusMonths.map(r=>`<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid #eee"><span>${escapeHtml(mLabel(r))}</span><span class="num pos">+${fmt(r.bonus)}</span></div>`).join('')}`;
+    const SC=['#E0A458','#8FD1A4','#9AB6FF','#D9A5C8','#C9B58A'];
+    const srcs = d.bonusSources;
+    bonusHtml += `<div class="ys-card2"><div class="ys-bn">
+      <div><small>${t('ysBonusTotal')} · ${d.bonusCount}</small><b class="pos">${fmt(d.bonusTotal)}</b></div>
+      <div><small>${t('ysBonusAvg')}</small><b>${fmt(d.bonusAvg)}</b></div>
+      <div><small>${t('ysBonusHighest')}</small><b>${fmt(parseFloat(d.bonusHighest.amount))}</b></div></div>
+      <div class="ys-note">${t('ysBonusFrom')} — ${t('ysBonusTop', escapeHtml(srcName(srcs[0].name)), (srcs[0].total/d.bonusTotal*100).toFixed(0))}</div>
+      <div class="ys-sb">${srcs.map((x,i)=>`<div style="width:${(x.total/d.bonusTotal*100).toFixed(1)}%;background:${SC[i%SC.length]}">${(x.total/d.bonusTotal*100)>=18?escapeHtml(srcName(x.name))+' '+(x.total/d.bonusTotal*100).toFixed(0)+'%':''}</div>`).join('')}</div>
+      ${srcs.map((x,i)=>`<div class="ys-cr"><span><span class="ys-sw" style="background:${SC[i%SC.length]}"></span>${escapeHtml(srcName(x.name))} <span class="ys-note">(${x.count})</span></span><span class="d"></span><b>${fmt(x.total)}</b><em>${(x.total/d.bonusTotal*100).toFixed(0)}%</em></div>`).join('')}
+      <div class="ys-note" style="margin-top:10px">${t('ysBonusMonths')}</div>
+      <div class="ys-ml">${d.bonusMonths.map(r=>`<div><small>${escapeHtml(mLabel(r))}</small><b>+${fmt(r.bonus)}</b></div>`).join('')}</div></div>`;
   }
-  return `<h1>${t('ysTitle', fyLabel(d.fy))}</h1><div class="r-sub">${t('ysElapsed', d.rows.length)}</div>
-  <div class="ys-grid">
-    ${card(t('ysSpent'), 'EGP '+fmt(d.spent))}
-    ${card(d.left>=0?t('ysSaved'):t('ysDeficit'), `<span class="${d.left>=0?'pos':'neg'}">EGP ${fmt(Math.abs(d.left))}</span>`, t('ysIncomeSplit', fmtShort(d.salaryTotal), fmtShort(d.bonusTotal)))}
-    ${card(t('ysAvg'), 'EGP '+fmt(d.spent/d.rows.length))}
-    ${card(t('ysDeposits'), 'EGP '+fmt(d.deposits))}
-  </div>
-  ${card(t('ysPriciest'), escapeHtml(mLabel(d.priciest))+' · EGP '+fmt(d.priciest.spent))}
-  ${d.activeCount>1 ? card(t('ysCheapest'), escapeHtml(mLabel(d.lightest))+' · EGP '+fmt(d.lightest.spent)) : ''}
-  ${card(t('ysBiggest'), 'EGP '+fmt(parseFloat(d.biggest.amount)), escapeHtml(d.biggest.desc||categoryLabel(d.biggest.category))+' · '+escapeHtml(formatDate(d.biggest.date)))}
-  ${bonusHtml}
-  <h3>${t('byCategory')}</h3>
-  ${pieHtml(d.cats.map(([c,a])=>({label:categoryLabel(c),amt:a})))}
-  <h3>${t('ysTop5')}</h3>
-  ${d.cats.slice(0,5).map(([c,a])=>`<div style="margin:7px 0"><div style="display:flex;justify-content:space-between"><span>${escapeHtml(categoryLabel(c))}</span><span class="num">${fmt(a)} · ${(a/d.spent*100).toFixed(0)}%</span></div><div class="ys-bar" style="width:${(a/d.cats[0][1]*100).toFixed(0)}%"></div></div>`).join('')}`;
+  return `<h1>${t('ysTitle', fyLabel(d.fy))}</h1><div class="r-sub">${t('ysElapsed', d.rows.length)}</div>${hero}${tiles}${catHtml}${bonusHtml}`;
 }
 let yearCtx = null;
 function buildYearXlsx(d){
@@ -4198,3 +4251,4 @@ loadState().then(()=>{ try{ resumeDrive(); }catch(e){ console.error(e); } });
 </script>
 </body>
 </html>
+
