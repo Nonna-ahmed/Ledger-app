@@ -664,6 +664,12 @@
   .goal-bar .sp{ flex:1; }
   .goal-actions.gm-form{ display:none; margin-top:10px; } .goal-actions.gm-form.open{ display:flex; }
   .goal-pace{ font-size:11px; color:var(--ink-soft); margin-top:2px; }
+  .goal-invnote{ font-size:11px; color:var(--green); margin-top:4px; }
+  .goal-invnote.neg{ color:var(--red); }
+  .goal-invnote.pending{ color:var(--ink-soft); }
+  .dep-row.inv-profit-row .dep-date-txt{ color:var(--green); }
+  .dep-row.inv-profit-row .dep-amt.neg{ color:var(--red); }
+  .inv-goal-tag{ display:block; margin-top:2px; font-size:10px; color:var(--green); }
   .st-sum .sts-l{ font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-soft); }
   .st-sum .sts-v{ font-family:'JetBrains Mono',monospace; font-size:26px; font-weight:700; direction:ltr; margin:2px 0 6px; }
   .st-sum .sts-s{ font-size:12px; color:var(--ink-soft); margin-top:4px; }
@@ -1120,8 +1126,8 @@ const translations = {
     simBtn: "🔧 What if I cut back?", simCat: "Category", simPct: "Cut by %", simGoal: "Goal", simNoGoal: "— no goal —", simAvg: (c,a)=>`You spend about ${a} a month on ${c}.`, simSave: (m,y)=>`Cutting it saves ${m} a month — ${y} a year.`, simFaster: (m0,m1,d,e)=>`You'd reach the goal in ${m1} months instead of ${m0} (${d} sooner), around ${e}.`, simReach: (m1,e)=>`At that pace you'd reach the goal in about ${m1} months, around ${e}.`, simBefore: "That's before your deadline ✓", simAfter: "That's still after your deadline.", simDone: "This goal is already reached.", simNoData: "No spending in this category yet.",
      invRatePlaceholder: "Annual return % (optional, e.g. 17.03)", invNowEst: "Now (est.)", invEstNote: (r)=>`Estimated at ${r}% / year`, invEstFromReal: (d)=>`from your real value on ${d}`, invEstNoReal: "no real value entered yet",
     calcBtn: "Returns calculator", calcAmount: "Amount", calcRate: "Annual rate %", calcGains: "Expected gains per month", calcTotalLabel: "Sum of 12 months gains", calcDay: "/day", calcWithdraw: (p,a)=>`Withdrawing monthly gains earns ${p}%, or ${a} EGP a year.`,
-     invValuePlaceholder: "Current value", invGoalMissing: "Linked goal was deleted", invInvestedPlaceholder: "Amount invested (if no goal)", invNoGoalLabel: "No linked goal", invNeedInvested: "add the amount you invested to see profit", invAtThen: (a)=>`invested ${a}`, noInvestYet: "No investments tracked yet.", toastEnterValue: "Enter the current value", toastInvestUpdated: "Value updated", toastInvestSaved: "Investment saved", toastNeedGoal: "Create a savings goal first, then link it", toastPickGoal: "Pick the goal that holds your deposits", deleteInvestTitle: "Delete this investment?", deleteInvestBody: (n)=>`"${n}" and its value history will be removed. Your goal and deposits stay.`,
-     noGoalOpt: "— No goal —", linkedDeposit: "from an expense", compareTitle: "Vs last month", compareNoPrev: "No spending last month to compare with.", compareSame: "No real change vs last month.", compareMore: "more than last month", compareLess: "less than last month", undoBtn: "Undo", toastRepeated: (d,a)=>`Added again: ${d} · ${a}`, toastUndone: "Removed", goalDeadlineLabel: "Deadline (optional)", updateGoal: "Update goal", toastGoalUpdated: "Goal updated", goalDueIn: (d,n)=>`Due ${d} · ${n} days left`, goalDueToday: (d)=>`Due today (${d})`, goalLate: (d,n)=>`Was due ${d} · ${n} days late`, goalPerMonth: (a)=>`≈ EGP ${a} / month needed`, goalDone: "Goal reached ✓", planSaved: "Saved toward goals", planOf: (a)=>`of ${a} EGP`, planInvSep: (n,pl)=>`Investments tracked separately (not added here): ${n} now · ${pl} profit`, goalOnTrack: "On track", goalBehind: "Behind pace", goalPaceNote: "Estimate from your last 3 months of deposits", addMoney: "+ Add money", stSpent: "Spent this period", stBelow: (n)=>`${n}% below last period`, stAbove: (n)=>`${n}% above last period`, stBudgetLine: (b,l)=>`of ${b} budget · ${l} left`, stAvgDay: (a)=>`avg ${a}/day`, stPace: (a)=>`pace guide: ${a}/day for the rest of the period (not a promise)`, stBusiest: (d,a)=>`Busiest day: ${d} · EGP ${a}`, vsLast: "vs last period", setMoney: "Money", setPersonalize: "Personalize", setSecurity: "Security & alerts", setBackup: "Backup", carriedOver: "Carried over", allCategories: "All categories", filteredTotal: "Total", depositHistory: "Deposits", hideHistory: "Hide", noDepositsYet: "No deposits yet.", deleteDepositTitle: "Delete this deposit?", deleteDepositBody: "This will reduce the saved amount.", toastDepositDeleted: "Deposit deleted", toastEnterDate: "Pick a date", addBtn: "+ Add", delete: "Delete",
+     invValuePlaceholder: "Current value", invGoalMissing: "Linked goal was deleted", invInvestedPlaceholder: "Amount invested (if no goal)", invNoGoalLabel: "No linked goal", invNeedInvested: "add the amount you invested to see profit", invAtThen: (a)=>`invested ${a}`, noInvestYet: "No investments tracked yet.", toastEnterValue: "Enter the current value", toastInvestUpdated: "Value updated", toastInvestSaved: "Investment saved", toastNeedGoal: "Create a savings goal first, then link it", toastPickGoal: "Pick the goal that holds your deposits", deleteInvestTitle: "Delete this investment?", deleteInvestBody: (n)=>`"${n}" and its value history will be removed. Its profit stops counting in the goal; your goal and deposits stay.`,
+     noGoalOpt: "— No goal —", linkedDeposit: "from an expense", compareTitle: "Vs last month", compareNoPrev: "No spending last month to compare with.", compareSame: "No real change vs last month.", compareMore: "more than last month", compareLess: "less than last month", undoBtn: "Undo", toastRepeated: (d,a)=>`Added again: ${d} · ${a}`, toastUndone: "Removed", goalDeadlineLabel: "Deadline (optional)", updateGoal: "Update goal", toastGoalUpdated: "Goal updated", goalDueIn: (d,n)=>`Due ${d} · ${n} days left`, goalDueToday: (d)=>`Due today (${d})`, goalLate: (d,n)=>`Was due ${d} · ${n} days late`, goalPerMonth: (a)=>`≈ EGP ${a} / month needed`, goalDone: "Goal reached ✓", planSaved: "Saved toward goals", planOf: (a)=>`of ${a} EGP`, planInvSep: (n,pl)=>`Investments tracked separately (not added here): ${n} now · ${pl} profit`, planInvAll: "All investments", egpNow: "EGP now", planInvLine: (inv,pl,pct)=>`Invested ${inv} · ${pl} profit (${pct})`, planInvLinkedNote: "Profit in investments linked to a goal is added to that goal.", planInvNoValue: "Add a current value to see the total.", planInvInGoals: (pl)=>`Includes ${pl} EGP investment profit in goals`, planInvInGoalsLoss: (pl)=>`Includes ${pl} EGP investment loss in goals`, planInvUnlinked: (n,pl)=>`Other investments (no goal): ${n} now · ${pl} profit`, goalInvProfit: (a,n)=>`Includes ${a} EGP investment profit from ${n}`, goalInvProfitEst: (a,n)=>`Includes ${a} EGP estimated profit from ${n}`, goalInvLoss: (a,n)=>`Includes ${a} EGP investment loss from ${n}`, goalInvPending: (n)=>`Add ${n}'s current value to count its profit here`, invProfitRow: "Investment profit", invProfitRowEst: "Investment profit (est.)", invProfitInGoal: "profit counted in this goal", invProfitInGoalEst: "est. profit counted in this goal", invLossInGoal: "loss counted in this goal", goalOnTrack: "On track", goalBehind: "Behind pace", goalPaceNote: "Estimate from your last 3 months of deposits", addMoney: "+ Add money", stSpent: "Spent this period", stBelow: (n)=>`${n}% below last period`, stAbove: (n)=>`${n}% above last period`, stBudgetLine: (b,l)=>`of ${b} budget · ${l} left`, stAvgDay: (a)=>`avg ${a}/day`, stPace: (a)=>`pace guide: ${a}/day for the rest of the period (not a promise)`, stBusiest: (d,a)=>`Busiest day: ${d} · EGP ${a}`, vsLast: "vs last period", setMoney: "Money", setPersonalize: "Personalize", setSecurity: "Security & alerts", setBackup: "Backup", carriedOver: "Carried over", allCategories: "All categories", filteredTotal: "Total", depositHistory: "Deposits", hideHistory: "Hide", noDepositsYet: "No deposits yet.", deleteDepositTitle: "Delete this deposit?", deleteDepositBody: "This will reduce the saved amount.", toastDepositDeleted: "Deposit deleted", toastEnterDate: "Pick a date", addBtn: "+ Add", delete: "Delete",
     recurringExpenses: "Recurring expenses",
     noRecurringYet: 'None yet — check "repeat every pay period" when adding an expense.',
     pause: "Pause", resume: "Resume", everyPayPeriod: "every pay period", pausedLabel: "(paused)",
@@ -1201,8 +1207,8 @@ const translations = {
     simBtn: "🔧 لو قللت؟", simCat: "الفئة", simPct: "التقليل %", simGoal: "الهدف", simNoGoal: "— بدون هدف —", simAvg: (c,a)=>`بتصرفي حوالي ${a} في الشهر على ${c}.`, simSave: (m,y)=>`لو قللتيها هتوفّري ${m} في الشهر، يعني ${y} في السنة.`, simFaster: (m0,m1,d,e)=>`هتوصلي للهدف في ${m1} شهر بدل ${m0} (أسرع بـ ${d})، تقريبًا ${e}.`, simReach: (m1,e)=>`بالسرعة دي هتوصلي للهدف في حوالي ${m1} شهر، تقريبًا ${e}.`, simBefore: "ده قبل ميعاد الهدف ✓", simAfter: "ده لسه بعد ميعاد الهدف.", simDone: "الهدف ده اتحقق بالفعل.", simNoData: "مفيش مصاريف على الفئة دي لسه.",
      invRatePlaceholder: "العائد السنوي % (اختياري، مثلًا 17.03)", invNowEst: "قيمته الآن (تقدير)", invEstNote: (r)=>`تقدير بمعدل ${r}% في السنة`, invEstFromReal: (d)=>`من قيمتك الحقيقية يوم ${d}`, invEstNoReal: "لسه ما سجّلتيش قيمة حقيقية",
     calcBtn: "حاسبة العائد", calcAmount: "المبلغ", calcRate: "العائد السنوي %", calcGains: "الأرباح المتوقعة كل شهر", calcTotalLabel: "مجموع أرباح 12 شهر", calcDay: "/يوم", calcWithdraw: (p,a)=>`لو سحبتي الأرباح كل شهر العائد ${p}%، يعني ${a} جنيه في السنة.`,
-     invValuePlaceholder: "القيمة الحالية", invGoalMissing: "الهدف المربوط اتمسح", invInvestedPlaceholder: "المبلغ اللي حطيتيه (لو بدون هدف)", invNoGoalLabel: "بدون هدف مربوط", invNeedInvested: "سجّلي المبلغ اللي حطيتيه عشان يظهر الربح", invAtThen: (a)=>`كان محطوط ${a}`, noInvestYet: "لسه مفيش استثمارات متتبّعة.", toastEnterValue: "اكتبي القيمة الحالية", toastInvestUpdated: "تم تحديث القيمة", toastInvestSaved: "تم حفظ الاستثمار", toastNeedGoal: "اعملي هدف ادخار الأول وبعدين اربطيه", toastPickGoal: "اختاري الهدف اللي فيه إيداعاتك", deleteInvestTitle: "حذف الاستثمار ده؟", deleteInvestBody: (n)=>`سيتم حذف "${n}" وسجل قيمته. الهدف والإيداعات هيفضلوا زي ما هم.`,
-     noGoalOpt: "— بدون هدف —", linkedDeposit: "من مصروف", compareTitle: "مقارنة بالشهر السابق", compareNoPrev: "مفيش مصاريف في الشهر السابق للمقارنة.", compareSame: "مفيش تغيير يُذكر عن الشهر السابق.", compareMore: "أكتر من الشهر السابق", compareLess: "أقل من الشهر السابق", undoBtn: "تراجع", toastRepeated: (d,a)=>`اتضاف تاني: ${d} · ${a}`, toastUndone: "تم الحذف", goalDeadlineLabel: "تاريخ الانتهاء (اختياري)", updateGoal: "تحديث الهدف", toastGoalUpdated: "تم تحديث الهدف", goalDueIn: (d,n)=>`ينتهي ${d} · باقي ${n} يوم`, goalDueToday: (d)=>`ينتهي النهارده (${d})`, goalLate: (d,n)=>`كان ينتهي ${d} · متأخر ${n} يوم`, goalPerMonth: (a)=>`≈ ${a} جنيه / شهر مطلوب`, goalDone: "تم تحقيق الهدف ✓", planSaved: "المدّخر للأهداف", planOf: (a)=>`من ${a} جنيه`, planInvSep: (n,pl)=>`الاستثمارات منفصلة (غير مضافة هنا): ${n} حاليًا · ربح ${pl}`, goalOnTrack: "ماشية صح", goalBehind: "متأخرة عن المعدل", goalPaceNote: "تقدير من إيداعات آخر 3 شهور", addMoney: "+ إضافة مبلغ", stSpent: "المصروف في الفترة", stBelow: (n)=>`أقل ${n}% من الفترة السابقة`, stAbove: (n)=>`أكتر ${n}% من الفترة السابقة`, stBudgetLine: (b,l)=>`من ميزانية ${b} · باقي ${l}`, stAvgDay: (a)=>`متوسط ${a}/يوم`, stPace: (a)=>`مؤشر: ${a}/يوم لباقي الفترة (مش وعد)`, stBusiest: (d,a)=>`أكتر يوم صرف: ${d} · ${a} جنيه`, vsLast: "مقارنة بالفترة السابقة", setMoney: "الفلوس", setPersonalize: "التخصيص", setSecurity: "الأمان والتنبيهات", setBackup: "النسخ الاحتياطي", carriedOver: "المرحَّل من الشهر السابق", allCategories: "كل الفئات", filteredTotal: "الإجمالي", depositHistory: "الإيداعات", hideHistory: "إخفاء", noDepositsYet: "لا توجد إيداعات بعد.", deleteDepositTitle: "حذف هذا الإيداع؟", deleteDepositBody: "سيتم خصم المبلغ من المدخر.", toastDepositDeleted: "تم حذف الإيداع", toastEnterDate: "اختر التاريخ", addBtn: "+ إضافة", delete: "حذف",
+     invValuePlaceholder: "القيمة الحالية", invGoalMissing: "الهدف المربوط اتمسح", invInvestedPlaceholder: "المبلغ اللي حطيتيه (لو بدون هدف)", invNoGoalLabel: "بدون هدف مربوط", invNeedInvested: "سجّلي المبلغ اللي حطيتيه عشان يظهر الربح", invAtThen: (a)=>`كان محطوط ${a}`, noInvestYet: "لسه مفيش استثمارات متتبّعة.", toastEnterValue: "اكتبي القيمة الحالية", toastInvestUpdated: "تم تحديث القيمة", toastInvestSaved: "تم حفظ الاستثمار", toastNeedGoal: "اعملي هدف ادخار الأول وبعدين اربطيه", toastPickGoal: "اختاري الهدف اللي فيه إيداعاتك", deleteInvestTitle: "حذف الاستثمار ده؟", deleteInvestBody: (n)=>`سيتم حذف "${n}" وسجل قيمته. ربحه مش هيتحسب في الهدف تاني، والهدف والإيداعات هيفضلوا زي ما هم.`,
+     noGoalOpt: "— بدون هدف —", linkedDeposit: "من مصروف", compareTitle: "مقارنة بالشهر السابق", compareNoPrev: "مفيش مصاريف في الشهر السابق للمقارنة.", compareSame: "مفيش تغيير يُذكر عن الشهر السابق.", compareMore: "أكتر من الشهر السابق", compareLess: "أقل من الشهر السابق", undoBtn: "تراجع", toastRepeated: (d,a)=>`اتضاف تاني: ${d} · ${a}`, toastUndone: "تم الحذف", goalDeadlineLabel: "تاريخ الانتهاء (اختياري)", updateGoal: "تحديث الهدف", toastGoalUpdated: "تم تحديث الهدف", goalDueIn: (d,n)=>`ينتهي ${d} · باقي ${n} يوم`, goalDueToday: (d)=>`ينتهي النهارده (${d})`, goalLate: (d,n)=>`كان ينتهي ${d} · متأخر ${n} يوم`, goalPerMonth: (a)=>`≈ ${a} جنيه / شهر مطلوب`, goalDone: "تم تحقيق الهدف ✓", planSaved: "المدّخر للأهداف", planOf: (a)=>`من ${a} جنيه`, planInvSep: (n,pl)=>`الاستثمارات منفصلة (غير مضافة هنا): ${n} حاليًا · ربح ${pl}`, planInvAll: "كل الاستثمارات", egpNow: "جنيه الآن", planInvLine: (inv,pl,pct)=>`المستثمر ${inv} · ${pl} ربح (${pct})`, planInvLinkedNote: "ربح الاستثمارات المربوطة بهدف بيتضاف على الهدف.", planInvNoValue: "سجّلي قيمة حالية عشان يظهر الإجمالي.", planInvInGoals: (pl)=>`شامل ${pl} جنيه ربح استثمارات في الأهداف`, planInvInGoalsLoss: (pl)=>`شامل ${pl} جنيه خسارة استثمارات في الأهداف`, planInvUnlinked: (n,pl)=>`استثمارات تانية (بدون هدف): ${n} حاليًا · ${pl} ربح`, goalInvProfit: (a,n)=>`شامل ${a} جنيه ربح من ${n}`, goalInvProfitEst: (a,n)=>`شامل ${a} جنيه ربح تقديري من ${n}`, goalInvLoss: (a,n)=>`شامل ${a} جنيه خسارة من ${n}`, goalInvPending: (n)=>`سجّلي قيمة ${n} الحالية عشان يتحسب ربحها هنا`, invProfitRow: "ربح الاستثمار", invProfitRowEst: "ربح الاستثمار (تقديري)", invProfitInGoal: "الربح متحسب في الهدف", invProfitInGoalEst: "الربح التقديري متحسب في الهدف", invLossInGoal: "الخسارة متحسبة في الهدف", goalOnTrack: "ماشية صح", goalBehind: "متأخرة عن المعدل", goalPaceNote: "تقدير من إيداعات آخر 3 شهور", addMoney: "+ إضافة مبلغ", stSpent: "المصروف في الفترة", stBelow: (n)=>`أقل ${n}% من الفترة السابقة`, stAbove: (n)=>`أكتر ${n}% من الفترة السابقة`, stBudgetLine: (b,l)=>`من ميزانية ${b} · باقي ${l}`, stAvgDay: (a)=>`متوسط ${a}/يوم`, stPace: (a)=>`مؤشر: ${a}/يوم لباقي الفترة (مش وعد)`, stBusiest: (d,a)=>`أكتر يوم صرف: ${d} · ${a} جنيه`, vsLast: "مقارنة بالفترة السابقة", setMoney: "الفلوس", setPersonalize: "التخصيص", setSecurity: "الأمان والتنبيهات", setBackup: "النسخ الاحتياطي", carriedOver: "المرحَّل من الشهر السابق", allCategories: "كل الفئات", filteredTotal: "الإجمالي", depositHistory: "الإيداعات", hideHistory: "إخفاء", noDepositsYet: "لا توجد إيداعات بعد.", deleteDepositTitle: "حذف هذا الإيداع؟", deleteDepositBody: "سيتم خصم المبلغ من المدخر.", toastDepositDeleted: "تم حذف الإيداع", toastEnterDate: "اختر التاريخ", addBtn: "+ إضافة", delete: "حذف",
     recurringExpenses: "المصروفات المتكررة",
     noRecurringYet: 'لا يوجد بعد — فعّل خيار "تكرار كل فترة راتب" عند إضافة مصروف.',
     pause: "إيقاف مؤقت", resume: "استئناف", everyPayPeriod: "كل فترة راتب", pausedLabel: "(متوقف)",
@@ -1370,6 +1376,7 @@ function genId(){ return Date.now().toString(36)+Math.random().toString(36).slic
 function localDateStr(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
 function todayStr(){ return localDateStr(new Date()); }
 function fmt(n){ return (Math.round(n*100)/100).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+function ltrSpan(s){ return `<span dir="ltr">${s}</span>`; }
 function fmtShort(n){ return (Math.round(n*100)/100).toLocaleString('en-US', {minimumFractionDigits:0, maximumFractionDigits:0}); }
 function showToast(msg, action){
   const el=document.getElementById('toast'); el.textContent=msg;
@@ -1597,7 +1604,37 @@ function renderRecurring(){
 }
 
 /* ---------------- Goals ---------------- */
-function goalSaved(goalId){ return state.contributions.filter(c=>c.goalId===goalId).reduce((s,c)=>s+parseFloat(c.amount),0); }
+function goalDeposits(goalId){ return state.contributions.filter(c=>c.goalId===goalId).reduce((s,c)=>s+parseFloat(c.amount),0); }
+/* Profit made inside an investment counts toward the goal that investment is linked to. */
+function invGoalProfit(goalId){
+  let profit=0, any=false, estimated=false, pending=false; const names=[];
+  (state.investments||[]).forEach(v=>{
+    if(v.goalId!==goalId) return;
+    try{
+      const st = invStats(v);
+      names.push(v.name);
+      const useEst = st.est!==null;
+      const val = useEst ? st.est : (st.last ? st.last.value : null);
+      const base = useEst ? st.investedNow : (st.last ? st.investedAt : st.investedNow);
+      if(val===null || !(base>0)){ pending=true; return; }
+      profit += val - base; any=true; if(useEst) estimated=true;
+    }catch(e){}
+  });
+  return {profit, any, estimated, pending, names};
+}
+function invProfitRowHtml(ip){
+  const neg = ip.profit<0;
+  return `<div class="dep-row inv-profit-row"><span class="dep-date-txt">${t(ip.estimated?'invProfitRowEst':'invProfitRow')}</span><span class="dep-amt mono${neg?' neg':''}">${(neg?'−':'+')+fmt(Math.abs(ip.profit))}</span><span class="dep-link">${escapeHtml(ip.names.join(', '))}</span></div>`;
+}
+function goalInvNoteHtml(ip){
+  if(ip.any){
+    const neg = ip.profit<0, amt = fmtShort(Math.abs(ip.profit)), nm = escapeHtml(ip.names.join(', '));
+    return `<div class="goal-invnote${neg?' neg':''}">${t(neg?'goalInvLoss':(ip.estimated?'goalInvProfitEst':'goalInvProfit'), ltrSpan((neg?'−':'+')+amt), nm)}</div>`;
+  }
+  if(ip.pending) return `<div class="goal-invnote pending">${t('goalInvPending', escapeHtml(ip.names.join(', ')))}</div>`;
+  return '';
+}
+function goalSaved(goalId){ return goalDeposits(goalId) + invGoalProfit(goalId).profit; }
 const expandedGoals = new Set();
 const rowOpen = new Set(), rowShut = new Set();
 function isRowOpen(id,n){ return rowOpen.has(id) || (n===1 && !rowShut.has(id)); }
@@ -1616,16 +1653,21 @@ function renderPlanSummary(){
   if(!state.goals.length && !state.investments.length){ el.style.display='none'; return; }
   el.style.display='';
   if(window.__sub==='invest'){
-    let now=0, inv=0, any=false;
-    state.investments.forEach(v=>{ try{ const st=invStats(v); const useEst=st.est!==null; const val=useEst?st.est:(st.last?st.last.value:null); const base=useEst?st.investedNow:(st.last?st.investedAt:st.investedNow); if(val!==null && base>0){ now+=val; inv+=base; any=true; } }catch(e){} });
+    let now=0, inv=0, any=false, linked=false;
+    state.investments.forEach(v=>{ try{ const st=invStats(v); const useEst=st.est!==null; const val=useEst?st.est:(st.last?st.last.value:null); const base=useEst?st.investedNow:(st.last?st.investedAt:st.investedNow); if(val!==null && base>0){ now+=val; inv+=base; any=true; if(v.goalId && state.goals.some(g=>g.id===v.goalId)) linked=true; } }catch(e){} });
     const pl=now-inv, ar=state.lang==='ar';
-    el.innerHTML = `<div class="ps-l">${ar?'كل الاستثمارات (منفصلة عن الأهداف)':'All investments (separate from goals)'}</div>` + (any ? `<div class="ps-v">${fmtShort(now)} <small>${ar?'جنيه الآن':'EGP now'}</small></div><div class="ps-s">${ar?'المستثمر':'Invested'} ${fmtShort(inv)} · ${pl>=0?'+':'−'}${fmtShort(Math.abs(pl))} ${ar?'ربح':'profit'} (${fmtPct(inv>0?pl/inv*100:0)})</div>` : `<div class="ps-s">${ar?'أضف قيمة حالية لعرض الإجمالي.':'Add a current value to see the total.'}</div>`);
+    el.innerHTML = `<div class="ps-l">${t('planInvAll')}</div>` + (any ? `<div class="ps-v">${fmtShort(now)} <small>${t('egpNow')}</small></div><div class="ps-s">${t('planInvLine', fmtShort(inv), (pl>=0?'+':'−')+fmtShort(Math.abs(pl)), fmtPct(inv>0?pl/inv*100:0))}</div>` + (linked ? `<div class="ps-s">${t('planInvLinkedNote')}</div>` : '') : `<div class="ps-s">${t('planInvNoValue')}</div>`);
     return;
   }
   const saved = state.goals.reduce((a,g)=>a+goalSaved(g.id),0), target = state.goals.reduce((a,g)=>a+parseFloat(g.target||0),0);
-  let now=0, pl=0, any=false;
-  state.investments.forEach(v=>{ try{ const st=invStats(v); const useEst=st.est!==null; const val=useEst?st.est:(st.last?st.last.value:null); const base=useEst?st.investedNow:(st.last?st.investedAt:st.investedNow); if(val!==null){ now+=val; any=true; if(base>0) pl+=val-base; } }catch(e){} });
-  el.innerHTML = `<div class="ps-l">${t('planSaved')}</div><div class="ps-v">${fmtShort(saved)} <small>${t('planOf', fmtShort(target))}</small></div>` + (any ? `<div class="ps-s">${t('planInvSep', fmtShort(now), (pl>=0?'+':'−')+fmtShort(Math.abs(pl)))}</div>` : '');
+  let linkedPl=0, linkedAny=false, unNow=0, unPl=0, unAny=false;
+  state.investments.forEach(v=>{ try{ const st=invStats(v); const useEst=st.est!==null; const val=useEst?st.est:(st.last?st.last.value:null); const base=useEst?st.investedNow:(st.last?st.investedAt:st.investedNow); if(val===null || !(base>0)) return;
+    if(v.goalId && state.goals.some(g=>g.id===v.goalId)){ linkedPl += val-base; linkedAny=true; }
+    else { unNow += val; unAny=true; unPl += val-base; }
+  }catch(e){} });
+  el.innerHTML = `<div class="ps-l">${t('planSaved')}</div><div class="ps-v">${fmtShort(saved)} <small>${t('planOf', fmtShort(target))}</small></div>`
+    + (linkedAny ? `<div class="ps-s">${t(linkedPl>=0?'planInvInGoals':'planInvInGoalsLoss', ltrSpan((linkedPl>=0?'+':'−')+fmtShort(Math.abs(linkedPl))))}</div>` : '')
+    + (unAny ? `<div class="ps-s">${t('planInvUnlinked', ltrSpan(fmtShort(unNow)), ltrSpan((unPl>=0?'+':'−')+fmtShort(Math.abs(unPl))))}</div>` : '');
 }
 function goalDueHtml(g, saved){
   if(!g.deadline) return '';
@@ -1652,6 +1694,7 @@ function renderGoals(){
   const el = document.getElementById('goalsList');
   if(!state.goals.length){ el.innerHTML = `<div class="empty-note">${t('noGoalsYet')}</div>`; return; }
   el.innerHTML = state.goals.map(g=>{
+    const ip = invGoalProfit(g.id);
     const saved = goalSaved(g.id);
     const pct = g.target>0 ? Math.min(100,(saved/g.target)*100) : 0;
     const deps = state.contributions.filter(c=>c.goalId===g.id).sort((a,b)=> b.date.localeCompare(a.date) || b.id.localeCompare(a.id));
@@ -1660,6 +1703,7 @@ function renderGoals(){
     <div class="goal-card">
       <div class="goal-top acc-h" data-acc="${g.id}" role="button" tabindex="0" aria-expanded="${isRowOpen(g.id,state.goals.length)}"><div class="goal-name"><span class="acc-ar">${isRowOpen(g.id,state.goals.length)?'▼':'▶'}</span> ${escapeHtml(g.name)} <span class="goal-pct mono${saved>=g.target?' done':''}">${g.target>0 ? Math.floor((saved/g.target)*100) : 0}%</span></div><div class="goal-nums mono">${fmt(saved)} / ${fmt(g.target)}</div></div>
       <div class="goal-track2"><div class="goal-fill2" style="width:${pct}%"></div></div>
+      ${goalInvNoteHtml(ip)}
       <div class="acc-body${isRowOpen(g.id,state.goals.length)?'':' shut'}">
       ${goalDueHtml(g, saved)}${goalPaceHtml(g, saved)}
       <div class="goal-bar">
@@ -1674,7 +1718,7 @@ function renderGoals(){
         <input type="date" class="dep-date" value="${todayStr()}" id="contribdate-${g.id}">
         <button data-id="${g.id}" class="contrib-btn">${t('addBtn')}</button>
       </div>
-      ${open ? `<div class="dep-list">${deps.length ? deps.map(c=>`
+      ${open ? `<div class="dep-list">${(deps.length || ip.any) ? (ip.any ? invProfitRowHtml(ip) : '') + deps.map(c=>`
         <div class="dep-row">
           <span class="dep-date-txt mono">${formatDate(c.date)}</span>
           <span class="dep-amt mono">+${fmt(c.amount)}</span>
@@ -3129,7 +3173,7 @@ function renderInvestments(){
     if(hasVal && !hasPL) note += ' · '+t('invNeedInvested');
     const rOpen = isRowOpen(v.id,state.investments.length);
     return `<div class="inv-card">
-      <div class="goal-top acc-h" data-acc="${v.id}" role="button" tabindex="0" aria-expanded="${rOpen}"><div class="goal-name"><span class="acc-ar">${rOpen?'▼':'▶'}</span> ${escapeHtml(v.name)} ${hasPL ? `<span class="goal-pct mono" style="color:var(--${pl>=0?'green':'red'})">${fmtPct(pct)}</span>` : ''}</div><div class="goal-nums mono">${v.goalId ? (goal ? escapeHtml(goal.name) : t('invGoalMissing')) : t('invNoGoalLabel')}</div></div>
+      <div class="goal-top acc-h" data-acc="${v.id}" role="button" tabindex="0" aria-expanded="${rOpen}"><div class="goal-name"><span class="acc-ar">${rOpen?'▼':'▶'}</span> ${escapeHtml(v.name)} ${hasPL ? `<span class="goal-pct mono" style="color:var(--${pl>=0?'green':'red'})">${fmtPct(pct)}</span>` : ''}</div><div class="goal-nums mono">${v.goalId ? (goal ? escapeHtml(goal.name) : t('invGoalMissing')) : t('invNoGoalLabel')}${(v.goalId && goal && hasPL) ? `<span class="inv-goal-tag">${t(pl<0?'invLossInGoal':(useEst?'invProfitInGoalEst':'invProfitInGoal'))}</span>` : ''}</div></div>
       <div class="acc-body${rOpen?'':' shut'}">
       <div class="inv-grid">
         <div><span>${t('invInvested')}</span><b>${fmtShort(shownInvested)}</b></div>
@@ -3163,7 +3207,7 @@ function renderInvestments(){
     v.valuations = v.valuations || [];
     const same = v.valuations.find(x=>x.date===date);
     if(same) same.value = val; else v.valuations.push({id:genId(), date, value:val});
-    await saveInvestments(); renderInvestments(); showToast(t('toastInvestUpdated'));
+    await saveInvestments(); renderGoals(); showToast(t('toastInvestUpdated'));
   }));
   list.querySelectorAll('.inv-updtoggle').forEach(b=>b.addEventListener('click', ()=>{ const f=document.getElementById('invform-'+b.dataset.id); f.classList.toggle('open'); if(f.classList.contains('open')) document.getElementById('invval-'+b.dataset.id).focus(); }));
   list.querySelectorAll('.inv-edit').forEach(b=>b.addEventListener('click', ()=>{
@@ -3177,7 +3221,7 @@ function renderInvestments(){
     const v = state.investments.find(x=>x.id===b.dataset.id);
     confirmAction(t('deleteInvestTitle'), t('deleteInvestBody', v?v.name:''), async ()=>{
       state.investments = state.investments.filter(x=>x.id!==b.dataset.id);
-      expandedInv.delete(b.dataset.id); await saveInvestments(); renderInvestments();
+      expandedInv.delete(b.dataset.id); await saveInvestments(); renderGoals();
     });
   }));
   list.querySelectorAll('.inv-toggle').forEach(b=>b.addEventListener('click', ()=>{
@@ -3187,7 +3231,7 @@ function renderInvestments(){
   list.querySelectorAll('.inv-hist-del').forEach(b=>b.addEventListener('click', async ()=>{
     const v = state.investments.find(x=>x.id===b.dataset.v); if(!v) return;
     v.valuations = (v.valuations||[]).filter(x=>x.id!==b.dataset.id);
-    await saveInvestments(); renderInvestments();
+    await saveInvestments(); renderGoals();
   }));
 }
 document.getElementById('toggleAddInvest').addEventListener('click', ()=>{
@@ -3207,7 +3251,7 @@ document.getElementById('saveInvest').addEventListener('click', async ()=>{
     const nv = {id:genId(), name, goalId, valuations:[]}; if(rate>0) nv.rate = rate; manual(nv);
     state.investments.push(nv); LedgerLocal.set('invSelected', nv.id);
   }
-  await saveInvestments(); resetInvestForm(); renderInvestments(); showToast(t('toastInvestSaved'));
+  await saveInvestments(); resetInvestForm(); renderGoals(); showToast(t('toastInvestSaved'));
 });
 
 
